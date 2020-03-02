@@ -1,0 +1,19 @@
+clear all;
+close all;
+clear load;
+load('sensorlog4.mat')
+
+fSample = 10;
+tSample= 1/fSample;
+
+t=0:tSample:tSample*(length(Orientation1)-tSample);
+
+data.time=t';
+data.signals.values.acc=Acceleration1;
+% data.signals.values.angVel=AngularVelocity1;
+% data.signals.values.magFie=MagneticField1;
+% data.signals.values.orientation=Orientation1;
+data.signals.dimension=[3 531];
+
+
+ts = timeseries(Acceleration(1,,t')

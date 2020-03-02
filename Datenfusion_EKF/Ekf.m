@@ -2,9 +2,9 @@ clear all;
 close all;
 clear load;
 
-load('sensorlog3.mat')
+load('sensorlog4.mat')
 
-fSample = 100;
+fSample = 10;
 tSample= 1/fSample;
 
 t=0:tSample:tSample*(length(Orientation1)-tSample);
@@ -16,21 +16,22 @@ x=zeros(length(t),3);
 %% Filtereinstellungen  
 
 I=eye(3);
+
+C=I;
+
 P = 100*I;
 
-R=[100 0 0;
-   0 100 0;
+R=[0.1 0 0;
+   0 0.1 0;
    0 0 100];
 
-Q=[0.01 0 0;
-   0 0.01 0;
-   0 0 1];
+Q=[.01 0 0;
+   0 .0001 0;
+   0 0 0.001];
 
 x_dach = [0 0 0]'; % Startwerte phi theta psi
 
-%% Filter
-  
-C=I;
+%% Extended-Kalman-Filter
 
 for k=1:length(t)
 
@@ -59,33 +60,33 @@ gyro = AngularVelocity1;
 mag = Orientation1;
 
 
-ifilt = ahrsfilter('SampleRate', 100);
-for ii=1:size(acc,1)
-    qahrs = ifilt(acc(ii,:), gyro(ii,:), mag(ii,:));
-    euler2(ii,:)=quat2eul(qahrs)*180/pi;
-  %  viewer(qahrs);
-   % pause(0.01);
-end
+% ifilt = ahrsfilter('SampleRate', 10);
+% for ii=1:size(acc,1)
+%     qahrs = ifilt(acc(ii,:), gyro(ii,:), mag(ii,:));
+%     euler2(ii,:)=quat2eul(qahrs)*180/pi;
+%   %  viewer(qahrs);
+%    % pause(0.01);
+% end
 
 %% Darstellung
 
 figure(1)
-subplot(2,2,1);
-plot(t,x(:,2),'b');
+subplot(2,2,1); % roll
+plot(t,-x(:,2),'b');
 hold on
 plot(t,Orientation1(:,3),'r')
 hold off
-subplot(2,2,2);
-plot(t,-x(:,1),'b');
+subplot(2,2,2); % pitch
+plot(t,x(:,1),'b');
 hold on
 plot(t,Orientation1(:,2),'r')
 hold off
-subplot(2,2,3);
-plot(t,x(:,3),'b');
+subplot(2,2,3); %yaw/azimuth
+plot(t,-1*x(:,3),'b');
 hold on
-plot(t,Orientation1(:,1),'r')
-hold on
-plot(t,-1*euler2(:,1)+50,'g')
+plot(t,Orientation1(:,1)-85,'r')
+%hold on
+%plot(t,-1*euler2(:,1),'g')
 hold off
 
 
