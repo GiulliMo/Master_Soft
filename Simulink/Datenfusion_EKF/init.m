@@ -1,22 +1,22 @@
+%Initialisierungs Skript fuer sdf_pi_test 
+
 clear all;
 close all;
 clear load;
-load('sensorlog4.mat')
+load('kalibrierIV.mat')
 
-fSample = 10;
+fSample = 100;
 tSample= 1/fSample;
 
-t=0:tSample:tSample*(length(Acceleration1)-tSample);
+t=0:tSample:tSample*(length(acceleration)-tSample);
 
-data.time=t';
-data.signals.values.acc=Acceleration1;
-% data.signals.values.angVel=AngularVelocity1;
-% data.signals.values.magFie=MagneticField1;
-% data.signals.values.orientation=Orientation1;
-data.signals.dimension=[3 531];
+for i=1:length(acceleration)
+    accel(i,:)=acceleration(:,:,i);
+    angvel(i,:)=angVel(:,:,i);
+    magnet(i,:)=magneticField(i,:);
+end
 
-
-acc = timeseries(Acceleration1,t');
-angVel = timeseries(AngularVelocity1,t(1:length(AngularVelocity1))');
-magField = timeseries(MagneticField1,t(1:length(MagneticField1))');
-orientation = timeseries(Orientation1,t(1:length(Orientation1))');
+acc = timeseries(accel,t');
+angVel = timeseries(angvel,t(1:length(angvel))');
+magField = timeseries(magnet/10,t(1:length(magnet))');
+%orientation = timeseries(Orientation1,t(1:length(Orientation1))');

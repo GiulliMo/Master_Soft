@@ -1,0 +1,66 @@
+%implements "chartSource" "C"
+%function ChartConfig(block, system) void
+  %createrecord chartConfiguration { ...
+          executeAtInitialization  0 ...
+  }
+  %return chartConfiguration
+%endfunction
+%function ChartDataMap(block, system) void
+  %createrecord ChartDataElements {\
+    NumChartData   6 \
+    ChartDataDefaults {\
+      RecordType   "ChartData"\
+      Dimensions   []\
+      IsTestPoint  0\
+    }\
+    ChartData {\
+      Name         "x_dach"\
+      Description  "EmlPersistent"\
+      SFName       ""\
+      Path         ""\
+      SrcLocation  "sdf_target:15:416-422"\
+      Dimensions   [3]\
+    }\
+    ChartData {\
+      Name         "P"\
+      Description  "EmlPersistent"\
+      SFName       ""\
+      Path         ""\
+      SrcLocation  "sdf_target:15:423-424"\
+      Dimensions   [3,3]\
+    }\
+    ChartData {\
+      Name         "Q"\
+      Description  "EmlPersistent"\
+      SFName       ""\
+      Path         ""\
+      SrcLocation  "sdf_target:15:425-426"\
+      Dimensions   [3,3]\
+    }\
+    ChartData {\
+      Name         "R"\
+      Description  "EmlPersistent"\
+      SFName       ""\
+      Path         ""\
+      SrcLocation  "sdf_target:15:427-428"\
+      Dimensions   [3,3]\
+    }\
+    ChartData {\
+      Name         "C"\
+      Description  "EmlPersistent"\
+      SFName       ""\
+      Path         ""\
+      SrcLocation  "sdf_target:15:429-430"\
+      Dimensions   [3,3]\
+    }\
+    ChartData {\
+      Name         "I"\
+      Description  "EmlPersistent"\
+      SFName       ""\
+      Path         ""\
+      SrcLocation  "sdf_target:15:431-432"\
+      Dimensions   [3,3]\
+    }\
+  }
+  %return ChartDataElements
+%endfunction
