@@ -1,0 +1,10 @@
+# Endungen
+
+*.avi
+*.DS_Store
+*.slxc
+*.mexmaci64
+
+# Verzeichnisse
+
+**/slprj 

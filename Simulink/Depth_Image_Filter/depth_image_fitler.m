@@ -1,6 +1,5 @@
-
 %****************************************************************
-%        Hochschule Hamm-Lippstadt / Hs Bochum                  *
+%        Hochschule Hamm-Lippstadt / HS Bochum                  *
 %****************************************************************
 % Modul			  : Masterarbeit                                *
 %				                            					*
@@ -25,7 +24,6 @@ clear load;
 load('FILTER.mat'); % simout = 20 Depth Image Bilder ? 
 
 aFrames_raw = simout; % Raw Data uint8
-
 [nSamples,nIndex] = size(aFrames_raw); % size of frame
 
 x = 1920; % height
@@ -35,11 +33,13 @@ aFrames = uint16(zeros(nSamples,x,y));
 aFrames_medFilt = uint16(zeros(nSamples,x,y));
 
 video1 = VideoWriter('depth.avi'); % ungefiltert
-video1.FrameRate=1;
+video1.FrameRate = 1;
+
 video2 = VideoWriter('depth_filt.avi'); % gefiltert
-video2.FrameRate=1;
+video2.FrameRate = 1;
 
 open(video1); %open the file for writing
+
 open(video2); 
 
 
@@ -47,16 +47,18 @@ open(video2);
 % 1 x 4147200 to 1920 x 1080 
 
 for i = 1:nSamples
+    
     frame = reshape(typecast(aFrames_raw(i,:), 'uint16'),x,y); % reshape uint8 1X 4147200 to uint16 1920 x 1080
     aFrames(i,:,:) = frame;
     
-    writeVideo(video1,mat2gray(permute(frame,[2 1]))); %write the image to file
+    writeVideo(video1,mat2gray(permute(frame,[2 1])));  %write the image to file
     
-    frame_medFilt = medfilt2(frame,[10 10]); % median Filter
+    frame_medFilt = medfilt2(frame,[2 2]); % median Filter
     
     aFrames_medFilt(i,:,:) = frame_medFilt; %save
     
     writeVideo(video2,mat2gray(permute(frame_medFilt,[2 1]))); %write the image to file
+    
 end
 
 close(video1); % video ungefiltert
@@ -77,12 +79,14 @@ for i = 1:nSamples
                      
              imgIndexStream = j+(k-1)*y; % index data Stream
              
-             data_u16(i,imgIndexStream) = aFrames_medFilt(i,k,j); %20x1920x1080 to 20x4147200
-             
+             data_u16(i,imgIndexStream) = aFrames_medFilt(i,k,j); %20x1920x1080 to 20x2073600
+           
         end
        
     end
-    data_u8(i,:)=typecast(data_u16(i,:), 'uint8'); % Cast to uint8 resize from 1 x 2073600 to 1 x 4147200
+    
+    data_u8(i,:) = typecast(data_u16(i,:), 'uint8'); % Cast to uint8 resize from 1 x 2073600 to 1 x 4147200
+
 end
 
 
