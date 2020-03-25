@@ -1,0 +1,41 @@
+
+#---standard pioneer footprint---
+#---(in meters)---
+#robot_radius: 0.17
+#footprint_padding: 0.00
+
+#---standard pioneer footprint---
+#---(in meters)---
+#robot_radius: 1.0
+footprint: [ [0.0, 0.36], [0.78, 0.36], [0.78, -0.36], [-0.78, -0.36], [-0.78, 0.36] ]
+#footprint_padding: 0.00
+
+transform_tolerance: 0.2
+map_type: costmap
+
+always_send_full_costmap: true
+
+obstacle_layer:
+ enabled: true
+ obstacle_range: 3.0
+ raytrace_range: 4.0
+ inflation_radius: 2
+ track_unknown_space: true
+ combination_method: 1
+
+ observation_sources: laser camera1 camera2 
+ 
+ laser: {data_type: LaserScan, topic: scan, marking: true, clearing: false}
+ camera1: {data_type: LaserScan, topic: scan1, marking: true, clearing: true}
+ camera2: {data_type: LaserScan, topic: scan2, marking: true, clearing: true}
+ 
+
+
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor:  10  # exponential rate at which the obstacle cost drops off (default: 10)
+  inflation_radius:     0.8  # max. distance from an obstacle at which costs are incurred for planning paths.
+
+static_layer:
+  enabled:              true
+  map_topic:            "/map"

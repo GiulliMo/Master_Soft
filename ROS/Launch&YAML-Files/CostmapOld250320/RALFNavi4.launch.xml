@@ -1,0 +1,46 @@
+
+<launch>
+
+  <!--<node pkg="costmap_2d" type="costmap_2d_markers" name="voxel_visualizer">
+    <remap from="voxel_grid" to="costmap/voxel_grid"/>
+  </node>
+
+  <node name="costmap_node" pkg="costmap_2d" type="costmap_2d_node">
+    <rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/example_params.yaml" command="load" ns="costmap" />-->
+    <!--<rosparam file="$(find costmap_2d)/launch/global_costmap.yaml" command="load" ns="costmap" />
+	<rosparam file="$(find costmap_2d)/launch/costmap_params.yaml" command="load" ns="costmap" />-->
+  <!--</node>-->
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+  	 	<rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/ccnew.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/ccnew.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/local_costmap_params.yaml" command="load" />
+  		<rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/global_costmap_params.yaml" command="load" />
+  		<rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/teb_local_planner_params.yaml" command="load" />
+		<!--<rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/costmap_converter_params.yaml" command="load" />-->
+
+
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		<param name="planner_frequency" value="1.0" /> 
+		<param name="planner_patience" value="5.0" />
+
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+		
+  </node>
+
+
+  <node name="joint_state_publisher"  pkg="joint_state_publisher"  type="joint_state_publisher">
+    <param name="robot_description" textfile="/home/alf/catkin_ws/devel/lib/rplidar_ros/myfirst.urdf"/>
+	<param name="use_gui" value="false" />
+  </node>
+
+
+  <node name="rviz"  pkg="rviz"  type="rviz">
+    <remap from="robot_description" to="/joint_state_publisher/robot_description"/>
+  </node>
+
+</launch>
+  
+  
