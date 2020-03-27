@@ -1,0 +1,65 @@
+
+<launch>
+<!--Lidar--> 
+
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen" clear_params="true">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+  <param name="serial_baudrate"     type="int"    value="115200"/><!-- A1/A2 -->
+  <!--<param name="serial_baudrate"     type="int"    value="256000"/>--><!--A3 -->
+  <param name="frame_id"            type="string" value="laser"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
+
+<!--ICP Odometry-->
+
+
+ <!-- <node name="icp_odometry"  pkg="rtabmap_ros"  type="icp_odometry" clear_params="true">
+  </node>-->
+
+
+<!--Transforms-->
+
+
+  <node pkg="tf" type="static_transform_publisher" name="base_k2laser" args="0 0 0 0 0 0 base_link laser 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_linkmap" args="0 0 0 0 0 0 odom base_link 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="odom2_base_Frame" args="0.5 -0.26 0 0 0 0 odom base_frame 10"/> 
+ 
+
+<!--Hector SLAM-->
+
+  <node pkg="hector_mapping" type="hector_mapping" name="hector_slam" clear_params="true"/>
+
+<!--Rviz-->
+
+  <node name="rviz"  pkg="rviz"  type="rviz">
+    <remap from="robot_description" to="/joint_state_publisher/robot_description"/>
+  </node>
+
+<!--Navigation Stack-->
+   
+   <arg name="package"            default="rplidar_ros"/>
+   <master auto="start"/>
+ <!-- Run the map server --> 
+    <!--<node name="map_server" pkg="map_server" type="map_server" args="/home/alf/testmapralf.pgm my_map_resolution"/>-->
+
+ <!--- Run AMCL --> 
+    <!--<include file="$(find amcl)/examples/amcl_omni.launch" />-->
+
+   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+    <rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/local_costmap_params.yaml" command="load" />
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/global_costmap_params.yaml" command="load" /> 
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/base_local_planner_params.yaml" command="load" />
+
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="10.0" />
+ </node>
+
+
+
+
+</launch>

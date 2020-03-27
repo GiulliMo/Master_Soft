@@ -1,0 +1,119 @@
+
+<launch>
+<!--Lidar--> 
+
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen" clear_params="true">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+  <param name="serial_baudrate"     type="int"    value="115200"/><!-- A1/A2 -->
+  <!--<param name="serial_baudrate"     type="int"    value="256000"/>--><!--A3 -->
+  <param name="frame_id"            type="string" value="laser"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
+
+<!--ICP Odometry-->
+
+
+ <!-- <node name="icp_odometry"  pkg="rtabmap_ros"  type="icp_odometry" clear_params="true">
+  </node>-->
+
+
+<!--Transforms-->
+
+
+  <node pkg="tf" type="static_transform_publisher" name="base_k2laser" args="0 0 0 0 0 0 base_link laser 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_k1laser" args="0 0 0 0 0 0 base_link laser1 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_linkmap" args="0 0 0 0 0 0 odom base_link 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="odom2_base_Frame" args="0.5 -0.26 0 0 0 0 odom base_frame 10"/> 
+ 
+  <node pkg="tf" type="static_transform_publisher" name="base_link2camera_depth_frame" args="-0.27 -0.24 0 3.14 0 0 base_link cam_back 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_link2rgboptical" args="0.1 -0.24 0 0 0 0 base_link cam_front 10"/>
+
+<!--Hector SLAM-->
+
+  <node pkg="hector_mapping" type="hector_mapping" name="hector_slam" clear_params="true">
+	<remap from="/scan" to="/scan_multi"/>
+  </node>
+
+<!--Rviz-->
+
+  <node name="rviz"  pkg="rviz"  type="rviz">
+    <remap from="robot_description" to="/joint_state_publisher/robot_description"/>
+  </node>
+
+<!--Navigation Stack-->
+   
+   <arg name="package"            default="rplidar_ros"/>
+   <master auto="start"/>
+ <!-- Run the map server --> 
+    <!--<node name="map_server" pkg="map_server" type="map_server" args="/home/alf/testmapralf.pgm my_map_resolution"/>-->
+
+ <!--- Run AMCL --> 
+    <!--<include file="$(find amcl)/examples/amcl_omni.launch" />-->
+
+   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+    <rosparam file="/home/alf/catkin_ws/devel/lib/rplidar_ros/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/local_costmap_params.yaml" command="load" />
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/global_costmap_params.yaml" command="load" /> 
+    <rosparam file="/home/alf/catkin_ws/devel/lib/$(arg package)/base_local_planner_params.yaml" command="load" />
+
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="10.0" />
+ </node>
+
+
+<!--Kinects-->
+
+<include file="/home/alf/catkin_ws/devel/lib/rplidar_ros/kinect1_bridge_new.launch"/>
+<include file="/home/alf/catkin_ws/devel/lib/rplidar_ros/kinect2_bridge_new.launch"/>
+
+<!--Depthimage to laser-->
+
+ 	<!--Kamera vorne-->
+
+
+  <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan2">
+    <remap from="image" to="kinect2/qhd/image_depth_rect"/>
+    <param name="output_frame_id" type="string" value="cam_front"/>
+    <remap from="camera_info" to="kinect2/qhd/camera_info"/>
+    <remap from="scan" to="scan2"/>
+	<param name="scan_height" type="int" value="900"/>
+    <param name="range_max" type="double" value="1.80"/>
+  </node>-->
+
+
+	<!--Kamera hinten-->
+	
+
+  <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan1">
+    <remap from="image" to="kinect1/qhd/image_depth_rect"/>
+    <param name="output_frame_id" type="string" value="cam_back"/>
+    <remap from="camera_info" to="kinect1/qhd/camera_info"/>
+    <remap from="scan" to="scan1"/>
+	<param name="scan_height" type="int" value="900"/>
+	<param name="range_max" type="double" value="1.80"/>
+  </node>-->
+
+<!--Laser Merge-->
+
+        <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+        <param name="destination_frame" value="laser1"/>
+		<param name="cloud_destination_topic" value="/merged_cloud"/>
+		<param name="scan_destination_topic" value="/scan_multi"/>
+        <param name="laserscan_topics" value ="/scan /scan1 /scan2"/> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+
+                <param name="angle_min" value="-3.14"/>
+                <param name="angle_max" value="3.14"/>
+                <param name="angle_increment" value="0.0058"/>
+                <param name="scan_time" value="0.0333333"/>
+                <param name="range_min" value="0.30"/>
+                <param name="range_max" value="50.0"/>
+
+	</node>
+
+</launch>
