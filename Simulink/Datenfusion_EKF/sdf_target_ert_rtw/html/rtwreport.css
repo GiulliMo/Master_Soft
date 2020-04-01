@@ -53,7 +53,7 @@ PP {
 }
 
 .highlightedCurrent {
-    background-color: #819FF7;
+    background-color: rgba(150, 12, 116, 0.1);
 }
 
 input.search {
@@ -210,7 +210,7 @@ ul.nav_list li {
 }
 
 .nav_toolbar {
-    background-color: #aff;
+    background-color: ivory;
     margin-top: 0;
 }
 
@@ -222,7 +222,7 @@ ul.nav_list li {
 }
 
 table.nav_table {
-    background-color: #aff;
+    background-color: ivory;
     border: none;
     width: 100%;
     display: inline;
@@ -254,4 +254,8 @@ select#fileSelector {
    text-overflow: ellipsis;
    overflow: hidden;
    width: 100%;
+}
+
+pre#RTWcode {
+  font-family: Courier;
 }

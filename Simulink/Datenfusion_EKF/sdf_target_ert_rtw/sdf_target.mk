@@ -2,8 +2,8 @@
 ## Makefile generated for Simulink model 'sdf_target'. 
 ## 
 ## Makefile     : sdf_target.mk
-## Generated on : Wed Mar 04 20:49:09 2020
-## MATLAB Coder version: 4.1 (R2018b)
+## Generated on : Wed Apr 01 19:10:37 2020
+## MATLAB Coder version: 5.0 (R2020a)
 ## 
 ## Build Info:
 ## 
@@ -20,17 +20,14 @@
 # Macro Descriptions:
 # PRODUCT_NAME            Name of the system to build
 # MAKEFILE                Name of this makefile
-# COMPUTER                Computer type. See the MATLAB "computer" command.
 
 PRODUCT_NAME              = sdf_target
 MAKEFILE                  = sdf_target.mk
-COMPUTER                  = GLNX
-MATLAB_ROOT               = $(MATLAB_WORKSPACE)/Applications/MATLAB_R2018b.app
-MATLAB_BIN                = $(MATLAB_WORKSPACE)/Applications/MATLAB_R2018b.app/bin
-MATLAB_ARCH_BIN           = $(MATLAB_BIN)/maci64
+MATLAB_ROOT               = /usr/local/MATLAB/R2020a
+MATLAB_BIN                = /usr/local/MATLAB/R2020a/bin
+MATLAB_ARCH_BIN           = $(MATLAB_BIN)/glnxa64
 MASTER_ANCHOR_DIR         = 
-START_DIR                 = $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/Studium/Master_Business_and_Systems_Engineering/3.Semester/Masterarbeit/Software/Master_Soft/Datenfusion_EKF
-ARCH                      = glnx
+START_DIR                 = /home/alf/Schreibtisch/Master_soft/Master_Soft/Simulink/Datenfusion_EKF
 SOLVER                    = 
 SOLVER_OBJ                = 
 CLASSIC_INTERFACE         = 0
@@ -44,9 +41,9 @@ CPP_STANDARD_OPTS         =
 ## TOOLCHAIN SPECIFICATIONS
 ###########################################################################
 
-# Toolchain Name:          GNU GCC Raspberry Pi v1.0 | gmake (64-bit Mac)
+# Toolchain Name:          Catkin
 # Supported Version(s):    
-# ToolchainInfo Version:   R2018b
+# ToolchainInfo Version:   2020a
 # Specification Revision:  1.0
 # 
 
@@ -59,29 +56,29 @@ LDOUTPUTFLAG = --output_file=
 
 TOOLCHAIN_SRCS = 
 TOOLCHAIN_INCS = 
-TOOLCHAIN_LIBS = -lm -lm -lstdc++
+TOOLCHAIN_LIBS = -lm -lm
 
 #------------------------
 # BUILD TOOL COMMANDS
 #------------------------
 
-# Assembler: GNU GCC Raspberry Pi Assembler
-AS = as
+# Assembler: Catkin1.0 Assembler
+AS = echo as
 
-# C Compiler: GNU GCC Raspberry Pi C Compiler
-CC = gcc
+# C Compiler: Catkin1.0 C Compiler
+CC = echo gcc
 
-# Linker: GNU GCC Raspberry Pi Linker
-LD = gcc
+# Linker: Catkin1.0 Linker
+LD = echo gcc
 
-# C++ Compiler: GNU GCC Raspberry Pi C++ Compiler
-CPP = g++
+# C++ Compiler: Catkin1.0 C++ Compiler
+CPP = echo g++
 
-# C++ Linker: GNU GCC Raspberry Pi C++ Linker
-CPP_LD = g++
+# C++ Linker: Catkin1.0 C++ Linker
+CPP_LD = echo gcc
 
-# Archiver: GNU GCC Raspberry Pi Archiver
-AR = ar
+# Archiver: Catkin1.0 Archiver
+AR = echo ar
 
 # MEX Tool: MEX Tool
 MEX_PATH = $(MATLAB_ARCH_BIN)
@@ -93,8 +90,8 @@ DOWNLOAD =
 # Execute: Execute
 EXECUTE = $(PRODUCT)
 
-# Builder: Make Tool
-MAKE = make
+# Builder: GMAKE Utility
+MAKE = echo
 
 
 #-------------------------
@@ -114,9 +111,9 @@ OUTPUT_FLAG         = -o
 ARDEBUG             =
 STATICLIB_OUTPUT_FLAG =
 MEX_DEBUG           = -g
-RM                  =
-ECHO                = echo
-MV                  =
+RM                  = @rm -f
+ECHO                = @echo
+MV                  = @mv
 RUN                 =
 
 #--------------------------------------
@@ -128,46 +125,20 @@ ASFLAGS              = -c \
                        $(ASFLAGS_ADDITIONAL) \
                        $(INCLUDES)
 CFLAGS               = -c \
-                       -MMD -MP -MF"$(@:%.o=%.dep)" -MT"$@"  \
                        -O2
-CPPFLAGS             = -c \
-                       -MMD -MP -MF"$(@:%.o=%.dep)" -MT"$@"  \
-                       -O2
-CPP_LDFLAGS          = -lrt -lpthread -ldl
-CPP_SHAREDLIB_LDFLAGS  = -shared  \
-                         -lrt -lpthread -ldl
+CPPFLAGS             =
+CPP_LDFLAGS          =
+CPP_SHAREDLIB_LDFLAGS  =
 DOWNLOAD_FLAGS       =
 EXECUTE_FLAGS        =
-LDFLAGS              = -lrt -lpthread -ldl
+LDFLAGS              =
 MEX_CPPFLAGS         =
 MEX_CPPLDFLAGS       =
 MEX_CFLAGS           =
 MEX_LDFLAGS          =
-MAKE_FLAGS           = -f $(MAKEFILE)
-SHAREDLIB_LDFLAGS    = -shared  \
-                       -lrt -lpthread -ldl
+MAKE_FLAGS           = "### Successfully generated all binary outputs."
+SHAREDLIB_LDFLAGS    =
 
-#--------------------
-# File extensions
-#--------------------
-
-OBJ_EXT             = .s.o
-ASM_EXT             = .s
-C_DEP               = .c.dep
-H_EXT               = .h
-COBJ_EXT            = .c.o
-C_EXT               = .c
-EXE_EXT             = .elf
-SHAREDLIB_EXT       = .so
-CXX_DEP             = .cpp.dep
-HPP_EXT             = .hpp
-CPPOBJ_EXT          = .cpp.o
-CPP_EXT             = .cpp
-EXE_EXT             =
-SHAREDLIB_EXT       = .so
-STATICLIB_EXT       = .lib
-MEX_EXT             = .mexmaci64
-MAKE_EXT            = .mk
 
 
 ###########################################################################
@@ -182,7 +153,7 @@ BUILD_TYPE = "Top-Level Standalone Executable"
 ## INCLUDE PATHS
 ###########################################################################
 
-INCLUDES_BUILDINFO = -I$(START_DIR) -I$(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/target/shared/svd/include -I$(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/server -I$(START_DIR)/sdf_target_ert_rtw -I$(MATLAB_ROOT)/extern/include -I$(MATLAB_ROOT)/simulink/include -I$(MATLAB_ROOT)/rtw/c/src -I$(MATLAB_ROOT)/rtw/c/src/ext_mode/common -I$(MATLAB_ROOT)/rtw/c/ert -I$(MATLAB_ROOT)/toolbox/coder/rtiostream/src/utils -I$(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/include -I$(MATLAB_ROOT)/toolbox/target/codertarget/rtos/inc
+INCLUDES_BUILDINFO = -I$(START_DIR) -I/home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/target/shared/svd/include -I/home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/server -I$(START_DIR)/sdf_target_ert_rtw -I$(MATLAB_ROOT)/extern/include -I$(MATLAB_ROOT)/simulink/include -I$(MATLAB_ROOT)/rtw/c/src -I$(MATLAB_ROOT)/rtw/c/src/ext_mode/common -I$(MATLAB_ROOT)/rtw/c/ert -I/home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/include -I$(MATLAB_ROOT)/toolbox/target/codertarget/rtos/inc
 
 INCLUDES = $(INCLUDES_BUILDINFO)
 
@@ -190,21 +161,22 @@ INCLUDES = $(INCLUDES_BUILDINFO)
 ## DEFINES
 ###########################################################################
 
-DEFINES_ = -DMODEL=sdf_target -DNUMST=2 -DNCSTATES=1 -DHAVESTDIO -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DUNIX -DON_TARGET_WAIT_FOR_START=1 -DCLASSIC_INTERFACE=0 -DALLOCATIONFCN=0 -DTID01EQ=1 -DTERMFCN=1 -DONESTEPFCN=1 -DMAT_FILE=0 -DMULTI_INSTANCE_CODE=0 -DEXT_MODE=1 -DINTEGER_CODE=0 -DMT=0 -DARM_PROJECT -D_USE_TARGET_UDP_ -D_RUNONTARGETHARDWARE_BUILD_ -DSTACK_SIZE=64 -D__MW_TARGET_USE_HARDWARE_RESOURCES_H__ -DRT
-DEFINES_BUILD_ARGS = -DCLASSIC_INTERFACE=0 -DALLOCATIONFCN=0 -DTERMFCN=1 -DONESTEPFCN=1 -DMAT_FILE=0 -DMULTI_INSTANCE_CODE=0 -DEXT_MODE=1 -DINTEGER_CODE=0 -DMT=0
-DEFINES_OPTS = -DON_TARGET_WAIT_FOR_START=1 -DTID01EQ=1
-DEFINES_SKIPFORSIL = -DARM_PROJECT -D_USE_TARGET_UDP_ -D_RUNONTARGETHARDWARE_BUILD_ -DSTACK_SIZE=64 -DRT
-DEFINES_STANDARD = -DMODEL=sdf_target -DNUMST=2 -DNCSTATES=1 -DHAVESTDIO -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DUNIX
+DEFINES_ = -DMODEL=sdf_target -DNUMST=2 -DNCSTATES=1 -DHAVESTDIO -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DCLASSIC_INTERFACE=0 -DALLOCATIONFCN=0 -DTID01EQ=1 -DTERMFCN=1 -DONESTEPFCN=1 -DMAT_FILE=0 -DMULTI_INSTANCE_CODE=0 -DINTEGER_CODE=0 -DMT=0 -DROS_PROJECT -DARM_PROJECT -D_USE_TARGET_UDP_ -D_RUNONTARGETHARDWARE_BUILD_ -DMW_SCHED_OTHER -DSTACK_SIZE=64 -D__MW_TARGET_USE_HARDWARE_RESOURCES_H__ -DRT=RT
+DEFINES_BUILD_ARGS = -DCLASSIC_INTERFACE=0 -DALLOCATIONFCN=0 -DTERMFCN=1 -DONESTEPFCN=1 -DMAT_FILE=0 -DMULTI_INSTANCE_CODE=0 -DINTEGER_CODE=0 -DMT=0
+DEFINES_CUSTOM = 
+DEFINES_OPTS = -DTID01EQ=1
+DEFINES_SKIPFORSIL = -DROS_PROJECT -DARM_PROJECT -D_USE_TARGET_UDP_ -D_RUNONTARGETHARDWARE_BUILD_ -DMW_SCHED_OTHER -DSTACK_SIZE=64
+DEFINES_STANDARD = -DMODEL=sdf_target -DNUMST=2 -DNCSTATES=1 -DHAVESTDIO -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0
 
-DEFINES = $(DEFINES_) $(DEFINES_BUILD_ARGS) $(DEFINES_OPTS) $(DEFINES_SKIPFORSIL) $(DEFINES_STANDARD)
+DEFINES = $(DEFINES_) $(DEFINES_BUILD_ARGS) $(DEFINES_CUSTOM) $(DEFINES_OPTS) $(DEFINES_SKIPFORSIL) $(DEFINES_STANDARD)
 
 ###########################################################################
 ## SOURCE FILES
 ###########################################################################
 
-SRCS = $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/target/supportpackages/raspberrypi/src/MW_I2C.c $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/server/devices.c $(START_DIR)/sdf_target_ert_rtw/rtGetInf.c $(START_DIR)/sdf_target_ert_rtw/rtGetNaN.c $(START_DIR)/sdf_target_ert_rtw/rt_nonfinite.c $(START_DIR)/sdf_target_ert_rtw/sdf_target.c $(START_DIR)/sdf_target_ert_rtw/sdf_target_data.c $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/ext_svr.c $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/updown.c $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/ext_work.c $(MATLAB_ROOT)/toolbox/coder/rtiostream/src/utils/rtiostream_utils.c $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/server/MW_raspi_init.c $(MATLAB_ROOT)/toolbox/target/codertarget/rtos/src/linuxinitialize.c $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/rtiostream_interface.c $(MATLAB_ROOT)/rtw/c/src/rtiostream/rtiostreamtcpip/rtiostream_tcpip.c
+SRCS = /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/target/supportpackages/raspberrypi/src/MW_I2C.c /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/server/devices.c $(START_DIR)/sdf_target_ert_rtw/rtGetInf.cpp $(START_DIR)/sdf_target_ert_rtw/rtGetNaN.cpp $(START_DIR)/sdf_target_ert_rtw/rt_nonfinite.cpp $(START_DIR)/sdf_target_ert_rtw/sdf_target.cpp $(START_DIR)/sdf_target_ert_rtw/sdf_target_data.cpp $(MATLAB_ROOT)/toolbox/target/codertarget/rtos/src/linuxinitialize.cpp $(START_DIR)/sdf_target_ert_rtw/slros_busmsg_conversion.cpp $(START_DIR)/sdf_target_ert_rtw/slros_initialize.cpp $(MATLAB_ROOT)/toolbox/ros/slros/src/slros_generic_param.cpp
 
-MAIN_SRC = $(START_DIR)/sdf_target_ert_rtw/ert_main.c
+MAIN_SRC = $(START_DIR)/sdf_target_ert_rtw/ert_main.cpp
 
 ALL_SRCS = $(SRCS) $(MAIN_SRC)
 
@@ -212,9 +184,9 @@ ALL_SRCS = $(SRCS) $(MAIN_SRC)
 ## OBJECTS
 ###########################################################################
 
-OBJS = MW_I2C.c.o devices.c.o rtGetInf.c.o rtGetNaN.c.o rt_nonfinite.c.o sdf_target.c.o sdf_target_data.c.o ext_svr.c.o updown.c.o ext_work.c.o rtiostream_utils.c.o MW_raspi_init.c.o linuxinitialize.c.o rtiostream_interface.c.o rtiostream_tcpip.c.o
+OBJS = MW_I2C.c.o devices.c.o rtGetInf.cpp.o rtGetNaN.cpp.o rt_nonfinite.cpp.o sdf_target.cpp.o sdf_target_data.cpp.o linuxinitialize.cpp.o slros_busmsg_conversion.cpp.o slros_initialize.cpp.o slros_generic_param.cpp.o
 
-MAIN_OBJ = ert_main.c.o
+MAIN_OBJ = ert_main.cpp.o
 
 ALL_OBJS = $(OBJS) $(MAIN_OBJ)
 
@@ -244,7 +216,7 @@ SYSTEM_LIBS =
 # C Compiler
 #---------------
 
-CFLAGS_SKIPFORSIL =  
+CFLAGS_SKIPFORSIL =   -fpermissive
 CFLAGS_BASIC = $(DEFINES) $(INCLUDES)
 
 CFLAGS += $(CFLAGS_SKIPFORSIL) $(CFLAGS_BASIC)
@@ -253,7 +225,7 @@ CFLAGS += $(CFLAGS_SKIPFORSIL) $(CFLAGS_BASIC)
 # C++ Compiler
 #-----------------
 
-CPPFLAGS_SKIPFORSIL =  
+CPPFLAGS_SKIPFORSIL =   -fpermissive
 CPPFLAGS_BASIC = $(DEFINES) $(INCLUDES)
 
 CPPFLAGS += $(CPPFLAGS_SKIPFORSIL) $(CPPFLAGS_BASIC)
@@ -262,7 +234,7 @@ CPPFLAGS += $(CPPFLAGS_SKIPFORSIL) $(CPPFLAGS_BASIC)
 # C++ Linker
 #---------------
 
-CPP_LDFLAGS_SKIPFORSIL =  
+CPP_LDFLAGS_SKIPFORSIL = -lrt
 
 CPP_LDFLAGS += $(CPP_LDFLAGS_SKIPFORSIL)
 
@@ -270,7 +242,7 @@ CPP_LDFLAGS += $(CPP_LDFLAGS_SKIPFORSIL)
 # C++ Shared Library Linker
 #------------------------------
 
-CPP_SHAREDLIB_LDFLAGS_SKIPFORSIL =  
+CPP_SHAREDLIB_LDFLAGS_SKIPFORSIL = -lrt
 
 CPP_SHAREDLIB_LDFLAGS += $(CPP_SHAREDLIB_LDFLAGS_SKIPFORSIL)
 
@@ -278,7 +250,7 @@ CPP_SHAREDLIB_LDFLAGS += $(CPP_SHAREDLIB_LDFLAGS_SKIPFORSIL)
 # Linker
 #-----------
 
-LDFLAGS_SKIPFORSIL =  
+LDFLAGS_SKIPFORSIL = -lrt
 
 LDFLAGS += $(LDFLAGS_SKIPFORSIL)
 
@@ -286,7 +258,7 @@ LDFLAGS += $(LDFLAGS_SKIPFORSIL)
 # Shared Library Linker
 #--------------------------
 
-SHAREDLIB_LDFLAGS_SKIPFORSIL =  
+SHAREDLIB_LDFLAGS_SKIPFORSIL = -lrt
 
 SHAREDLIB_LDFLAGS += $(SHAREDLIB_LDFLAGS_SKIPFORSIL)
 
@@ -295,16 +267,8 @@ SHAREDLIB_LDFLAGS += $(SHAREDLIB_LDFLAGS_SKIPFORSIL)
 ###########################################################################
 
 
-DERIVED_SRCS = $(subst .o,.dep,$(OBJS))
-
-build:
-
-%.dep:
-
-
-
 -include codertarget_assembly_flags.mk
--include *.dep
+-include ../codertarget_assembly_flags.mk
 
 
 ###########################################################################
@@ -315,26 +279,26 @@ build:
 
 
 all : build
-	echo "### Successfully generated all binary outputs."
+	@echo "### Successfully generated all binary outputs."
 
 
 build : prebuild $(PRODUCT)
 
 
 buildobj : prebuild $(OBJS) $(PREBUILT_OBJS)
-	echo "### Successfully generated all binary outputs."
+	@echo "### Successfully generated all binary outputs."
 
 
 prebuild : 
 
 
-download : build
+download : $(PRODUCT)
 
 
 execute : download
-	echo "### Invoking postbuild tool "Execute" ..."
+	@echo "### Invoking postbuild tool "Execute" ..."
 	$(EXECUTE) $(EXECUTE_FLAGS)
-	echo "### Done invoking postbuild tool."
+	@echo "### Done invoking postbuild tool."
 
 
 ###########################################################################
@@ -346,9 +310,9 @@ execute : download
 #-------------------------------------------
 
 $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS) $(MAIN_OBJ)
-	echo "### Creating standalone executable "$(PRODUCT)" ..."
-	$(LD) $(LDFLAGS) -o $(PRODUCT) $(OBJS) $(MAIN_OBJ) $(SYSTEM_LIBS) $(TOOLCHAIN_LIBS)
-	echo "### Created: $(PRODUCT)"
+	@echo "### Creating standalone executable "$(PRODUCT)" ..."
+	$(CPP_LD) $(CPP_LDFLAGS) -o $(PRODUCT) $(OBJS) $(MAIN_OBJ) $(SYSTEM_LIBS) $(TOOLCHAIN_LIBS)
+	@echo "### Created: $(PRODUCT)"
 
 
 ###########################################################################
@@ -383,54 +347,6 @@ $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS) $(MAIN_OBJ)
 	$(CPP) $(CPPFLAGS) -o $@ $<
 
 
-%.c.o : $(MATLAB_ROOT)/rtw/c/src/%.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-
-%.s.o : $(MATLAB_ROOT)/rtw/c/src/%.s
-	$(AS) $(ASFLAGS) -o $@ $<
-
-
-%.cpp.o : $(MATLAB_ROOT)/rtw/c/src/%.cpp
-	$(CPP) $(CPPFLAGS) -o $@ $<
-
-
-%.c.o : $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/%.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-
-%.s.o : $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/%.s
-	$(AS) $(ASFLAGS) -o $@ $<
-
-
-%.cpp.o : $(MATLAB_ROOT)/rtw/c/src/ext_mode/common/%.cpp
-	$(CPP) $(CPPFLAGS) -o $@ $<
-
-
-%.c.o : $(MATLAB_ROOT)/simulink/src/%.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-
-%.s.o : $(MATLAB_ROOT)/simulink/src/%.s
-	$(AS) $(ASFLAGS) -o $@ $<
-
-
-%.cpp.o : $(MATLAB_ROOT)/simulink/src/%.cpp
-	$(CPP) $(CPPFLAGS) -o $@ $<
-
-
-%.c.o : $(MATLAB_ROOT)/toolbox/coder/rtiostream/src/utils/%.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-
-%.s.o : $(MATLAB_ROOT)/toolbox/coder/rtiostream/src/utils/%.s
-	$(AS) $(ASFLAGS) -o $@ $<
-
-
-%.cpp.o : $(MATLAB_ROOT)/toolbox/coder/rtiostream/src/utils/%.cpp
-	$(CPP) $(CPPFLAGS) -o $@ $<
-
-
 %.c.o : $(START_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $<
 
@@ -440,6 +356,30 @@ $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS) $(MAIN_OBJ)
 
 
 %.cpp.o : $(START_DIR)/%.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+%.c.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/target/supportpackages/raspberrypi/src/%.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+
+%.s.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/target/supportpackages/raspberrypi/src/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+
+
+%.cpp.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/target/supportpackages/raspberrypi/src/%.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+%.c.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/server/%.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+
+%.s.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/server/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+
+
+%.cpp.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/server/%.cpp
 	$(CPP) $(CPPFLAGS) -o $@ $<
 
 
@@ -455,36 +395,76 @@ $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS) $(MAIN_OBJ)
 	$(CPP) $(CPPFLAGS) -o $@ $<
 
 
-%.c.o : $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/server/%.c
+%.c.o : $(MATLAB_ROOT)/rtw/c/src/%.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 
-%.s.o : $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/server/%.s
+%.s.o : $(MATLAB_ROOT)/rtw/c/src/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
 
-%.cpp.o : $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/realtime/targets/raspi/server/%.cpp
+%.cpp.o : $(MATLAB_ROOT)/rtw/c/src/%.cpp
 	$(CPP) $(CPPFLAGS) -o $@ $<
 
 
-%.c.o : $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/target/supportpackages/raspberrypi/src/%.c
+%.c.o : $(MATLAB_ROOT)/simulink/src/%.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 
-%.s.o : $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/target/supportpackages/raspberrypi/src/%.s
+%.s.o : $(MATLAB_ROOT)/simulink/src/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
 
-%.cpp.o : $(MATLAB_WORKSPACE)/Users/HannesDittmann/Documents/MATLAB/SupportPackages/R2018b/toolbox/target/supportpackages/raspberrypi/src/%.cpp
+%.cpp.o : $(MATLAB_ROOT)/simulink/src/%.cpp
 	$(CPP) $(CPPFLAGS) -o $@ $<
 
 
-linuxinitialize.c.o : $(MATLAB_ROOT)/toolbox/target/codertarget/rtos/src/linuxinitialize.c
+MW_I2C.c.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/target/supportpackages/raspberrypi/src/MW_I2C.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 
-rtiostream_tcpip.c.o : $(MATLAB_ROOT)/rtw/c/src/rtiostream/rtiostreamtcpip/rtiostream_tcpip.c
+devices.c.o : /home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/realtime/targets/raspi/server/devices.c
 	$(CC) $(CFLAGS) -o $@ $<
+
+
+ert_main.cpp.o : $(START_DIR)/sdf_target_ert_rtw/ert_main.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+rtGetInf.cpp.o : $(START_DIR)/sdf_target_ert_rtw/rtGetInf.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+rtGetNaN.cpp.o : $(START_DIR)/sdf_target_ert_rtw/rtGetNaN.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+rt_nonfinite.cpp.o : $(START_DIR)/sdf_target_ert_rtw/rt_nonfinite.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+sdf_target.cpp.o : $(START_DIR)/sdf_target_ert_rtw/sdf_target.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+sdf_target_data.cpp.o : $(START_DIR)/sdf_target_ert_rtw/sdf_target_data.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+linuxinitialize.cpp.o : $(MATLAB_ROOT)/toolbox/target/codertarget/rtos/src/linuxinitialize.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+slros_busmsg_conversion.cpp.o : $(START_DIR)/sdf_target_ert_rtw/slros_busmsg_conversion.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+slros_initialize.cpp.o : $(START_DIR)/sdf_target_ert_rtw/slros_initialize.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
+
+
+slros_generic_param.cpp.o : $(MATLAB_ROOT)/toolbox/ros/slros/src/slros_generic_param.cpp
+	$(CPP) $(CPPFLAGS) -o $@ $<
 
 
 ###########################################################################
@@ -499,40 +479,39 @@ $(ALL_OBJS) : rtw_proj.tmw $(MAKEFILE)
 ###########################################################################
 
 info : 
-	echo "### PRODUCT = $(PRODUCT)"
-	echo "### PRODUCT_TYPE = $(PRODUCT_TYPE)"
-	echo "### BUILD_TYPE = $(BUILD_TYPE)"
-	echo "### INCLUDES = $(INCLUDES)"
-	echo "### DEFINES = $(DEFINES)"
-	echo "### ALL_SRCS = $(ALL_SRCS)"
-	echo "### ALL_OBJS = $(ALL_OBJS)"
-	echo "### LIBS = $(LIBS)"
-	echo "### MODELREF_LIBS = $(MODELREF_LIBS)"
-	echo "### SYSTEM_LIBS = $(SYSTEM_LIBS)"
-	echo "### TOOLCHAIN_LIBS = $(TOOLCHAIN_LIBS)"
-	echo "### ASFLAGS = $(ASFLAGS)"
-	echo "### CFLAGS = $(CFLAGS)"
-	echo "### LDFLAGS = $(LDFLAGS)"
-	echo "### SHAREDLIB_LDFLAGS = $(SHAREDLIB_LDFLAGS)"
-	echo "### CPPFLAGS = $(CPPFLAGS)"
-	echo "### CPP_LDFLAGS = $(CPP_LDFLAGS)"
-	echo "### CPP_SHAREDLIB_LDFLAGS = $(CPP_SHAREDLIB_LDFLAGS)"
-	echo "### ARFLAGS = $(ARFLAGS)"
-	echo "### MEX_CFLAGS = $(MEX_CFLAGS)"
-	echo "### MEX_CPPFLAGS = $(MEX_CPPFLAGS)"
-	echo "### MEX_LDFLAGS = $(MEX_LDFLAGS)"
-	echo "### MEX_CPPLDFLAGS = $(MEX_CPPLDFLAGS)"
-	echo "### DOWNLOAD_FLAGS = $(DOWNLOAD_FLAGS)"
-	echo "### EXECUTE_FLAGS = $(EXECUTE_FLAGS)"
-	echo "### MAKE_FLAGS = $(MAKE_FLAGS)"
+	@echo "### PRODUCT = $(PRODUCT)"
+	@echo "### PRODUCT_TYPE = $(PRODUCT_TYPE)"
+	@echo "### BUILD_TYPE = $(BUILD_TYPE)"
+	@echo "### INCLUDES = $(INCLUDES)"
+	@echo "### DEFINES = $(DEFINES)"
+	@echo "### ALL_SRCS = $(ALL_SRCS)"
+	@echo "### ALL_OBJS = $(ALL_OBJS)"
+	@echo "### LIBS = $(LIBS)"
+	@echo "### MODELREF_LIBS = $(MODELREF_LIBS)"
+	@echo "### SYSTEM_LIBS = $(SYSTEM_LIBS)"
+	@echo "### TOOLCHAIN_LIBS = $(TOOLCHAIN_LIBS)"
+	@echo "### ASFLAGS = $(ASFLAGS)"
+	@echo "### CFLAGS = $(CFLAGS)"
+	@echo "### LDFLAGS = $(LDFLAGS)"
+	@echo "### SHAREDLIB_LDFLAGS = $(SHAREDLIB_LDFLAGS)"
+	@echo "### CPPFLAGS = $(CPPFLAGS)"
+	@echo "### CPP_LDFLAGS = $(CPP_LDFLAGS)"
+	@echo "### CPP_SHAREDLIB_LDFLAGS = $(CPP_SHAREDLIB_LDFLAGS)"
+	@echo "### ARFLAGS = $(ARFLAGS)"
+	@echo "### MEX_CFLAGS = $(MEX_CFLAGS)"
+	@echo "### MEX_CPPFLAGS = $(MEX_CPPFLAGS)"
+	@echo "### MEX_LDFLAGS = $(MEX_LDFLAGS)"
+	@echo "### MEX_CPPLDFLAGS = $(MEX_CPPLDFLAGS)"
+	@echo "### DOWNLOAD_FLAGS = $(DOWNLOAD_FLAGS)"
+	@echo "### EXECUTE_FLAGS = $(EXECUTE_FLAGS)"
+	@echo "### MAKE_FLAGS = $(MAKE_FLAGS)"
 
 
 clean : 
 	$(ECHO) "### Deleting all derived files..."
 	$(RM) $(PRODUCT)
 	$(RM) $(ALL_OBJS)
-	$(RM) *.c.dep
-	$(RM) *.cpp.dep
+	$(RM) *Object
 	$(ECHO) "### Deleted all derived files."
 
 

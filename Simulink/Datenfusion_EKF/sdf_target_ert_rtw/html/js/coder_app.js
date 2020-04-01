@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 The MathWorks, Inc. */
+/* Copyright 2013-2018 The MathWorks, Inc. */
 function queryByClassName(className, elem) {
     if (!elem) elem = document.body;
     if (typeof elem.querySelectorAll === "function") {
@@ -105,7 +105,14 @@ function updateTokenLink(id) {
     var aLink = top.document.createElement("a");
     if (hasTraceFlag || (top.CodeDefine && top.CodeDefine.instance))  {
         for (var i=0; i<els.length; i++) {
-            defObj = (codeDef) ? codeDef.def[els[i].text] : null;
+            defObj = null;
+            if (codeDef) {
+                if (codeDef.def[srcFilename + ":" + els[i].text]) {
+                    defObj = codeDef.def[srcFilename + ":" + els[i].text];
+                } else if (codeDef.def[els[i].text]) {
+                    defObj = codeDef.def[els[i].text];
+                }
+            } 
             traceObj = hasTraceFlag && hasTraceFlag[srcFilename+":"+els[i].id];
             if (traceObj || defObj) {
                 els[i].onclick= tokenOnclick;

@@ -1,4 +1,4 @@
-// Copyright 2006-2018 The MathWorks, Inc.
+// Copyright 2006-2019 The MathWorks, Inc.
 
 // Class RTW_Hash ------------------------------------------------------------
 // Internal web browser doesn't change window.location.hash if the link points
@@ -607,7 +607,8 @@ function expandFileGroup(docObj, tagID) {
             var o = category_table.id + "_button";
             o = docObj.getElementById(o);
             if (o && top.rtwreport_contents_frame.rtwFileListShrink) {
-                top.rtwreport_contents_frame.rtwFileListShrink(o, category_table.id, 0);
+                top.rtwreport_contents_frame.rtwFileListShrink(o, category_table.id,
+                                                               category_table.getAttribute('label'), 0);
             }
         }
     }
@@ -1366,7 +1367,9 @@ function rtwHilite(aBlock,aParentSID) {
     // webview 2 defines an interface api, call slwebview.
     if (top.slwebview) {
         // webview 2.x
-        top.codeToWebView(aBlock, aParentSID);
+        if (top.codeToWebView(aBlock, aParentSID) === -1) {
+            alert("Cannot highlight block in model Web view. It may not be exported.");
+        }
     
     } else {
         // webview 1.x
@@ -1528,7 +1531,7 @@ function toggleNavToolBar(val)
 var GlobalConfig = {
     navHiliteColor: "#0000ff",
     fileLinkHiliteColor: "#ffff99",
-    navToolbarBgcolor: "#aaffff",
+    navToolbarBgcolor: "ivory",
     offset: 10,
     hiliteToken: false
 };
@@ -1647,7 +1650,8 @@ function getInspectData(file, anchorObj) {
     var propObj = null;
     var type = null;
     var size = null;
-    var cm; 
+    var cm;
+    var srcFileName = RTW_TraceInfo.toSrcFileName(file);
     if (top.rtwreport_nav_frame && top.rtwreport_nav_frame.CodeMetrics && 
         top.rtwreport_nav_frame.CodeMetrics.instance && 
         top.RTW_TraceArgs && top.RTW_TraceArgs.instance && 
@@ -1658,7 +1662,7 @@ function getInspectData(file, anchorObj) {
         metricsData = cm.getMetrics(anchorObj.text);
         if (!metricsData) {
             // try static token
-            metricsData =  cm.getMetrics(RTW_TraceInfo.toSrcFileName(file) + ":" + anchorObj.text);
+            metricsData =  cm.getMetrics(srcFileName + ":" + anchorObj.text);
         }
         if (metricsData) {            
             type = metricsData.type;
@@ -1677,7 +1681,12 @@ function getInspectData(file, anchorObj) {
         }
     }    
     if (type === null) {
-        var defObj = top.CodeDefine.instance.def[anchorObj.text];
+        var defObj;
+        if (top.CodeDefine.instance.def[srcFileName + ":" + anchorObj.text]) {
+            defObj = top.CodeDefine.instance.def[srcFileName + ":" + anchorObj.text];
+        } else if (top.CodeDefine.instance.def[anchorObj.text]) {
+            defObj = top.CodeDefine.instance.def[anchorObj.text];
+        }
         if (defObj) {
             type = defObj.type;
             if (type === "var") {
@@ -1713,11 +1722,17 @@ function getInspectLink(file, pathname, anchorObj) {
     ulObj = document.createElement("ul");
     ulObj.id = "token_nav_links";
     ulObj.className="popup_attrib_list";
-    var defObj = top.CodeDefine.instance.def[anchorObj.text];
+    var srcFileName = RTW_TraceInfo.toSrcFileName(file);
+    var defObj;
+    if (top.CodeDefine.instance.def[srcFileName + ":" + anchorObj.text]) {
+        defObj = top.CodeDefine.instance.def[srcFileName + ":" + anchorObj.text];
+    } else if (top.CodeDefine.instance.def[anchorObj.text]) {
+        defObj = top.CodeDefine.instance.def[anchorObj.text];
+    }
     var line = anchorObj.id.substring(0,anchorObj.id.indexOf("c"));
     // link to model
     if (top.TraceInfoFlag && top.TraceInfoFlag.instance && 
-        top.TraceInfoFlag.instance.traceFlag[RTW_TraceInfo.toSrcFileName(file)+":"+anchorObj.id]) {
+        top.TraceInfoFlag.instance.traceFlag[srcFileName+":"+anchorObj.id]) {
         return null;
     }
     // link to def/decl
@@ -1788,7 +1803,18 @@ function scrollToLineBasedOnHash(hashValue) {
                     }
                 }
                 if (token !== null && top.CodeDefine && top.CodeDefine.instance) {
-                    var addr = top.CodeDefine.instance.def[token];
+                    var addr;
+                    var filename = location.pathname.split(/\//);
+                    filename = filename[filename.length-1];  
+                    var srcFileName;
+                    if (top.RTW_TraceInfo) {
+                        srcFileName = top.RTW_TraceInfo.toSrcFileName(filename);
+                    }
+                    if (top.CodeDefine.instance.def[srcFileName + ":" + token]) {
+                        addr = top.CodeDefine.instance.def[srcFileName + ":" + token];
+                    } else {
+                        addr = top.CodeDefine.instance.def[token];
+                    }
                     if (addr) {
                         hilite_line(addr.line);
                     }
@@ -2043,4 +2069,13 @@ function getCodeLines()
             });
         }
     return codeLocs;
+}
+
+//add source to frame when _codegen_rpt openend from outisde matlab
+function loadDocFrameSource(modelName) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const opendInExtBrowser = urlParams.get('useExternalBrowser');
+    if (opendInExtBrowser === null) {
+        document.getElementById('rtwreport_document_frame').src = modelName.concat('_survey.html');
+    }
 }
