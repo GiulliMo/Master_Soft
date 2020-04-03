@@ -1,18 +1,19 @@
 #define S_FUNCTION_NAME system_send/* Defines and Includes */
 #define S_FUNCTION_LEVEL 2
 
-#define SHELLSCRIPT "\
-#/bin/bash \n\
-mkdir -p ~/Documents/scripts"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "simstruc.h"
 
+#define SHELLSCRIPT "\
+#! /bin/sh/\n\
+cd ~\n\
+./launch.sh"
 
-
+         
+         
 static void mdlInitializeSizes(SimStruct *S)
 {
     ssSetNumSFcnParams(S, 0);
@@ -46,24 +47,21 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     
     
     for (i=0; i<width; i++) {
-        *y++ = 2.0 *(*uPtrs[i]);
-    }
     
-    puts("Will execute sh with the following script :");
-    puts(SHELLSCRIPT);
-    puts("Starting now:");
-    system(SHELLSCRIPT);
+        *y++ = 2*(*uPtrs[i]);   
+        
+        if (*uPtrs[i] == 1){
+        puts("Will execute sh with the following script :");
+        puts(SHELLSCRIPT);
+        puts("Starting now:");
+        system(SHELLSCRIPT); 
+    } 
+  
+  
+     
+    }
+     
 }
-
-
-
-
-
-// static void send()
-// {
-//     
-// }
-
 
 
 static void mdlTerminate(SimStruct *S){}
