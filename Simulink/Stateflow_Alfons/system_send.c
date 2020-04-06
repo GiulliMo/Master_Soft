@@ -70,7 +70,7 @@ static char *myString(const mxArray* mxPrm)
 /*Wird zyklisch aufgerufen*/
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
-    int_T i;
+    int_T i = 0;
     InputRealPtrsType uPtrs = ssGetInputPortRealSignalPtrs(S,0);
     real_T *y = ssGetOutputPortRealSignal(S,0);
     int_T width = ssGetOutputPortWidth(S,0);
@@ -85,8 +85,9 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     #define Script strcat(strcat(textA,strcat(textB,myString(ssGetSFcnParam(S, 0)))),strcat(textD,myString(ssGetSFcnParam(S, 1))))
     
     
-    if(*uPtrs>0)
+    if(*uPtrs[i]>0)
      {
+        printf("%s","test1");
         puts("Will execute sh with the following script :");
        // puts(Script);
         puts("Starting now:");
