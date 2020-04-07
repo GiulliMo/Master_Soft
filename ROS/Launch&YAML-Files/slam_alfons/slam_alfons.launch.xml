@@ -11,6 +11,11 @@
   <param name="angle_compensate"    type="bool"   value="true"/>
   </node>
 
+<!--Joystick-->
+
+<node name="joy"  pkg="joy"  type="joy_node" clear_params="true">
+  </node>
+
 <!--ICP Odometry-->
 
 
@@ -36,7 +41,7 @@
 <!--Hector SLAM-->
 
   <node pkg="hector_mapping" type="hector_mapping" name="hector_slam" clear_params="true">
-	<remap from="/scan" to="/scan_multi"/>
+	<!--<remap from="/scan" to="/scan_multi"/>-->
   </node>
 
 <!--Rviz-->
