@@ -1,8 +1,10 @@
 function out = test(in3) 
 var = coder.load('labels.mat','labels');
 afe = coder.load('afe.mat','afestr');
-afecorr = coder.load('afecorr.mat','afe');
 ynew = coder.load('y.mat','y');
+
+
+SpectralDescriptorInput = 'linearSpectrum';
 %WINDOW Analysis window
 % Specify the analysis window as a numeric vector with more than three
 % elements. The default is hamming(1024,"periodic").
@@ -11,6 +13,7 @@ ynew = coder.load('y.mat','y');
 % Specify the number of samples overlapped between analysis windows as a
 % positive scalar less than the analysis window length. The default is 512.
 %OverlapLength = 512;
+
 %SAMPLERATE Sample rate (Hz)
 % Specify sample rate as a positive scalar in Hz. The default is 44100 Hz.
 %SampleRate = 44.1e3;
@@ -18,7 +21,7 @@ ynew = coder.load('y.mat','y');
 % Specify the DFT length as a positive scalar integer. The default of this
 % property is [], which means that the DFT length is equal to the length
 % of the Window property.
-%FFTLength = [];
+FFTLength = 512;
 %SPECTRALDESCRIPTORINPUT Input to spectral descriptors
 % Specify the input to the low-level spectral shape
 % descriptors as "linearSpectrum", "melSpectrum", "barkSpectrum", or
@@ -28,7 +31,7 @@ ynew = coder.load('y.mat','y');
 % Extract the linear spectrum, specified as true or false. If
 % linearSpectrum is true, then the object extracts the one-sided linear
 % spectrum and appends it to the features returned. The default is false.
-afe.afestr.linearSpectrum = false;
+linearSpectrum = false;
 %MELSPECTRUM Extract mel spectrum
 % Extract the mel spectrum, specified as true or false. If melSpectrum is
 % true, then the object extracts the mel spectrum and appends it to the
@@ -38,7 +41,7 @@ afe.afestr.linearSpectrum = false;
 % configure the mel spectrum extraction using setExtractorParams.
 %
 % See also designAuditoryFilterBank, melSpectrogram, setExtractorParamel
-afe.afestr.melSpectrum = false;
+melSpectrum = false;
 %BARKSPECTRUM Extract Bark spectrum
 % Extract the Bark spectrum, specified as true or false. If barkSpectrum is
 % true, then the object extracts the Bark spectrum and appends it to the
@@ -48,7 +51,7 @@ afe.afestr.melSpectrum = false;
 % configure the Bark spectrum extraction using setExtractorParams.
 %
 % See also designAuditoryFilterBank, setExtractorParams
-%barkSpectrum = false;
+barkSpectrum = true;
 %ERBSPECTRUM Extract ERB spectrum
 % Extract the ERB spectrum, specified as true or false. If erbSpectrum is
 % true, then the object extracts the ERB spectrum and appends it to the
@@ -57,7 +60,7 @@ afe.afestr.melSpectrum = false;
 % You can configure the ERB spectrum extraction using setExtractorParams.
 %
 % See also designAuditoryFilterBank, setExtractorParams
-afe.afestr.erbSpectrum = false;
+erbSpectrum = false;
 %MFCC Extract MFCC
 % Extract the mfcc, specified as true or false. If mfcc is true, then the
 % object extracts the mfcc and appends it to the features returned. The
@@ -66,7 +69,7 @@ afe.afestr.erbSpectrum = false;
 % You can configure the MFCC feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.mfcc = false;
+mfcc = false;
 %MFCCDELTA Extract delta mfcc
 % Extract the delta mfcc, specified as true or false. If mfccDelta is true,
 % then the object extracts the delta mfcc and appends it to the features
@@ -75,7 +78,7 @@ afe.afestr.mfcc = false;
 % You can configure the MFCC feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.mfccDelta = false;
+mfccDelta = false;
 %MFCCDELTADELTA Extract delta-delta MFCC
 % Extract the delta-delta MFCC, specified as true or false. If
 % mfccDeltaDelta is true, then the object extracts the delta-delta mfcc and
@@ -84,7 +87,7 @@ afe.afestr.mfccDelta = false;
 % You can configure the MFCC feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.mfccDeltaDelta = false;
+mfccDeltaDelta = false;
 %GTCC Extract GTCC
 % Extract the GTCC, specified as true or false. If gtcc is true, then the
 % object extracts the GTCC and appends it to the features returned. The
@@ -93,7 +96,7 @@ afe.afestr.mfccDeltaDelta = false;
 % You can configure the GTCC feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.gtcc = false;
+gtcc = false;
 %GTCCDELTA Extract delta GTCC
 % Extract the delta GTCC, specified as true or false. If gtccDelta is true,
 % then the object extracts the delta GTCC and appends it to the features
@@ -102,7 +105,7 @@ afe.afestr.gtcc = false;
 % You can configure the GTCC feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.gtccDelta = false;
+gtccDelta = false;
 %GTCCDELTADELTA Extract delta-delta GTCC
 % Extract the delta-delta GTCC, specified as true or false. If
 % gtccDeltaDelta is true, then the object extracts the delta-delta gtcc and
@@ -111,33 +114,33 @@ afe.afestr.gtccDelta = false;
 % You can configure the GTCC feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.gtccDeltaDelta = false;
+gtccDeltaDelta = false;
 %SPECTRALCENTROID Extract spectral centroid
 % Extract the spectral centroid, specified as true or false. If
 % spectralCentroid is true, then the object extracts the spectral centroid
 % and appends it to the features returned. The default is false.
-afe.afestr.spectralCentroid = false;
+spectralCentroid = false;
 
 %SPECTRALCREST Extract spectral crest
 % Extract the spectral crest, specified as true or false. If spectralCrest
 % is true, then the object extracts the spectral crest and appends it to
 % the features returned. The default is false.
-afe.afestr.spectralCrest = false;
+spectralCrest = false;
 %SPECTRALDECREASE Extract spectral decrease
 % Extract the spectral decrease, specified as true or false. If
 % spectralDecrease is true, then the object extracts the spectral decrease and
 % appends it to the features returned. The default is false.
-afe.afestr.spectralDecrease = false;
+spectralDecrease = false;
 %SPECTRALENTROPY Extract spectral entropy
 % Extract the spectral entropy, specified as true or false. If
 % spectralEntropy is true, then the object extracts the spectral entropy
 % and appends it to the features returned. The default is false.
-afe.afestr.spectralEntropy = false;
+spectralEntropy = false;
 %SPECTRALFLATNESS Extract spectral flatness
 % Extract the spectral flatness, specified as true or false. If
 % spectralFlatness is true, then the object extracts the spectral flatness
 % and appends it to the features returned. The default is false.
-afe.afestr.spectralFlatness = false;
+spectralFlatness = false;
 %SPECTRALFLUX Extract spectral flux
 % Extract the spectral flux, specified as true or false. If spectralFlux is
 % true, then the object extracts the spectral flux and appends it to the
@@ -147,12 +150,12 @@ afe.afestr.spectralFlatness = false;
 % setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.spectralFlux = false;
+spectralFlux = false;
 %SPECTRALKURTOSIS Extract spectral kurtosis
 % Extract the spectral kurtosis, specified as true or false. If
 % spectralKurtosis is true, then the object extracts the spectral kurtosis
 % and appends it to the features returned. The default is false.
-afe.afestr.spectralKurtosis = false;
+spectralKurtosis = false;
 %SPECTRALROLLOFFPOINT Extract spectral rolloff point
 % Extract the spectral rolloff point, specified as true or false. If
 % spectralRolloffPoint is true, then the object extracts the spectral
@@ -163,22 +166,22 @@ afe.afestr.spectralKurtosis = false;
 % setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.spectralRolloffPoint = false
+spectralRolloffPoint = false;
 %SPECTRALSKEWNESS Extract spectral skewness
 % Extract the spectral skewness, specified as true or false. If
 % spectralSkewness is true, then the object extracts the spectral skewness
 % and appends it to the features returned. The default is false.
-afe.afestr.spectralSkewness = false;
+spectralSkewness = false;
 %SPECTRALSLOPE Extract spectral slope
 % Extract the spectral slope, specified as true or false. If spectralSlope
 % is true, then the object extracts the spectral slope and appends it to
 % the features returned. The default is false.
-afe.afestr.spectralSlope = false
+spectralSlope = false;
 %SPECTRALSPREAD Extract spectral spread
 % Extract the spectral spread, specified as true or false. If
 % spectralSpread is true, then the object extracts the spectral spread and
 % appends it to the features returned. The default is false.
-afe.afestr.spectralSpread = false
+spectralSpread = false;
 %PITCH Extract pitch
 % Extract the pitch, specified as true or false. If pitch is true, then the
 % object extracts the pitch and appends it to the features returned. The
@@ -187,63 +190,67 @@ afe.afestr.spectralSpread = false
 % You can configure the pitch feature extraction using setExtractorParams.
 %
 % See also setExtractorParams
-afe.afestr.pitch = false
+pitch = false;
 %HARMONICRATIO Extract harmonic ratio
 % Extract the harmonic ratio, specified as true or false. If harmonicRatio
 % is true, then the object extracts the harmonic ratio and appends it to
 % the features returned. The default is false.
-afe.afestr.harmonicRatio = false
+harmonicRatio = false;
 
 
 
 % Flag for setup
-afe.afestr.pIsInitialized = true
+pIsInitialized = true;
 
 % Properties to hold user-specified feature extractor parameters
-pmfccUserSpecifiedParams                 = {}
-pgtccUserSpecifiedParams                 = {}
-pspectralFluxUserSpecifiedParams         = {}
-pspectralRolloffPointUserSpecifiedParams = {}
-plinearSpectrumUserSpecifiedParams       = {}
-pmelSpectrumUserSpecifiedParams          = {}
-afe.afestr.pbarkSpectrumUserSpecifiedParams         = false;
-perbSpectrumUserSpecifiedParams          = {}
-ppitchUserSpecifiedParams                = {}
+% pmfccUserSpecifiedParams                 = {};
+% pgtccUserSpecifiedParams                 = {};
+% pspectralFluxUserSpecifiedParams         = {};
+% pspectralRolloffPointUserSpecifiedParams = {};
+% plinearSpectrumUserSpecifiedParams       = {};
+% pmelSpectrumUserSpecifiedParams          = {};
+pbarkSpectrumUserSpecifiedParams         = false;
+% perbSpectrumUserSpecifiedParams          = {};
+% ppitchUserSpecifiedParams                = {};
 plinearSpectrumType = "power";
 pmelSpectrumType    = "power";
-afe.afestr.pbarkSpectrumType   = "power";
+pbarkSpectrumType   = "power";
 perbSpectrumType    = "power";
 
 % Convenience properties to navigate the feature extraction pipeline
-pPipelineParameters= {}
-pExtractorParameters= {}
-afe.afestr.pOutputIndex= {}
-pOutputIndexReduced= {}
-pUseSpectrum= {}
-pUseHalfSpectrum= {}
-pUsePowerSpectrum= {}
-afe.afestr.pUseMagnitudeSpectrum= false
-pExtractSpectralDescriptor= {}
-pCalculateGTCC= {}
-pCalculateMFCC= {}
-pCalculateBarkSpectrum= {}
-pCalculateMelSpectrum= {}
-pCalculateLinearSpectrum= {}
-pCalculateERBSpectrum= {}
-    afe.afestr.pFeaturesToExtract = getpFeaturesToExtract(afe.afestr)
-    afe.afestr.pFFTLength= getpFFTLength(afe.afestr)
+%pPipelineParameters= {};
+pExtractorParameters= {};
+pOutputIndex= {};
+pOutputIndexReduced= {};
+pUseSpectrum= false;
+pUseHalfSpectrum= false;
+pUsePowerSpectrum= false;
+pUseMagnitudeSpectrum= false;
+% pExtractSpectralDescriptor= {};
+% pCalculateGTCC= {};
+% pCalculateMFCC= {};
+pCalculateBarkSpectrum= false;
+pCalculateMelSpectrum= false;
+pCalculateLinearSpectrum= false;
+pCalculateERBSpectrum= false;
+pFeaturesToExtract = struct('barkSpectrum',barkSpectrum);
+%pFFTLength = getpFFTLength(str);
+a = struct('pExtractSpectralDescriptor',false);
+b = struct('pUseSpectrum',false);
+c = struct('pUseHalfSpectrum',false);
+PowerNormalizationFactor = 0;
+MagnitudeNormalizationFactor = 0;
+MelFilterBank = 0;
+fs = 16000;
 
-
-
-
-
-
+lb = struct('empty',0);
+defaults1 = struct("NumBands",50,"FrequencyRange",[0,fs/2],"Normalization","bandwidth");
 
 classificationRate = 20; % Rate?
 
 
 %x = zeros(12800,1);
-fs = 16000;
+
 
 segmentDuration = 1;
 frameDuration = 0.025;
@@ -254,12 +261,75 @@ segmentSamples = round(segmentDuration*fs);
 frameSamples = round(frameDuration*fs);
 hopSamples = round(hopDuration*fs);
 overlapSamples = frameSamples - hopSamples;
+pPipelineParameters = struct( ...
+        "Window",        hann(frameSamples,'periodic'), ...
+        "WindowLength",  numel(hann(frameSamples,'periodic')), ...
+        "OverlapLength", overlapSamples, ...
+        "HopLength",     numel(hann(frameSamples,'periodic')) - overlapSamples, ...
+        "FFTLength",     FFTLength, ...
+        "PowerNormalizationFactor",       PowerNormalizationFactor, ...
+        "MagnitudeNormalizationFactor",       MagnitudeNormalizationFactor, ...
+        'linearSpectrum',      lb, ...
+        "SampleRate",    fs);
 
+plinearSpectrumUserSpecifiedParams = struct( ...
+        "a",1)
 
+str.SampleRate = fs;
+str.FFTLength = FFTLength;
+str.Window=hann(frameSamples,'periodic');
+str.OverlapLength=overlapSamples;
+str.linearSpectrum=linearSpectrum;
+str.melSpectrum=melSpectrum;
+str.pFeaturesToExtract=pFeaturesToExtract;
+str.pFFTLength=FFTLength;
+str.spectralCentroid=spectralCentroid;
+str.spectralCrest=spectralCrest;
+str.spectralDecrease=spectralDecrease;
+str.spectralEntropy=spectralEntropy;
+str.spectralFlatness=spectralFlatness;
+str.spectralFlux=spectralFlux;
+str.spectralKurtosis=spectralKurtosis;
+str.spectralRolloffPoint=spectralRolloffPoint;
+str.spectralSkewness=spectralSkewness;
+str.spectralSlope=spectralSlope;
+str.spectralSpread=spectralSpread;
+str.gtcc=gtcc;
+str.gtccDelta=gtccDelta;
+str.gtccDeltaDelta=gtccDeltaDelta;
+str.mfcc=mfcc;
+str.mfccDelta=mfccDelta;
+str.mfccDeltaDelta=mfccDeltaDelta;
+str.pbarkSpectrumType=pbarkSpectrumType;
+str.erbSpectrum=erbSpectrum;
+str.pUseHalfSpectrum=pUseHalfSpectrum;
+str.pUseMagnitudeSpectrum=pUseMagnitudeSpectrum;
+str.SpectralDescriptorInput=SpectralDescriptorInput;
+str.pbarkSpectrumUserSpecifiedParams=pbarkSpectrumUserSpecifiedParams;
+str.pitch=pitch;
+str.harmonicRatio=harmonicRatio;
+str.pIsInitialized=pIsInitialized;
+str.pPipelineParameters=pPipelineParameters;
+str.pUseSpectrum=b.pUseSpectrum;
+str.pExtractSpectralDescriptor=a.pExtractSpectralDescriptor;
+str.pCalculateGTCC=gtcc;
+str.pCalculateMFCC=mfcc;
+str.plinearSpectrumType=plinearSpectrumType;
+str.pUsePowerSpectrum=pUsePowerSpectrum;
+str.barkSpectrum=true;
+str.pmelSpectrumType=pmelSpectrumType;
+str.perbSpectrumType=perbSpectrumType;
+str.pCalculateMelSpectrum=pCalculateMelSpectrum;
+str.pCalculateERBSpectrum=pCalculateERBSpectrum;
+str.pCalculateLinearSpectrum=pCalculateLinearSpectrum;
+str.pCalculateBarkSpectrum=pCalculateBarkSpectrum;
+str.plinearSpectrumUserSpecifiedParams=plinearSpectrumUserSpecifiedParams;
+%str.params=params;
 
+str.pPipelineParameters
 %afe.afestr.pFFTLength = getpFFTLength(afe.afestr);
 
-afe.afestr = setup(afe.afestr);
+str = setup(str);
 %afe.afestr = setExtractorParams(afe.afestr,'barkSpectrum','NumBands',numBands);
 
 probBuffer = zeros([numel(var.labels),classificationRate/2]);
@@ -293,21 +363,21 @@ xPadded = [zeros(numToPadFront,1,'like',ynew.y);ynew.y;zeros(numToPadBack,1,'lik
 % To extract audio features, call |extract|. The output is a Bark spectrum
 % with time across rows.
 
-features = extract(afe.afestr,xPadded);
+%features = extract(str,xPadded);
 
 
 % Determine the denormalization factor to apply.
-unNorm = 2/(sum(afe.afestr.Window)^2);
-features = features/unNorm;
+%unNorm = 2/(sum(afe.afestr.Window)^2);
+%features = features/unNorm;
 epsil = 1e-6;
 
 % Take the log. 
-spec = log10(features + epsil);
+%spec = log10(features + epsil);
 %%
 
-[YPredicted,probs] = classify(trainedNet,spec,'ExecutionEnvironment','cpu');
+%[YPredicted,probs] = classify(trainedNet,spec,'ExecutionEnvironment','cpu');
 
-out =probs;
+out =0;
 
 
 
@@ -890,6 +960,9 @@ function obj1 = setup(obj)
         "OverlapLength", obj.OverlapLength, ...
         "HopLength",     numel(obj.Window) - obj.OverlapLength, ...
         "FFTLength",     obj.pFFTLength, ...
+        "PowerNormalizationFactor",       PowerNormalizationFactor, ...
+        "MagnitudeNormalizationFactor",       MagnitudeNormalizationFactor, ...
+        'linearSpectrum',      lb, ...
         "SampleRate",    obj.SampleRate);
 
      obj.pExtractSpectralDescriptor = obj.spectralCentroid || obj.spectralCrest || ...
@@ -910,7 +983,7 @@ function obj1 = setup(obj)
      if obj.linearSpectrum || (obj.pExtractSpectralDescriptor && isequal('linearSpectrum',obj.SpectralDescriptorInput))
          if strcmpi(obj.plinearSpectrumType,"Magnitude")
              obj.pUseMagnitudeSpectrum = true;
-         else
+             else
              obj.pUsePowerSpectrum = true;
          end
      end
@@ -951,45 +1024,47 @@ function obj1 = setup(obj)
      obj.pCalculateLinearSpectrum = obj.linearSpectrum || (strcmpi(obj.SpectralDescriptorInput,"linearSpectrum") && obj.pExtractSpectralDescriptor);
      obj.pCalculateERBSpectrum    = obj.erbSpectrum    || (strcmpi(obj.SpectralDescriptorInput,"erbSpectrum")    && obj.pExtractSpectralDescriptor) || obj.pCalculateGTCC;
      
-     if obj.pCalculateLinearSpectrum
-         params  = getFeatureExtractorParams(obj,"linearSpectrum","struct");
-         range   = params.FrequencyRange;
-         binHigh = floor(range(2)*obj.pFFTLength/obj.SampleRate + 1);
-         binLow  = ceil(range(1)*obj.pFFTLength/obj.SampleRate + 1);
-         bins    = binLow:binHigh;
-         obj.pPipelineParameters.linearSpectrum.FrequencyBins = bins;
-         
-         w = (obj.SampleRate/obj.pFFTLength)*(bins-1);
-         if rem(obj.pFFTLength,2) && binHigh == floor(obj.pFFTLength/2 + 1)
-             w(end) = obj.SampleRate*(obj.pFFTLength-1)/(2*obj.pFFTLength);
-         end
-         LinearFc = w(:);
-     end
-     if obj.pCalculateMelSpectrum
-         params = getFeatureExtractorParams(obj,"melSpectrum","struct");
-         params = obj.Struct2NameValueCell(rmfield(params,"SpectrumType"));
-         [fb,MelFilterBankFc] = designAuditoryFilterBank(obj.SampleRate, ...
-                                  "FrequencyScale","mel", ...
-                                  "FFTLength",obj.pFFTLength, ...
-                                  params{:});
-         if strcmpi(obj.pmelSpectrumType,"Power")
-             fb = fb*obj.pPipelineParameters.PowerNormalizationFactor;
-         else
-             fb = fb*obj.pPipelineParameters.MagnitudeNormalizationFactor;
-         end
-         fb(:,1) = 0.5*fb(:,1);
-         if rem(obj.pFFTLength,2) == 0
-             fb(:,end) = 0.5*fb(:,end);
-         end
-         if ~obj.pUseHalfSpectrum
-             fb = [fb,zeros(size(fb,1),ceil(obj.pFFTLength/2)-1)];
-         end
-         obj.pPipelineParameters.melSpectrum.FilterBank = fb;
-     end
+%      if obj.pCalculateLinearSpectrum
+%          params  = getFeatureExtractorParams(obj,"linearSpectrum","struct");
+%          range   = params.FrequencyRange;
+%          binHigh = floor(range(2)*obj.pFFTLength/obj.SampleRate + 1);
+%          binLow  = ceil(range(1)*obj.pFFTLength/obj.SampleRate + 1);
+%          bins    = binLow:binHigh;
+%          obj.pPipelineParameters.linearSpectrum.FrequencyBins = bins;
+%          
+%          w = (obj.SampleRate/obj.pFFTLength)*(bins-1);
+%          if rem(obj.pFFTLength,2) && binHigh == floor(obj.pFFTLength/2 + 1)
+%              w(end) = obj.SampleRate*(obj.pFFTLength-1)/(2*obj.pFFTLength);
+%          end
+%          LinearFc = w(:);
+%      end
+%      if obj.pCalculateMelSpectrum
+%          params = getFeatureExtractorParams(obj,"melSpectrum","struct");
+%          params = obj.Struct2NameValueCell(rmfield(params,"SpectrumType"));
+%          [fb,MelFilterBankFc] = designAuditoryFilterBank(obj.SampleRate, ...
+%                                   "FrequencyScale","mel", ...
+%                                   "FFTLength",obj.pFFTLength, ...
+%                                   params{:});
+%          if strcmpi(obj.pmelSpectrumType,"Power")
+%              fb = fb*obj.pPipelineParameters.PowerNormalizationFactor;
+%          else
+%              fb = fb*obj.pPipelineParameters.MagnitudeNormalizationFactor;
+%          end
+%          fb(:,1) = 0.5*fb(:,1);
+%          if rem(obj.pFFTLength,2) == 0
+%              fb(:,end) = 0.5*fb(:,end);
+%          end
+%          if ~obj.pUseHalfSpectrum
+%              fb = [fb,zeros(size(fb,1),ceil(obj.pFFTLength/2)-1)];
+%          end
+%          obj.pPipelineParameters.melSpectrum.FilterBank = fb;
+%      end
      if obj.pCalculateBarkSpectrum
-         params = getFeatureExtractorParams(obj,"barkSpectrum","struct");
-         params = Struct2NameValueCell(rmfield(params,"SpectrumType"));
-         obj.params = params;
+         params = MergeStructs(defaults1,obj.pbarkSpectrumUserSpecifiedParams);
+         params
+         params = Struct2NameValueCell(params);
+         params
+         %obj.params = params;
          [fb,BarkFilterBankFc] = designAuditoryFilterBank(obj.SampleRate, ...
                                    "FrequencyScale","bark", ...
                                    "FFTLength",obj.pFFTLength, ...
@@ -1310,15 +1385,15 @@ function featureExtractorParams = getFeatureExtractorParams(obj,featurename,outp
     defaults = getFeatureExtractorDefaultParams(obj,featurename);
     switch featurename
         case 'mfcc'
-            featureExtractorParams = obj.MergeStructs(defaults,obj.pmfccUserSpecifiedParams);
+            featureExtractorParams = MergeStructs(defaults,obj.pmfccUserSpecifiedParams);
         case 'gtcc'
-            featureExtractorParams = obj.MergeStructs(defaults,obj.pgtccUserSpecifiedParams);
+            featureExtractorParams = MergeStructs(defaults,obj.pgtccUserSpecifiedParams);
         case 'spectralFlux'
-            featureExtractorParams = obj.MergeStructs(defaults,obj.pspectralFluxUserSpecifiedParams);
+            featureExtractorParams = MergeStructs(defaults,obj.pspectralFluxUserSpecifiedParams);
         case 'spectralRolloffPoint'
-            featureExtractorParams = obj.MergeStructs(defaults,obj.pspectralRolloffPointUserSpecifiedParams);
+            featureExtractorParams = MergeStructs(defaults,obj.pspectralRolloffPointUserSpecifiedParams);
         case 'linearSpectrum'
-            featureExtractorParams = obj.MergeStructs(defaults,obj.plinearSpectrumUserSpecifiedParams);
+            featureExtractorParams = MergeStructs(defaults,obj.plinearSpectrumUserSpecifiedParams);
         case 'melSpectrum'
             featureExtractorParams = MergeStructs(defaults,obj.pmelSpectrumUserSpecifiedParams);
         case 'barkSpectrum'

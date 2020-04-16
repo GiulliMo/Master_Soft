@@ -19,9 +19,6 @@ h = figure('Units','normalized','Position',[0.2 0.1 0.6 0.8]);
 timeLimit = inf; % Zeit der Ausführung
 
 tic;
-rosinit;
-pub = rospublisher('/ypred','std_msgs/String');
-msg = rosmessage(pub);
 while ishandle(h) && toc < timeLimit
 
     % Extract audio samples from the audio device and add the samples to
@@ -35,7 +32,7 @@ while ishandle(h) && toc < timeLimit
     % Classify the current spectrogram, save the label to the label buffer,
     % and save the predicted probabilities to the probability buffer.
     [YPredicted,probs] = classify(trainedNet,spec,'ExecutionEnvironment','cpu');
-
+    YPstr = char(YPredicted);
     
     YBuffer = [YBuffer(2:end),YPredicted];
     probBuffer = [probBuffer(:,2:end),probs(:)];
@@ -66,8 +63,6 @@ while ishandle(h) && toc < timeLimit
     else
         title(string(YMode),'FontSize',20)
     end
-    YPstr = char(YMode);
-    msg.Data = YPstr;
-    send(pub,msg);
+
     drawnow
 end

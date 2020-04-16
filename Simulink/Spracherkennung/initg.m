@@ -69,7 +69,8 @@ afestr.SampleRate = afe.SampleRate;
 afestr.FFTLength = afe.FFTLength;
 afestr.SpectralDescriptorInput = afe.SpectralDescriptorInput;
 afestr.barkSpectrum = afe.barkSpectrum;
-
+afestr.pFeaturesToExtract = struct('barkSpectrum',false);
+afestr.pFFTLength = 0;
 save labels.mat labels 
 save afe.mat afestr
-save afecorr.mat afe
+
