@@ -22,13 +22,14 @@ close all;
 
 load('trained_net_daten.mat');
 load('spec.mat');
-%load('commandNet.mat');
+load('spectrum.mat');
+load('commandNet.mat');
 %load('scope.mat');
 
 Filter = ones(3,3);
 %1. layer
-
-A = convolutional(A1,Filter,conv1_weights,conv1_Bias,1,12);
+A = inputNormalization(spec,mean);
+A = convolutional(A,Filter,conv1_weights,conv1_Bias,1,12);
 
 %2.layer
 
@@ -36,7 +37,7 @@ A = batchnormalize(A,batch1_mu,batch1_offset,batch1_scale,batch1_sigma,epsilon);
 
 %3.layer
 
-A = relu(A3);
+A = relu(A);
 
 %4.layer
 
@@ -117,11 +118,19 @@ A=maxPoolingSelf13x1(A,[13,1],1);
 A=reshape(A,[1,1,336]);
 A=reshape(A,[1,336]);
 A=fully_connected(A,fully_connected_weights,fully_connected_bias);
-A=softmax(A);
+A=softmaxHD(A);
 
 
 %% Functions Neuronales Netzwerk
 
+
+function A = inputNormalization(A,mean)
+
+%zeroscore 
+
+A = A - mean;
+
+end
 
 function A = relu(A)
 
@@ -410,9 +419,6 @@ for i=1:NumChannels
         end
 
 end
-
-
-
 
 
 
