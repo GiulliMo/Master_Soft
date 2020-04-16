@@ -85,6 +85,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     #define Script strcat(strcat(textA,strcat(textB,myString(ssGetSFcnParam(S, 0)))),strcat(textD,myString(ssGetSFcnParam(S, 1))))
     
     
+    
     if(*uPtrs[i]>0)
      {
         printf("%s","test1");
@@ -93,8 +94,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
         puts("Starting now:");
         system(Script);  
      }
-     
-   
+         
 }
 
 

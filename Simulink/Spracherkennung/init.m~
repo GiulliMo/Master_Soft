@@ -1,4 +1,6 @@
+<<<<<<< HEAD
 
+=======
 clear load;
 clear all;
 close all;
@@ -325,13 +327,22 @@ for i=1:NumChannels
         end
 
 end
+>>>>>>> ab467c7bc610c6de73fa8e62a4be29a0df77bcd5
 
 
 
 
 
+<<<<<<< HEAD
+save labels.mat labels 
+save afe.mat afestr
+save afecorr.mat afe
 
 
+
+
+
+=======
 
 B=C;
 
@@ -390,4 +401,4 @@ C=zeros(height/kernel(1),width,NumChannels); % Array mit groesse nach pooling
     
 end
 end
-
+>>>>>>> ab467c7bc610c6de73fa8e62a4be29a0df77bcd5
