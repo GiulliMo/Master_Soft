@@ -5,7 +5,7 @@
 // File: test.h
 //
 // MATLAB Coder version            : 5.0
-// C/C++ source code generated on  : 11-Apr-2020 11:33:32
+// C/C++ source code generated on  : 13-Apr-2020 12:22:45
 //
 #ifndef TEST_H
 #define TEST_H
@@ -14,13 +14,10 @@
 #include <cstddef>
 #include <cstdlib>
 #include "rtwtypes.h"
-#include "omp.h"
 #include "test_types.h"
-#define MAX_THREADS                    omp_get_max_threads()
 
 // Function Declarations
-extern void test(double in3, float out[12]);
-extern void test_init();
+extern void test(double in3, coder::array<double, 1U> &out);
 
 #endif
 

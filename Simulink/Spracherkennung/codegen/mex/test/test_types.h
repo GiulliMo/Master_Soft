@@ -13,38 +13,69 @@
 
 // Include files
 #include "rtwtypes.h"
+#include "coder_array.h"
+#ifdef _MSC_VER
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
+#endif
 
 // Type Definitions
-#include "cnn_api.hpp"
-#include "MWTargetNetworkImpl.hpp"
-
-// Type Definitions
-class b_commandNet_0
+struct cell_wrap_3
 {
- public:
-  void allocate();
-  void postsetup();
-  b_commandNet_0();
-  void deallocate();
-  void setSize();
-  void setup();
-  void predict();
-  void cleanup();
-  real32_T *getLayerOutput(int32_T layerIndex, int32_T portIndex);
-  real32_T *getInputDataPointer();
-  real32_T *getOutputDataPointer();
-  ~b_commandNet_0();
-  int32_T batchSize;
-  int32_T numLayers;
-  MWTensor *inputTensor;
-  MWTensor *outputTensor;
-  MWCNNLayer *layers[15];
-  real32_T *inputData;
-  real32_T *outputData;
- private:
-  MWTargetNetworkImpl *targetImpl;
+  uint32_T f1[8];
 };
 
-#define MAX_THREADS                    omp_get_max_threads()
+struct dsp_private_AsyncBuffercgHelper
+{
+  boolean_T matlabCodegenIsDeleted;
+  int32_T isInitialized;
+  boolean_T isSetupComplete;
+  cell_wrap_3 inputVarSize[1];
+  int32_T NumChannels;
+  real_T Cache[16001];
+  int32_T CumulativeOverrun;
+  int32_T CumulativeUnderrun;
+  int32_T ReadPointer;
+  int32_T WritePointer;
+  boolean_T c_AsyncBuffercgHelper_isInitial;
+};
+
+struct dsp_private_AsyncBuffercg
+{
+  boolean_T matlabCodegenIsDeleted;
+  dsp_private_AsyncBuffercgHelper pBuffer;
+};
+
+struct testStackData
+{
+  struct {
+    dsp_private_AsyncBuffercg audioBuffer;
+  } f0;
+};
+
+struct c_audiointerface_audioDeviceRea
+{
+  int32_T S0_isInitialized;
+  uint8_T W0_AudioDeviceLib[1096];
+  real_T O0_Y0[800];
+  uint32_T O1_Y1;
+};
+
+struct audioDeviceReader
+{
+  boolean_T matlabCodegenIsDeleted;
+  int32_T isInitialized;
+  boolean_T isSetupComplete;
+  boolean_T TunablePropsChanged;
+  c_audiointerface_audioDeviceRea pInterface;
+};
+
+#ifdef _MSC_VER
+
+#pragma warning(pop)
+
+#endif
 
 // End of code generation (test_types.h)

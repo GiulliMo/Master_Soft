@@ -1,4 +1,4 @@
-x = zeros(12800,1);
+%x = zeros(12800,1);
 fs = 16000; % Samplerate des ursprünglichen Audios (vorgefertigte Audios)
 load('commandNet.mat') % beinhaltet trainedNet und wird hier in das Workspace geladen 
 
@@ -27,7 +27,7 @@ while ishandle(h) && toc < timeLimit
     write(audioBuffer,x);
     y = read(audioBuffer,fs,fs-adr.SamplesPerFrame);
 
-    spec = helperExtractAuditoryFeatures(y,fs);
+    [spec,Z] = helperExtractAuditoryFeatures(y,fs);
 
     % Classify the current spectrogram, save the label to the label buffer,
     % and save the predicted probabilities to the probability buffer.
@@ -53,7 +53,7 @@ while ishandle(h) && toc < timeLimit
     % labels agree. 3) The maximum probability of the predicted label is at
     % least probThreshold. Otherwise, do not declare a detection.
     [YMode,count] = mode(YBuffer);
-
+    YModeStr = timeseries(string(YMode));
     maxProb = max(probBuffer(labels == YMode,:));
     subplot(2,1,1)
     if YMode == "background" || count < countThreshold || maxProb < probThreshold

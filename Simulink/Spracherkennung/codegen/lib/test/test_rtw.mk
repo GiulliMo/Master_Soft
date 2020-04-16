@@ -2,7 +2,7 @@
 ## Makefile generated for MATLAB file/project 'test'. 
 ## 
 ## Makefile     : test_rtw.mk
-## Generated on : Sat Apr 11 11:08:02 2020
+## Generated on : Mon Apr 13 12:22:50 2020
 ## MATLAB Coder version: 5.0 (R2020a)
 ## 
 ## Build Info:
@@ -51,6 +51,7 @@ MODELLIB                  = test.a
 #-------------------------------------------
 
 # C_STANDARD_OPTS
+# CPP_STANDARD_OPTS
 
 #-----------
 # MACROS
@@ -60,7 +61,6 @@ WARN_FLAGS         = -Wall -W -Wwrite-strings -Winline -Wstrict-prototypes -Wnes
 WARN_FLAGS_MAX     = $(WARN_FLAGS) -Wcast-qual -Wshadow
 CPP_WARN_FLAGS     = -Wall -W -Wwrite-strings -Winline -Wpointer-arith -Wcast-align
 CPP_WARN_FLAGS_MAX = $(CPP_WARN_FLAGS) -Wcast-qual -Wshadow
-CPP_STANDARD_OPTS  =   -std=c++11 
 
 TOOLCHAIN_SRCS = 
 TOOLCHAIN_INCS = 
@@ -155,7 +155,7 @@ BUILD_TYPE = "Static Library"
 ## INCLUDE PATHS
 ###########################################################################
 
-INCLUDES_BUILDINFO = -I$(START_DIR) -I/home/alf/Schreibtisch/Master_Soft/Simulink/Spracherkennung -I/home/alf/mkl-dnn/include -I$(MATLAB_ROOT)/extern/include
+INCLUDES_BUILDINFO = -I$(START_DIR) -I/home/alf/Schreibtisch/Master_Soft/Simulink/Spracherkennung -I$(MATLAB_ROOT)/toolbox/shared/spc/src_ml/extern/include -I$(MATLAB_ROOT)/toolbox/dsp/include -I$(MATLAB_ROOT)/extern/include
 
 INCLUDES = $(INCLUDES_BUILDINFO)
 
@@ -172,7 +172,7 @@ DEFINES = $(DEFINES_CUSTOM) $(DEFINES_STANDARD)
 ## SOURCE FILES
 ###########################################################################
 
-SRCS = MWElementwiseAffineLayer.cpp MWFusedConvReLULayer.cpp cnn_api.cpp MWCNNLayerImpl.cpp MWElementwiseAffineLayerImpl.cpp MWFusedConvReLULayerImpl.cpp MWTargetNetworkImpl.cpp MWMkldnnUtils.cpp $(START_DIR)/test_rtwutil.cpp $(START_DIR)/test_data.cpp $(START_DIR)/test_initialize.cpp $(START_DIR)/test_terminate.cpp $(START_DIR)/test.cpp $(START_DIR)/imresize.cpp $(START_DIR)/DeepLearningNetwork.cpp $(START_DIR)/predict.cpp
+SRCS = $(START_DIR)/test_initialize.cpp $(START_DIR)/test_terminate.cpp $(START_DIR)/test.cpp $(START_DIR)/audioDeviceReader.cpp $(START_DIR)/matlabCodegenHandle.cpp $(START_DIR)/SystemCore.cpp $(START_DIR)/AsyncBuffercg.cpp $(START_DIR)/AsyncBuffercgHelper.cpp $(MATLAB_ROOT)/toolbox/shared/spc/src_ml/extern/src/DAHostLib_rtw.c $(MATLAB_ROOT)/toolbox/dsp/include/HostLib_Audio.c
 
 ALL_SRCS = $(SRCS)
 
@@ -180,7 +180,7 @@ ALL_SRCS = $(SRCS)
 ## OBJECTS
 ###########################################################################
 
-OBJS = MWElementwiseAffineLayer.o MWFusedConvReLULayer.o cnn_api.o MWCNNLayerImpl.o MWElementwiseAffineLayerImpl.o MWFusedConvReLULayerImpl.o MWTargetNetworkImpl.o MWMkldnnUtils.o test_rtwutil.o test_data.o test_initialize.o test_terminate.o test.o imresize.o DeepLearningNetwork.o predict.o
+OBJS = test_initialize.o test_terminate.o test.o audioDeviceReader.o matlabCodegenHandle.o SystemCore.o AsyncBuffercg.o AsyncBuffercgHelper.o DAHostLib_rtw.o HostLib_Audio.o
 
 ALL_OBJS = $(OBJS)
 
@@ -200,7 +200,7 @@ LIBS =
 ## SYSTEM LIBRARIES
 ###########################################################################
 
-SYSTEM_LIBS =  -L"/home/alf/mkl-dnn/lib" -L"$(MATLAB_ROOT)/sys/os/glnxa64" -lmkldnn -lm -lstdc++ -liomp5
+SYSTEM_LIBS =  -lm -lstdc++
 
 ###########################################################################
 ## ADDITIONAL TOOLCHAIN FLAGS
@@ -210,19 +210,49 @@ SYSTEM_LIBS =  -L"/home/alf/mkl-dnn/lib" -L"$(MATLAB_ROOT)/sys/os/glnxa64" -lmkl
 # C Compiler
 #---------------
 
-CFLAGS_OPTS = -fopenmp
 CFLAGS_BASIC = $(DEFINES) $(INCLUDES)
 
-CFLAGS += $(CFLAGS_OPTS) $(CFLAGS_BASIC)
+CFLAGS += $(CFLAGS_BASIC)
 
 #-----------------
 # C++ Compiler
 #-----------------
 
-CPPFLAGS_OPTS = -fopenmp
 CPPFLAGS_BASIC = $(DEFINES) $(INCLUDES)
 
-CPPFLAGS += $(CPPFLAGS_OPTS) $(CPPFLAGS_BASIC)
+CPPFLAGS += $(CPPFLAGS_BASIC)
+
+#---------------
+# C++ Linker
+#---------------
+
+CPP_LDFLAGS_BLOCKMODULES = -lm -ldl
+
+CPP_LDFLAGS += $(CPP_LDFLAGS_BLOCKMODULES)
+
+#------------------------------
+# C++ Shared Library Linker
+#------------------------------
+
+CPP_SHAREDLIB_LDFLAGS_BLOCKMODULES = -lm -ldl
+
+CPP_SHAREDLIB_LDFLAGS += $(CPP_SHAREDLIB_LDFLAGS_BLOCKMODULES)
+
+#-----------
+# Linker
+#-----------
+
+LDFLAGS_BLOCKMODULES = -lm -ldl
+
+LDFLAGS += $(LDFLAGS_BLOCKMODULES)
+
+#--------------------------
+# Shared Library Linker
+#--------------------------
+
+SHAREDLIB_LDFLAGS_BLOCKMODULES = -lm -ldl
+
+SHAREDLIB_LDFLAGS += $(SHAREDLIB_LDFLAGS_BLOCKMODULES)
 
 ###########################################################################
 ## INLINED COMMANDS
@@ -305,11 +335,19 @@ $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS)
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
 
 
-test_rtwutil.o : $(START_DIR)/test_rtwutil.cpp
+%.o : $(MATLAB_ROOT)/toolbox/shared/spc/src_ml/extern/src/%.c
+	$(CC) $(CFLAGS) -o "$@" "$<"
+
+
+%.o : $(MATLAB_ROOT)/toolbox/shared/spc/src_ml/extern/src/%.cpp
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
 
 
-test_data.o : $(START_DIR)/test_data.cpp
+%.o : $(MATLAB_ROOT)/toolbox/dsp/include/%.c
+	$(CC) $(CFLAGS) -o "$@" "$<"
+
+
+%.o : $(MATLAB_ROOT)/toolbox/dsp/include/%.cpp
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
 
 
@@ -325,16 +363,32 @@ test.o : $(START_DIR)/test.cpp
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
 
 
-imresize.o : $(START_DIR)/imresize.cpp
+audioDeviceReader.o : $(START_DIR)/audioDeviceReader.cpp
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
 
 
-DeepLearningNetwork.o : $(START_DIR)/DeepLearningNetwork.cpp
+matlabCodegenHandle.o : $(START_DIR)/matlabCodegenHandle.cpp
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
 
 
-predict.o : $(START_DIR)/predict.cpp
+SystemCore.o : $(START_DIR)/SystemCore.cpp
 	$(CPP) $(CPPFLAGS) -o "$@" "$<"
+
+
+AsyncBuffercg.o : $(START_DIR)/AsyncBuffercg.cpp
+	$(CPP) $(CPPFLAGS) -o "$@" "$<"
+
+
+AsyncBuffercgHelper.o : $(START_DIR)/AsyncBuffercgHelper.cpp
+	$(CPP) $(CPPFLAGS) -o "$@" "$<"
+
+
+DAHostLib_rtw.o : $(MATLAB_ROOT)/toolbox/shared/spc/src_ml/extern/src/DAHostLib_rtw.c
+	$(CC) $(CFLAGS) -o "$@" "$<"
+
+
+HostLib_Audio.o : $(MATLAB_ROOT)/toolbox/dsp/include/HostLib_Audio.c
+	$(CC) $(CFLAGS) -o "$@" "$<"
 
 
 ###########################################################################

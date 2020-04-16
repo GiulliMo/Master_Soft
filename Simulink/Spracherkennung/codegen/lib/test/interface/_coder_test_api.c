@@ -5,7 +5,7 @@
  * File: _coder_test_api.c
  *
  * MATLAB Coder version            : 5.0
- * C/C++ source code generated on  : 11-Apr-2020 11:33:32
+ * C/C++ source code generated on  : 13-Apr-2020 12:22:45
  */
 
 /* Include Files */
@@ -32,7 +32,10 @@ static real_T c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId);
 static real_T emlrt_marshallIn(const emlrtStack *sp, const mxArray *in3, const
   char_T *identifier);
-static const mxArray *emlrt_marshallOut(const real32_T u[12]);
+static const mxArray *emlrt_marshallOut(const emxArray_real_T *u);
+static void emxFree_real_T(emxArray_real_T **pEmxArray);
+static void emxInit_real_T(const emlrtStack *sp, emxArray_real_T **pEmxArray,
+  int32_T numDimensions, boolean_T doPush);
 
 /* Function Definitions */
 
@@ -88,23 +91,67 @@ static real_T emlrt_marshallIn(const emlrtStack *sp, const mxArray *in3, const
 }
 
 /*
- * Arguments    : const real32_T u[12]
+ * Arguments    : const emxArray_real_T *u
  * Return Type  : const mxArray *
  */
-static const mxArray *emlrt_marshallOut(const real32_T u[12])
+static const mxArray *emlrt_marshallOut(const emxArray_real_T *u)
 {
   const mxArray *y;
   const mxArray *m;
-  static const int32_T iv[2] = { 0, 0 };
-
-  static const int32_T iv1[2] = { 1, 12 };
+  static const int32_T iv[1] = { 0 };
 
   y = NULL;
-  m = emlrtCreateNumericArray(2, &iv[0], mxSINGLE_CLASS, mxREAL);
-  emlrtMxSetData((mxArray *)m, (void *)&u[0]);
-  emlrtSetDimensions((mxArray *)m, *(int32_T (*)[2])&iv1[0], 2);
+  m = emlrtCreateNumericArray(1, &iv[0], mxDOUBLE_CLASS, mxREAL);
+  emlrtMxSetData((mxArray *)m, &u->data[0]);
+  emlrtSetDimensions((mxArray *)m, u->size, 1);
   emlrtAssign(&y, m);
   return y;
+}
+
+/*
+ * Arguments    : emxArray_real_T **pEmxArray
+ * Return Type  : void
+ */
+static void emxFree_real_T(emxArray_real_T **pEmxArray)
+{
+  if (*pEmxArray != (emxArray_real_T *)NULL) {
+    if (((*pEmxArray)->data != (real_T *)NULL) && (*pEmxArray)->canFreeData) {
+      emlrtFreeMex((*pEmxArray)->data);
+    }
+
+    emlrtFreeMex((*pEmxArray)->size);
+    emlrtFreeMex(*pEmxArray);
+    *pEmxArray = (emxArray_real_T *)NULL;
+  }
+}
+
+/*
+ * Arguments    : const emlrtStack *sp
+ *                emxArray_real_T **pEmxArray
+ *                int32_T numDimensions
+ *                boolean_T doPush
+ * Return Type  : void
+ */
+static void emxInit_real_T(const emlrtStack *sp, emxArray_real_T **pEmxArray,
+  int32_T numDimensions, boolean_T doPush)
+{
+  emxArray_real_T *emxArray;
+  int32_T i;
+  *pEmxArray = (emxArray_real_T *)emlrtMallocMex(sizeof(emxArray_real_T));
+  if (doPush) {
+    emlrtPushHeapReferenceStackR2012b(sp, (void *)pEmxArray, (void *)
+      &emxFree_real_T);
+  }
+
+  emxArray = *pEmxArray;
+  emxArray->data = (real_T *)NULL;
+  emxArray->numDimensions = numDimensions;
+  emxArray->size = (int32_T *)emlrtMallocMex(sizeof(int32_T) * numDimensions);
+  emxArray->allocatedSize = 0;
+  emxArray->canFreeData = true;
+  for (i = 0; i < numDimensions; i++) {
+    emxArray->size[i] = 0;
+  }
 }
 
 /*
@@ -115,7 +162,7 @@ static const mxArray *emlrt_marshallOut(const real32_T u[12])
  */
 void test_api(const mxArray * const prhs[1], int32_T nlhs, const mxArray *plhs[1])
 {
-  real32_T (*out)[12];
+  emxArray_real_T *out;
   real_T in3;
   emlrtStack st = { NULL,              /* site */
     NULL,                              /* tls */
@@ -124,16 +171,20 @@ void test_api(const mxArray * const prhs[1], int32_T nlhs, const mxArray *plhs[1
 
   (void)nlhs;
   st.tls = emlrtRootTLSGlobal;
-  out = (real32_T (*)[12])mxMalloc(sizeof(real32_T [12]));
+  emlrtHeapReferenceStackEnterFcnR2012b(&st);
+  emxInit_real_T(&st, &out, 1, true);
 
   /* Marshall function inputs */
   in3 = emlrt_marshallIn(&st, emlrtAliasP(prhs[0]), "in3");
 
   /* Invoke the target function */
-  test(in3, *out);
+  test(in3, out);
 
   /* Marshall function outputs */
-  plhs[0] = emlrt_marshallOut(*out);
+  out->canFreeData = false;
+  plhs[0] = emlrt_marshallOut(out);
+  emxFree_real_T(&out);
+  emlrtHeapReferenceStackLeaveFcnR2012b(&st);
 }
 
 /*

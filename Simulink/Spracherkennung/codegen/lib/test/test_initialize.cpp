@@ -5,14 +5,15 @@
 // File: test_initialize.cpp
 //
 // MATLAB Coder version            : 5.0
-// C/C++ source code generated on  : 11-Apr-2020 11:33:32
+// C/C++ source code generated on  : 13-Apr-2020 12:22:45
 //
 
 // Include Files
 #include "test_initialize.h"
-#include "DeepLearningNetwork.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
+#include "matlabCodegenHandle.h"
 #include "test.h"
-#include "test_data.h"
 
 // Function Definitions
 
@@ -22,9 +23,6 @@
 //
 void test_initialize()
 {
-  omp_init_nest_lock(&emlrtNestLockGlobal);
-  test_init();
-  isInitialized_test = true;
 }
 
 //

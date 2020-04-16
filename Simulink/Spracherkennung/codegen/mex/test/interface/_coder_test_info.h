@@ -13,7 +13,6 @@
 
 /* Include files */
 #include "mex.h"
-#define MAX_THREADS                    omp_get_max_threads()
 
 /* Function Declarations */
 MEXFUNCTION_LINKAGE mxArray *emlrtMexFcnProperties();

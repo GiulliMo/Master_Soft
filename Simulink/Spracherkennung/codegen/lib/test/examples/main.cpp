@@ -5,7 +5,7 @@
 // File: main.cpp
 //
 // MATLAB Coder version            : 5.0
-// C/C++ source code generated on  : 11-Apr-2020 11:33:32
+// C/C++ source code generated on  : 13-Apr-2020 12:22:45
 //
 
 //***********************************************************************
@@ -35,7 +35,9 @@
 
 // Include Files
 #include "main.h"
-#include "DeepLearningNetwork.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
+#include "matlabCodegenHandle.h"
 #include "test.h"
 #include "test_terminate.h"
 
@@ -60,7 +62,7 @@ static double argInit_real_T()
 //
 static void main_test()
 {
-  float out[12];
+  coder::array<double, 1U> out;
 
   // Initialize function 'test' input arguments.
   // Call the entry-point 'test'.

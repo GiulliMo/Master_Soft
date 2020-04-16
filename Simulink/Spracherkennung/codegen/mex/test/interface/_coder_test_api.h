@@ -19,11 +19,10 @@
 #include "mex.h"
 #include "emlrt.h"
 #include "rtwtypes.h"
-#include "omp.h"
 #include "test_types.h"
-#define MAX_THREADS                    omp_get_max_threads()
 
 // Function Declarations
-void test_api(const mxArray * const prhs[1], int32_T nlhs, const mxArray *plhs[1]);
+void test_api(testStackData *SD, const mxArray * const prhs[1], int32_T nlhs,
+              const mxArray *plhs[1]);
 
 // End of code generation (_coder_test_api.h)

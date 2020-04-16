@@ -19,13 +19,11 @@
 #include "mex.h"
 #include "emlrt.h"
 #include "rtwtypes.h"
-#include "omp.h"
 #include "test_types.h"
-#define MAX_THREADS                    omp_get_max_threads()
 
 // Function Declarations
-MEXFUNCTION_LINKAGE void test_mexFunction(int32_T nlhs, mxArray *plhs[1],
-  int32_T nrhs, const mxArray *prhs[1]);
+MEXFUNCTION_LINKAGE void test_mexFunction(testStackData *SD, int32_T nlhs,
+  mxArray *plhs[1], int32_T nrhs, const mxArray *prhs[1]);
 MEXFUNCTION_LINKAGE void mexFunction(int32_T nlhs, mxArray *plhs[], int32_T nrhs,
   const mxArray *prhs[]);
 emlrtCTX mexFunctionCreateRootTLS();

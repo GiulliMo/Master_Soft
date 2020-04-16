@@ -1,4 +1,4 @@
-function features = helperExtractAuditoryFeatures(x,fs)
+function [features,xPadded] = helperExtractAuditoryFeatures(x,fs)
 % helperExtractAuditoryFeatures Compute auditory spectrogram
 
 % Copyright 2019 The MathWorks, Inc.
@@ -19,8 +19,9 @@ overlapSamples = frameSamples - hopSamples;
 
 FFTLength = 512;
 
-persistent afe
+persistent afe 
 if isempty(afe)
+   
     afe = audioFeatureExtractor( ...
         'SampleRate',fs, ...
         'FFTLength',FFTLength, ...
@@ -28,7 +29,10 @@ if isempty(afe)
         'OverlapLength',overlapSamples, ...
         'barkSpectrum',true);
     setExtractorParams(afe,'barkSpectrum','NumBands',numBands);
+    disp('test');
 end
+
+
 
 % Some files in the data set are less than 1 second long. Apply
 % zero-padding to the front and back of the audio signal so that it is of

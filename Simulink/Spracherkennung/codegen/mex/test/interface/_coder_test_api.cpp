@@ -11,7 +11,9 @@
 
 // Include files
 #include "_coder_test_api.h"
-#include "DeepLearningNetwork.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
+#include "matlabCodegenHandle.h"
 #include "rt_nonfinite.h"
 #include "test.h"
 #include "test_data.h"
@@ -21,9 +23,9 @@ static real_T b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
   emlrtMsgIdentifier *parentId);
 static real_T c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId);
+static const mxArray *d_emlrt_marshallOut(const coder::array<real_T, 1U> &u);
 static real_T emlrt_marshallIn(const emlrtStack *sp, const mxArray *in3, const
   char_T *identifier);
-static const mxArray *emlrt_marshallOut(const real32_T u[12]);
 
 // Function Definitions
 static real_T b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
@@ -46,6 +48,20 @@ static real_T c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   return ret;
 }
 
+static const mxArray *d_emlrt_marshallOut(const coder::array<real_T, 1U> &u)
+{
+  const mxArray *y;
+  const mxArray *m;
+  static const int32_T iv[1] = { 0 };
+
+  y = NULL;
+  m = emlrtCreateNumericArray(1, &iv[0], mxDOUBLE_CLASS, mxREAL);
+  emlrtMxSetData((mxArray *)m, &(((coder::array<real_T, 1U> *)&u)->data())[0]);
+  emlrtSetDimensions((mxArray *)m, ((coder::array<real_T, 1U> *)&u)->size(), 1);
+  emlrtAssign(&y, m);
+  return y;
+}
+
 static real_T emlrt_marshallIn(const emlrtStack *sp, const mxArray *in3, const
   char_T *identifier)
 {
@@ -59,42 +75,29 @@ static real_T emlrt_marshallIn(const emlrtStack *sp, const mxArray *in3, const
   return y;
 }
 
-static const mxArray *emlrt_marshallOut(const real32_T u[12])
+void test_api(testStackData *SD, const mxArray * const prhs[1], int32_T, const
+              mxArray *plhs[1])
 {
-  const mxArray *y;
-  const mxArray *m;
-  static const int32_T iv[2] = { 0, 0 };
-
-  static const int32_T iv1[2] = { 1, 12 };
-
-  y = NULL;
-  m = emlrtCreateNumericArray(2, &iv[0], mxSINGLE_CLASS, mxREAL);
-  emlrtMxSetData((mxArray *)m, (void *)&u[0]);
-  emlrtSetDimensions((mxArray *)m, *(int32_T (*)[2])&iv1[0], 2);
-  emlrtAssign(&y, m);
-  return y;
-}
-
-void test_api(const mxArray * const prhs[1], int32_T, const mxArray *plhs[1])
-{
-  real32_T (*out)[12];
   real_T in3;
+  coder::array<real_T, 1U> out;
   emlrtStack st = { NULL,              // site
     NULL,                              // tls
     NULL                               // prev
   };
 
   st.tls = emlrtRootTLSGlobal;
-  out = (real32_T (*)[12])mxMalloc(sizeof(real32_T [12]));
+  emlrtHeapReferenceStackEnterFcnR2012b(&st);
 
   // Marshall function inputs
   in3 = emlrt_marshallIn(&st, emlrtAliasP(prhs[0]), "in3");
 
   // Invoke the target function
-  test(&st, in3, *out);
+  test(SD, &st, in3, out);
 
   // Marshall function outputs
-  plhs[0] = emlrt_marshallOut(*out);
+  out.no_free();
+  plhs[0] = d_emlrt_marshallOut(out);
+  emlrtHeapReferenceStackLeaveFcnR2012b(&st);
 }
 
 // End of code generation (_coder_test_api.cpp)

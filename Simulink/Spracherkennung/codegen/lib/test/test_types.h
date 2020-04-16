@@ -5,46 +5,102 @@
 // File: test_types.h
 //
 // MATLAB Coder version            : 5.0
-// C/C++ source code generated on  : 11-Apr-2020 11:33:32
+// C/C++ source code generated on  : 13-Apr-2020 12:22:45
 //
 #ifndef TEST_TYPES_H
 #define TEST_TYPES_H
 
 // Include Files
 #include "rtwtypes.h"
+#include "coder_array.h"
+#ifdef _MSC_VER
+
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
+#endif
 
 // Type Definitions
-#include "cnn_api.hpp"
-#include "MWTargetNetworkImpl.hpp"
-
-// Type Definitions
-class b_commandNet_0
+struct c_audiointerface_audioDeviceRea
 {
- public:
-  void allocate();
-  void postsetup();
-  b_commandNet_0();
-  void deallocate();
-  void setSize();
-  void setup();
-  void predict();
-  void cleanup();
-  float *getLayerOutput(int layerIndex, int portIndex);
-  float *getInputDataPointer();
-  float *getOutputDataPointer();
-  ~b_commandNet_0();
-  int batchSize;
-  int numLayers;
-  MWTensor *inputTensor;
-  MWTensor *outputTensor;
-  MWCNNLayer *layers[15];
-  float *inputData;
-  float *outputData;
- private:
-  MWTargetNetworkImpl *targetImpl;
+  int S0_isInitialized;
+  unsigned char W0_AudioDeviceLib[1096];
+  double O0_Y0[800];
+  unsigned int O1_Y1;
 };
 
-#define MAX_THREADS                    omp_get_max_threads()
+class audioDeviceReader
+{
+ public:
+  audioDeviceReader *init();
+  void step(double varargout_1[800]);
+  void setupAndReset();
+  void setup();
+  void checkTunableProps();
+  void matlabCodegenDestructor();
+  void release();
+  void releaseWrapper();
+  ~audioDeviceReader();
+  boolean_T matlabCodegenIsDeleted;
+  c_audiointerface_audioDeviceRea pInterface;
+ private:
+  int isInitialized;
+  boolean_T isSetupComplete;
+  boolean_T TunablePropsChanged;
+};
+
+struct cell_wrap_3
+{
+  unsigned int f1[8];
+};
+
+class dsp_private_AsyncBuffercgHelper
+{
+ public:
+  dsp_private_AsyncBuffercgHelper *init();
+  int step(const double varargin_1_data[]);
+  void setupAndReset();
+  void setup();
+  int write(const double in_data[]);
+  void read(coder::array<double, 1U> &out, int *underrun);
+  static void ReadSamplesFromBuffer(const dsp_private_AsyncBuffercgHelper *obj,
+    coder::array<double, 1U> &out, int *underrun, int *overlapUnderrun, int *c);
+  void matlabCodegenDestructor();
+  void release();
+  void releaseWrapper();
+  ~dsp_private_AsyncBuffercgHelper();
+  boolean_T matlabCodegenIsDeleted;
+  double Cache[16001];
+  int ReadPointer;
+  int WritePointer;
+  boolean_T c_AsyncBuffercgHelper_isInitial;
+ protected:
+  int isInitialized;
+  int CumulativeOverrun;
+  int CumulativeUnderrun;
+ private:
+  boolean_T isSetupComplete;
+  cell_wrap_3 inputVarSize[1];
+  int NumChannels;
+};
+
+class dsp_private_AsyncBuffercg
+{
+ public:
+  dsp_private_AsyncBuffercg *init();
+  void write(const double in_data[]);
+  void read(coder::array<double, 1U> &out);
+  void matlabCodegenDestructor();
+  ~dsp_private_AsyncBuffercg();
+  boolean_T matlabCodegenIsDeleted;
+  dsp_private_AsyncBuffercgHelper pBuffer;
+};
+
+#ifdef _MSC_VER
+
+#pragma warning(pop)
+
+#endif
 #endif
 
 //

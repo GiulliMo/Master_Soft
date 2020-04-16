@@ -14,11 +14,11 @@ cxx = /usr/bin/g++
 linker = gcc
 linkerxx = /usr/bin/g++
 
-cflags =  -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -fvisibility=hidden -std=c99 -I "$root" -I "$startdir" -I "$matlabdir/extern/include/mkldnn" -I "$root/interface" -I "$matlabdir/extern/include" -I "." -DMODEL=test_mex -DMW_NEEDS_VERSION_H -c -fopenmp -DOMPLIBNAME="$matlabdir/sys/os/glnxa64/libiomp5.so" 
+cflags =  -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -fvisibility=hidden -std=c99 -I "$root" -I "$startdir" -I "$matlabdir/extern/include/mkldnn" -I "$root/interface" -I "$matlabdir/toolbox/shared/spc/src_ml/extern/include" -I "$matlabdir/toolbox/dsp/include" -I "$matlabdir/extern/include" -I "." -DMODEL=test_mex -DMW_NEEDS_VERSION_H -c 
 
-cxxflags =  -fexceptions -fPIC -fno-omit-frame-pointer -pthread -std=c++11 -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -fvisibility=hidden -std=c++11 -I "$root" -I "$startdir" -I "$matlabdir/extern/include/mkldnn" -I "$root/interface" -I "$matlabdir/extern/include" -I "." -DMODEL=test_mex -DMW_NEEDS_VERSION_H -c -fopenmp -DOMPLIBNAME="$matlabdir/sys/os/glnxa64/libiomp5.so" 
+cxxflags =  -fexceptions -fPIC -fno-omit-frame-pointer -pthread -std=c++11 -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -fvisibility=hidden -std=c++11 -I "$root" -I "$startdir" -I "$matlabdir/extern/include/mkldnn" -I "$root/interface" -I "$matlabdir/toolbox/shared/spc/src_ml/extern/include" -I "$matlabdir/toolbox/dsp/include" -I "$matlabdir/extern/include" -I "." -DMODEL=test_mex -DMW_NEEDS_VERSION_H -c 
 
-ldflags =  -pthread -Wl,--no-undefined  -shared -Wl,--as-needed -Wl,-rpath-link,$matlabdir/bin/glnxa64 -L"$matlabdir/bin/glnxa64" -Wl,-rpath-link,$matlabdir/extern/bin/glnxa64 -L"$matlabdir/extern/bin/glnxa64" -lMatlabDataArray -lmx -lmex -lmat -lm -lstdc++  -o test_mex.mexa64 -L"$matlabdir/bin/glnxa64" -L"$matlabdir/sys/os/glnxa64" -lmwmkldnn -liomp5 -lemlrt -lcovrt -lut -lmwmathutil -fPIC -L"$matlabdir/sys/os/glnxa64" -liomp5
+ldflags =  -pthread -Wl,--no-undefined  -shared -Wl,--as-needed -Wl,-rpath-link,$matlabdir/bin/glnxa64 -L"$matlabdir/bin/glnxa64" -Wl,-rpath-link,$matlabdir/extern/bin/glnxa64 -L"$matlabdir/extern/bin/glnxa64" -lMatlabDataArray -lmx -lmex -lmat -lm -lstdc++  -o test_mex.mexa64 -L"$matlabdir/bin/glnxa64" -L"$matlabdir/sys/os/glnxa64" -lmwmkldnn -liomp5 -lemlrt -lcovrt -lut -lmwmathutil -lm -ldl
 
 # Build Rules
 rule cc
@@ -34,27 +34,22 @@ rule linkxx
     command = $linkerxx $in $ldflags
 
 # Build
-build $builddir/MWElementwiseAffineLayer.o : cxx $root/MWElementwiseAffineLayer.cpp
-build $builddir/MWFusedConvReLULayer.o : cxx $root/MWFusedConvReLULayer.cpp
-build $builddir/cnn_api.o : cxx $root/cnn_api.cpp
-build $builddir/MWCNNLayerImpl.o : cxx $root/MWCNNLayerImpl.cpp
-build $builddir/MWElementwiseAffineLayerImpl.o : cxx $root/MWElementwiseAffineLayerImpl.cpp
-build $builddir/MWFusedConvReLULayerImpl.o : cxx $root/MWFusedConvReLULayerImpl.cpp
-build $builddir/MWTargetNetworkImpl.o : cxx $root/MWTargetNetworkImpl.cpp
-build $builddir/MWMkldnnUtils.o : cxx $root/MWMkldnnUtils.cpp
 build $builddir/rt_nonfinite.o : cxx $root/rt_nonfinite.cpp
-build $builddir/test_mexutil.o : cxx $root/test_mexutil.cpp
 build $builddir/test_data.o : cxx $root/test_data.cpp
 build $builddir/test_initialize.o : cxx $root/test_initialize.cpp
 build $builddir/test_terminate.o : cxx $root/test_terminate.cpp
 build $builddir/test.o : cxx $root/test.cpp
-build $builddir/imresize.o : cxx $root/imresize.cpp
-build $builddir/DeepLearningNetwork.o : cxx $root/DeepLearningNetwork.cpp
-build $builddir/predict.o : cxx $root/predict.cpp
+build $builddir/audioDeviceReader.o : cxx $root/audioDeviceReader.cpp
+build $builddir/matlabCodegenHandle.o : cxx $root/matlabCodegenHandle.cpp
+build $builddir/SystemCore.o : cxx $root/SystemCore.cpp
+build $builddir/AsyncBuffercg.o : cxx $root/AsyncBuffercg.cpp
+build $builddir/AsyncBuffercgHelper.o : cxx $root/AsyncBuffercgHelper.cpp
 build $builddir/_coder_test_api.o : cxx $root/interface/_coder_test_api.cpp
 build $builddir/_coder_test_mex.o : cxx $root/interface/_coder_test_mex.cpp
 build $builddir/_coder_test_info.o : cxx $root/interface/_coder_test_info.cpp
+build $builddir/DAHostLib_rtw.o : cc $matlabdir/toolbox/shared/spc/src_ml/extern/src/DAHostLib_rtw.c
+build $builddir/HostLib_Audio.o : cc $matlabdir/toolbox/dsp/include/HostLib_Audio.c
 build $builddir/cpp_mexapi_version.o : cxx $matlabdir/extern/version/cpp_mexapi_version.cpp
 
 # Link
-build $root/test_mex.mexa64 : linkxx $builddir/MWElementwiseAffineLayer.o $builddir/MWFusedConvReLULayer.o $builddir/cnn_api.o $builddir/MWCNNLayerImpl.o $builddir/MWElementwiseAffineLayerImpl.o $builddir/MWFusedConvReLULayerImpl.o $builddir/MWTargetNetworkImpl.o $builddir/MWMkldnnUtils.o $builddir/rt_nonfinite.o $builddir/test_mexutil.o $builddir/test_data.o $builddir/test_initialize.o $builddir/test_terminate.o $builddir/test.o $builddir/imresize.o $builddir/DeepLearningNetwork.o $builddir/predict.o $builddir/_coder_test_api.o $builddir/_coder_test_mex.o $builddir/_coder_test_info.o $builddir/cpp_mexapi_version.o 
+build $root/test_mex.mexa64 : linkxx $builddir/rt_nonfinite.o $builddir/test_data.o $builddir/test_initialize.o $builddir/test_terminate.o $builddir/test.o $builddir/audioDeviceReader.o $builddir/matlabCodegenHandle.o $builddir/SystemCore.o $builddir/AsyncBuffercg.o $builddir/AsyncBuffercgHelper.o $builddir/_coder_test_api.o $builddir/_coder_test_mex.o $builddir/_coder_test_info.o $builddir/DAHostLib_rtw.o $builddir/HostLib_Audio.o $builddir/cpp_mexapi_version.o 

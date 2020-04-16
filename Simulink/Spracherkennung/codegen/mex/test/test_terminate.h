@@ -19,9 +19,7 @@
 #include "mex.h"
 #include "emlrt.h"
 #include "rtwtypes.h"
-#include "omp.h"
 #include "test_types.h"
-#define MAX_THREADS                    omp_get_max_threads()
 
 // Function Declarations
 CODEGEN_EXPORT_SYM void test_atexit();

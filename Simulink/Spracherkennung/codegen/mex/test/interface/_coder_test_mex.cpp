@@ -11,21 +11,22 @@
 
 // Include files
 #include "_coder_test_mex.h"
-#include "DeepLearningNetwork.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
 #include "_coder_test_api.h"
+#include "matlabCodegenHandle.h"
 #include "test.h"
 #include "test_data.h"
 #include "test_initialize.h"
-#include "test_mexutil.h"
 #include "test_terminate.h"
 
 // Function Declarations
-MEXFUNCTION_LINKAGE void test_mexFunction(int32_T nlhs, mxArray *plhs[1],
-  int32_T nrhs, const mxArray *prhs[1]);
+MEXFUNCTION_LINKAGE void test_mexFunction(testStackData *SD, int32_T nlhs,
+  mxArray *plhs[1], int32_T nrhs, const mxArray *prhs[1]);
 
 // Function Definitions
-void test_mexFunction(int32_T nlhs, mxArray *plhs[1], int32_T nrhs, const
-                      mxArray *prhs[1])
+void test_mexFunction(testStackData *SD, int32_T nlhs, mxArray *plhs[1], int32_T
+                      nrhs, const mxArray *prhs[1])
 {
   const mxArray *outputs[1];
   emlrtStack st = { NULL,              // site
@@ -47,7 +48,7 @@ void test_mexFunction(int32_T nlhs, mxArray *plhs[1], int32_T nrhs, const
   }
 
   // Call the function.
-  test_api(prhs, nlhs, outputs);
+  test_api(SD, prhs, nlhs, outputs);
 
   // Copy over outputs to the caller.
   emlrtReturnArrays(1, plhs, &outputs[0]);
@@ -56,40 +57,24 @@ void test_mexFunction(int32_T nlhs, mxArray *plhs[1], int32_T nrhs, const
 void mexFunction(int32_T nlhs, mxArray *plhs[], int32_T nrhs, const mxArray
                  *prhs[])
 {
-  emlrtStack st = { NULL,              // site
-    NULL,                              // tls
-    NULL                               // prev
-  };
-
+  testStackData *testStackDataGlobal = NULL;
+  testStackDataGlobal = new testStackData;
   mexAtExit(&test_atexit);
-  emlrtLoadMATLABLibrary("sys/os/glnxa64/libiomp5.so");
-
-  // Initialize the memory manager.
-  omp_init_lock(&emlrtLockGlobal);
-  omp_init_nest_lock(&emlrtNestLockGlobal);
 
   // Module initialization.
   test_initialize();
-  st.tls = emlrtRootTLSGlobal;
-  try {
-    // Dispatch the entry-point.
-    test_mexFunction(nlhs, plhs, nrhs, prhs);
 
-    // Module termination.
-    test_terminate();
-    omp_destroy_lock(&emlrtLockGlobal);
-    omp_destroy_nest_lock(&emlrtNestLockGlobal);
-  } catch (...) {
-    omp_destroy_lock(&emlrtLockGlobal);
-    omp_destroy_nest_lock(&emlrtNestLockGlobal);
-    emlrtReportParallelRunTimeError(&st);
-  }
+  // Dispatch the entry-point.
+  test_mexFunction(testStackDataGlobal, nlhs, plhs, nrhs, prhs);
+
+  // Module termination.
+  test_terminate();
+  delete testStackDataGlobal;
 }
 
 emlrtCTX mexFunctionCreateRootTLS()
 {
-  emlrtCreateRootTLS(&emlrtRootTLSGlobal, &emlrtContextGlobal,
-                     &emlrtLockerFunction, omp_get_num_procs());
+  emlrtCreateRootTLS(&emlrtRootTLSGlobal, &emlrtContextGlobal, NULL, 1);
   return emlrtRootTLSGlobal;
 }
 

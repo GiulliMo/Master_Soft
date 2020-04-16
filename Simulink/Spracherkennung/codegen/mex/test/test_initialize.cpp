@@ -11,8 +11,10 @@
 
 // Include files
 #include "test_initialize.h"
-#include "DeepLearningNetwork.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
 #include "_coder_test_mex.h"
+#include "matlabCodegenHandle.h"
 #include "rt_nonfinite.h"
 #include "test.h"
 #include "test_data.h"
@@ -20,16 +22,7 @@
 // Variable Definitions
 static const volatile char_T *emlrtBreakCheckR2012bFlagVar = NULL;
 
-// Function Declarations
-static void test_once();
-
 // Function Definitions
-static void test_once()
-{
-  mex_InitInfAndNan();
-  test_init();
-}
-
 void test_initialize()
 {
   emlrtStack st = { NULL,              // site
@@ -37,15 +30,15 @@ void test_initialize()
     NULL                               // prev
   };
 
+  mex_InitInfAndNan();
   mexFunctionCreateRootTLS();
   emlrtBreakCheckR2012bFlagVar = emlrtGetBreakCheckFlagAddressR2012b();
   st.tls = emlrtRootTLSGlobal;
   emlrtClearAllocCountR2012b(&st, false, 0U, 0);
   emlrtEnterRtStackR2012b(&st);
+  emlrtLicenseCheckR2012b(&st, "Signal_Blocks", 2);
   emlrtLicenseCheckR2012b(&st, "Neural_Network_Toolbox", 2);
-  if (emlrtFirstTimeR2012b(emlrtRootTLSGlobal)) {
-    test_once();
-  }
+  emlrtFirstTimeR2012b(emlrtRootTLSGlobal);
 }
 
 // End of code generation (test_initialize.cpp)

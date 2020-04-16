@@ -19,25 +19,30 @@
 #include "mex.h"
 #include "emlrt.h"
 #include "rtwtypes.h"
-#include "omp.h"
 #include "test_types.h"
 
 // Variable Declarations
 extern emlrtCTX emlrtRootTLSGlobal;
-extern omp_lock_t emlrtLockGlobal;
-extern omp_nest_lock_t emlrtNestLockGlobal;
 extern emlrtContext emlrtContextGlobal;
-extern emlrtRSInfo b_emlrtRSI;
-extern emlrtRSInfo c_emlrtRSI;
-extern emlrtRSInfo f_emlrtRSI;
-extern emlrtRSInfo g_emlrtRSI;
-extern emlrtRSInfo h_emlrtRSI;
 extern emlrtRSInfo i_emlrtRSI;
 extern emlrtRSInfo j_emlrtRSI;
 extern emlrtRSInfo k_emlrtRSI;
 extern emlrtRSInfo l_emlrtRSI;
 extern emlrtRSInfo m_emlrtRSI;
-
-#define MAX_THREADS                    omp_get_max_threads()
+extern emlrtRSInfo n_emlrtRSI;
+extern emlrtRSInfo o_emlrtRSI;
+extern emlrtRSInfo p_emlrtRSI;
+extern emlrtRSInfo q_emlrtRSI;
+extern emlrtRSInfo y_emlrtRSI;
+extern emlrtRSInfo ab_emlrtRSI;
+extern emlrtRSInfo bb_emlrtRSI;
+extern emlrtRSInfo cb_emlrtRSI;
+extern emlrtRSInfo db_emlrtRSI;
+extern emlrtRSInfo ib_emlrtRSI;
+extern emlrtRSInfo jb_emlrtRSI;
+extern emlrtRSInfo kb_emlrtRSI;
+extern emlrtRSInfo lb_emlrtRSI;
+extern emlrtRSInfo mb_emlrtRSI;
+extern emlrtRSInfo nb_emlrtRSI;
 
 // End of code generation (test_data.h)

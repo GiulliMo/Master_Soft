@@ -11,8 +11,10 @@
 
 // Include files
 #include "test_terminate.h"
-#include "DeepLearningNetwork.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
 #include "_coder_test_mex.h"
+#include "matlabCodegenHandle.h"
 #include "rt_nonfinite.h"
 #include "test.h"
 #include "test_data.h"
@@ -28,7 +30,6 @@ void test_atexit()
   mexFunctionCreateRootTLS();
   st.tls = emlrtRootTLSGlobal;
   emlrtEnterRtStackR2012b(&st);
-  test_init();
   emlrtLeaveRtStackR2012b(&st);
   emlrtDestroyRootTLS(&emlrtRootTLSGlobal);
   emlrtExitTimeCleanup(&emlrtContextGlobal);

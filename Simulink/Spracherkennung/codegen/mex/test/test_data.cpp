@@ -11,13 +11,13 @@
 
 // Include files
 #include "test_data.h"
+#include "DAHostLib_rtw.h"
+#include "HostLib_Audio.h"
 #include "rt_nonfinite.h"
 #include "test.h"
 
 // Variable Definitions
 emlrtCTX emlrtRootTLSGlobal = NULL;
-omp_lock_t emlrtLockGlobal;
-omp_nest_lock_t emlrtNestLockGlobal;
 emlrtContext emlrtContextGlobal = { true,// bFirstTime
   false,                               // bInitialized
   131594U,                             // fVersionInfo
@@ -25,60 +25,109 @@ emlrtContext emlrtContextGlobal = { true,// bFirstTime
   "test",                              // fFunctionName
   NULL,                                // fRTCallStack
   false,                               // bDebugMode
-  { 837580427U, 366578640U, 3423171347U, 1296972372U },// fSigWrd
+  { 2784685692U, 4214335806U, 1942224668U, 3111102194U },// fSigWrd
   NULL                                 // fSigMem
 };
 
-emlrtRSInfo b_emlrtRSI = { 9,          // lineNo
-  "test",                              // fcnName
-  "/home/alf/Schreibtisch/Master_Soft/Simulink/Spracherkennung/test.m"// pathName 
+emlrtRSInfo i_emlrtRSI = { 1,          // lineNo
+  "audioDeviceReader/get.SamplesPerFrame",// fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/audio/audio/compiled/audioDeviceReader.p"// pathName 
 };
 
-emlrtRSInfo c_emlrtRSI = { 7,          // lineNo
-  "test",                              // fcnName
-  "/home/alf/Schreibtisch/Master_Soft/Simulink/Spracherkennung/test.m"// pathName 
+emlrtRSInfo j_emlrtRSI = { 1,          // lineNo
+  "System/System",                     // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/System.p"// pathName 
 };
 
-emlrtRSInfo f_emlrtRSI = { 444,        // lineNo
-  "resizeAlongDim",                    // fcnName
-  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/images/imresize.m"// pathName 
+emlrtRSInfo k_emlrtRSI = { 1,          // lineNo
+  "SystemProp/clearTunablePropertyChanged",// fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/SystemProp.p"// pathName 
 };
 
-emlrtRSInfo g_emlrtRSI = { 16,         // lineNo
-  "sub2ind",                           // fcnName
-  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/elmat/sub2ind.m"// pathName
+emlrtRSInfo l_emlrtRSI = { 1,          // lineNo
+  "SystemCore/release",                // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/SystemCore.p"// pathName 
 };
 
-emlrtRSInfo h_emlrtRSI = { 457,        // lineNo
-  "resizeAlongDim",                    // fcnName
-  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/images/imresize.m"// pathName 
+emlrtRSInfo m_emlrtRSI = { 30,         // lineNo
+  "AsyncBuffercg/AsyncBuffercg",       // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/dsp/dsp/+dsp/+private/AsyncBuffercg.m"// pathName 
 };
 
-emlrtRSInfo i_emlrtRSI = { 466,        // lineNo
-  "resizeAlongDim",                    // fcnName
-  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/images/imresize.m"// pathName 
+emlrtRSInfo n_emlrtRSI = { 31,         // lineNo
+  "AsyncBuffercg",                     // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/dsp/dsp/+dsp/+private/AsyncBuffercg.m"// pathName 
 };
 
-emlrtRSInfo j_emlrtRSI = { 69,         // lineNo
+emlrtRSInfo o_emlrtRSI = { 176,        // lineNo
+  "AsyncBuffercgHelper/AsyncBuffercgHelper",// fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/dsp/dsp/+dsp/+private/AsyncBuffercgHelper.m"// pathName 
+};
+
+emlrtRSInfo p_emlrtRSI = { 1,          // lineNo
+  "SystemProp/SystemProp",             // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/SystemProp.p"// pathName 
+};
+
+emlrtRSInfo q_emlrtRSI = { 1,          // lineNo
+  "SystemCore/SystemCore",             // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/SystemCore.p"// pathName 
+};
+
+emlrtRSInfo y_emlrtRSI = { 28,         // lineNo
+  "colon",                             // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/ops/colon.m"// pathName
+};
+
+emlrtRSInfo ab_emlrtRSI = { 81,        // lineNo
+  "colon",                             // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/ops/colon.m"// pathName
+};
+
+emlrtRSInfo bb_emlrtRSI = { 126,       // lineNo
+  "eml_integer_colon_dispatcher",      // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/ops/colon.m"// pathName
+};
+
+emlrtRSInfo cb_emlrtRSI = { 149,       // lineNo
+  "eml_signed_integer_colon",          // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/ops/colon.m"// pathName
+};
+
+emlrtRSInfo db_emlrtRSI = { 239,       // lineNo
+  "integer_colon_length",              // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/eml/lib/matlab/ops/colon.m"// pathName
+};
+
+emlrtRSInfo ib_emlrtRSI = { 69,        // lineNo
   "loadDeepLearningNetwork",           // fcnName
   "/usr/local/MATLAB/R2020a/toolbox/shared/coder/coder/lib/+coder/loadDeepLearningNetwork.m"// pathName 
 };
 
-emlrtRSInfo k_emlrtRSI = { 1,          // lineNo
+emlrtRSInfo jb_emlrtRSI = { 1,         // lineNo
   "loadDeepLearningNetwork",           // fcnName
   "/usr/local/MATLAB/R2020a/toolbox/shared/dlcoder_base/dlcoder_base/+coder/+internal/loadDeepLearningNetwork.p"// pathName 
 };
 
-emlrtRSInfo l_emlrtRSI = { 1,          // lineNo
-  "DeepLearningNetwork/callPredict",   // fcnName
+emlrtRSInfo kb_emlrtRSI = { 1,         // lineNo
+  "DeepLearningNetwork/callSetup",     // fcnName
   "/home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/shared/dlcoder_base/supportpackages/shared_dl_targets/+coder/@DeepLear"
   "ningNetwork/DeepLearningNetwork.p"  // pathName
 };
 
-emlrtRSInfo m_emlrtRSI = { 1,          // lineNo
-  "DeepLearningNetwork/predict",       // fcnName
-  "/home/alf/Documents/MATLAB/SupportPackages/R2020a/toolbox/shared/dlcoder_base/supportpackages/shared_dl_targets/+coder/@DeepLear"
-  "ningNetwork/predict.p"              // pathName
+emlrtRSInfo lb_emlrtRSI = { 1,         // lineNo
+  "matlabCodegenHandle/matlabCodegenDestructor",// fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/coder/coder/+coder/+internal/matlabCodegenHandle.p"// pathName 
+};
+
+emlrtRSInfo mb_emlrtRSI = { 1,         // lineNo
+  "SystemCore/delete",                 // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/SystemCore.p"// pathName 
+};
+
+emlrtRSInfo nb_emlrtRSI = { 1,         // lineNo
+  "SystemCore/releaseWrapper",         // fcnName
+  "/usr/local/MATLAB/R2020a/toolbox/shared/system/coder/+matlab/+system/+coder/SystemCore.p"// pathName 
 };
 
 // End of code generation (test_data.cpp)
