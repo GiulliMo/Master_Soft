@@ -26,5 +26,6 @@
 // Function Declarations
 CODEGEN_EXPORT_SYM void SECodegen(SECodegenStackData *SD, const emlrtStack *sp,
   const real_T y[16000], real32_T out[12]);
+void SECodegen_init();
 
 // End of code generation (SECodegen.h)

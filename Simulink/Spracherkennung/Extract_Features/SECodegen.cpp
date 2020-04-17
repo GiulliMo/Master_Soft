@@ -22,6 +22,8 @@
 #include <string.h>
 
 // Variable Definitions
+static b_commandNet_0 trainedNet;
+static boolean_T trainedNet_not_empty;
 static emlrtRSInfo emlrtRSI = { 15,    // lineNo
   "SECodegen",                         // fcnName
   "/home/alf/Schreibtisch/Master_Soft/Simulink/Spracherkennung/Extract_Features/SECodegen.m"// pathName 
@@ -144,8 +146,8 @@ static emlrtBCInfo d_emlrtBCI = { -1,  // iFirst
 void SECodegen(SECodegenStackData *SD, const emlrtStack *sp, const real_T y
                [16000], real32_T out[12])
 {
-  b_commandNet_0 trainedNet;
   real_T CF2[50];
+  b_commandNet_0 *iobj_0;
   coder::array<creal_T, 2U> unusedU0;
   real_T F_data[512];
   int32_T F_size[1];
@@ -174,12 +176,17 @@ void SECodegen(SECodegenStackData *SD, const emlrtStack *sp, const real_T y
   emlrtHeapReferenceStackEnterFcnR2012b(sp);
 
   //  Rate?
-  st.site = &g_emlrtRSI;
-  b_st.site = &h_emlrtRSI;
-  DeepLearningNetwork_setup(&trainedNet);
+  if (!trainedNet_not_empty) {
+    st.site = &g_emlrtRSI;
+    iobj_0 = &trainedNet;
+    b_st.site = &h_emlrtRSI;
+    DeepLearningNetwork_setup(iobj_0);
+    trainedNet_not_empty = true;
 
-  //  beinhaltet trainedNet und wird hier in das Workspace geladen
-  // load('left_test.mat')
+    //  beinhaltet trainedNet und wird hier in das Workspace geladen
+    // load('left_test.mat')
+  }
+
   st.site = &emlrtRSI;
   designAuditoryFilterBank(SD, &st, SD->f3.filterBank2, CF2);
 
@@ -293,6 +300,11 @@ void SECodegen(SECodegenStackData *SD, const emlrtStack *sp, const real_T y
   }
 
   emlrtHeapReferenceStackLeaveFcnR2012b(sp);
+}
+
+void SECodegen_init()
+{
+  trainedNet_not_empty = false;
 }
 
 // End of code generation (SECodegen.cpp)

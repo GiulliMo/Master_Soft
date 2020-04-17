@@ -18,7 +18,16 @@
 #include "rt_nonfinite.h"
 #include <string.h>
 
+// Function Declarations
+static void SECodegen_once();
+
 // Function Definitions
+static void SECodegen_once()
+{
+  mex_InitInfAndNan();
+  SECodegen_init();
+}
+
 void SECodegen_initialize()
 {
   emlrtStack st = { NULL,              // site
@@ -26,7 +35,6 @@ void SECodegen_initialize()
     NULL                               // prev
   };
 
-  mex_InitInfAndNan();
   mexFunctionCreateRootTLS();
   emlrtBreakCheckR2012bFlagVar = emlrtGetBreakCheckFlagAddressR2012b();
   st.tls = emlrtRootTLSGlobal;
@@ -34,7 +42,9 @@ void SECodegen_initialize()
   emlrtEnterRtStackR2012b(&st);
   emlrtLicenseCheckR2012b(&st, "Neural_Network_Toolbox", 2);
   emlrtLicenseCheckR2012b(&st, "Signal_Toolbox", 2);
-  emlrtFirstTimeR2012b(emlrtRootTLSGlobal);
+  if (emlrtFirstTimeR2012b(emlrtRootTLSGlobal)) {
+    SECodegen_once();
+  }
 }
 
 // End of code generation (SECodegen_initialize.cpp)

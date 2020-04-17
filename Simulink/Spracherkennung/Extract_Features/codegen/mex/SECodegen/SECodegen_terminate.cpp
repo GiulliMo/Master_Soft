@@ -29,6 +29,7 @@ void SECodegen_atexit()
   mexFunctionCreateRootTLS();
   st.tls = emlrtRootTLSGlobal;
   emlrtEnterRtStackR2012b(&st);
+  SECodegen_init();
   emlrtLeaveRtStackR2012b(&st);
   emlrtDestroyRootTLS(&emlrtRootTLSGlobal);
   emlrtExitTimeCleanup(&emlrtContextGlobal);
