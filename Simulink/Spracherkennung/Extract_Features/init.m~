@@ -48,7 +48,8 @@ tic;
      
   % Compute mel spectrogram
   SBark = filterBank2 * S;
-    
+  
+  
   unNorm = 2/(sum(win)^2);
   features = SBark/unNorm;
   epsil = 1e-6;
@@ -57,8 +58,6 @@ tic;
   features = log10(features + epsil)';
  
   [YPredicted,probs] = classify(trainedNet,features,'ExecutionEnvironment','cpu');
-  
-  YPredicted
   
  end
   
