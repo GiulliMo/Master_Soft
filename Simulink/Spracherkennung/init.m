@@ -1,3 +1,20 @@
+%****************************************************************
+%        Hochschule Hamm-Lippstadt / HS Bochum                  *
+%****************************************************************
+% Modul			  : Masterarbeit                                *
+%				                            					*
+% Datum           : 16-April-2020                               *
+%                                                               *
+% Funktion        : Compute CNN                                 *
+%                                                               *
+% Implementation  : MATLAB R2018b                 			    *
+%                                                               *
+% Author		  : Hannes Dittmann            				    *
+%                                                               *
+% Bemerkung       : Skript zum haendischen durchrechnen eines CNN
+% Letzte Änderung : April 16 2020                                *
+%                                                               *
+%***************************************************************/
 
 clear load;
 clear all;
@@ -5,68 +22,115 @@ close all;
 
 load('trained_net_daten.mat');
 load('spec.mat');
+load('spectrum.mat');
 load('commandNet.mat');
+%load('scope.mat');
 
 Filter = ones(3,3);
 %1. layer
-A = spec;
-A = convolutional(A,Filter,conv1_weights,conv1_Bias,12);
+A = inputNormalization(spec,mean);
+A = convolutional(A,Filter,conv1_weights,conv1_Bias,1,12);
+
 %2.layer
+
 A = batchnormalize(A,batch1_mu,batch1_offset,batch1_scale,batch1_sigma,epsilon);
+
 %3.layer
+
 A = relu(A);
+
 %4.layer
+
 A = padding(A,[0,1,0,0]);
 A = padding(A,[0,0,0,1]);
 A = maxPoolingSelf(A,[3,3],2);
+
 % %5.layer
-A = convolutional(A,Filter,conv2_weights,conv2_bias,24);
-% % %6.layer
+
+A = convolutional(A,Filter,conv2_weights,conv2_bias,1,24);
+
+%6.layer
+
 A=batchnormalize(A,batch2_mu,batch2_offset,batch2_scale,batch2_sigma,epsilon);
-% %7.layer
+
+%7.layer
+
 A=relu(A);
-% % %8.layer
+
+%8.layer
+
 A = padding(A,[1,0,0,0]);
 A = padding(A,[0,1,0,0]);
 A = padding(A,[0,0,1,0]);
 A = padding(A,[0,0,0,1]);
 A = maxPoolingSelf(A,[3,3],2);
+
 %9.layer
-A = convolutional(A,Filter,conv3_weights,conv3_bias,48);
-% % %10. layer
+
+A = convolutional(A,Filter,conv3_weights,conv3_bias,1,48);
+
+%10. layer
+
 A = batchnormalize(A,batch3_mu,batch3_offset,batch3_scale,batch3_sigma,epsilon);
-% %11. layer
+
+%11. layer
+
 A=relu(A);
-% % %12. layer
+
+%12. layer
+
 A = padding(A,[1,0,0,0]);
 A = padding(A,[0,1,0,0]);
 A = padding(A,[0,0,1,0]); 
 A = padding(A,[0,0,0,1]); 
 A = maxPoolingSelf(A,[3,3],2);
-% % % 13. layer
-A= convolutional(A,Filter,conv4_weights,conv4_bias,48);
+
+% 13. layer
+
+A= convolutional(A,Filter,conv4_weights,conv4_bias,1,48);
+
 % 14. layer
+
 A=batchnormalize(A,batch4_mu,batch4_offset,batch4_scale,batch4_sigma,epsilon);
-% % %15. layer 
+
+% 15. layer 
+
 A=relu(A);
+
 %16. layer 
-A = convolutional(A,Filter,conv5_weights,conv5_bias,48);
-% % % %17. layer 
+
+A = convolutional(A,Filter,conv5_weights,conv5_bias,1,48);
+
+%17. layer 
+
 A=batchnormalize(A,batch5_mu,batch5_offset,batch5_scale,batch5_sigma,epsilon);
-% % %18. Layer
+
+%18. Layer
+
 A=relu(A);
-% % % %19.Layer
+
+%19.Layer
+
 A=maxPoolingSelf13x1(A,[13,1],1);
-% % % 20.Layer
+
+% 20.Layer
+
 A=reshape(A,[1,1,336]);
 A=reshape(A,[1,336]);
 A=fully_connected(A,fully_connected_weights,fully_connected_bias);
 A=softmaxHD(A);
-% % 
 
 
 %% Functions Neuronales Netzwerk
 
+
+function A = inputNormalization(A,mean)
+
+%zeroscore 
+
+A = A - mean;
+
+end
 
 function A = relu(A)
 
@@ -97,9 +161,10 @@ end
 end
 
 
-
 function A = padding(A,padding) % eingabe padding: [1 1 1 1] top bottom left right
 % fuer 1 1 1 1 padarray(A,[1,1])
+% nicht alle faelle des Paddings abgedeckt
+
     [height,width,NumChannels]=size(A);
      
     checksum = padding(1)*2^3+padding(2)*2^2+padding(3)*2^1+padding(4)*2^0; % 1 1 1 1 = 2^3+2^2+2^1+2^0
@@ -143,49 +208,74 @@ function A = padding(A,padding) % eingabe padding: [1 1 1 1] top bottom left rig
     A=A_dach;
 end
 
-function B = convolutional(A,filter,weights,bias,NumFilters)
 
-   C = conv2(A(:,:,1),(filter.*weights(:,:,1,1)),'same');
+function C = convolutional(A,filter,weights,bias,stride,NumFilters)
    
-   [height,width]=size(C);
-   
+   % Funktion fuer Faltung mit 3x3 Filter und Stride 1
+   % Padding wird in der Funktion durchgefuehrt, nicht vorher!
+
    [a,b,NumChannelsWeights,NumChannelsOutput]=size(weights);
-   [c,d,NumChannelsInput]=size(A);
- 
-    B = zeros(height,width,NumChannelsOutput);
-    
+  
+   [heightInput,widthInput,NumChannelsInput]=size(A);
+   
+   C = zeros(heightInput,widthInput,NumChannelsOutput);
+   
+   A = padarray(A,[1,1]); % Auffüllen mit Nullen um groesse zu behalten ==> Input = Output
+  
             for i=1:NumFilters % numFilter ==> numChannels bei Ausgabe
              
-                     for l=1:NumChannelsWeights
+                C(:,:,i)=C(:,:,i)+bias(:,:,i);
+                
+                 for l=1:NumChannelsInput % Channels =0 Anzahl der GEwichtugns Channel
+                         
+                         D = A(:,:,l);
+                         B = zeros(heightInput,widthInput,NumChannelsWeights);
+                         [heightComputing,widthComputing,NumChannelsInput] = size(A);
+                         
+                         for k=1:stride:heightComputing-2 %-2 also Abzug fuer vorheriges padding ==> Modus Same
+           
+                                                          
+                                 for j=1:stride:widthComputing-2
              
-                                      
-                         B(:,:,i) = B(:,:,i)+conv2(A(:,:,l),filter.*weights(:,:,l,i),'same');
-      
-                                   
-                     end
-               
-                B(:,:,i) = B(:,:,i) + bias(:,:,i);
+                                     % region of interest fur dot produkt
+                                     roi = [D((j-1)*heightComputing+k) D((j)*heightComputing+k) D((j+1)*heightComputing+k) ; D((j-1)*heightComputing+k+1) D((j)*heightComputing+k+1) D((j+1)*heightComputing+k+1) ; D((j-1)*heightComputing+k+2) D((j)*heightComputing+k+2) D((j+1)*heightComputing+k+2)];
+                                     kernel = filter.*weights(:,:,l,i); % Kernel
+                                     B(k,j,l) = sum(dot(roi,kernel,2)); % Faltung
+                                    
+                                
+                                 end
+                                 
+                         end
+                         
+                         C(:,:,i) = C(:,:,i)+B(:,:,l); %% Addition der gefalteten Inputs
+                                                       
+                 end
+                 
             end
-             
+                        
 end
 
 
-function A = batchnormalize(A,mu,offset,scale,sigma,epsilon)
+function A = batchnormalize(A,mu,offset,batch_scale,sigma,epsilon)
     
+  % Funktion fuer Batchnorm
+
+
   [height,width,NumChannels]=size(A);
   
+  
          for k=1:NumChannels
-             
-            for i=1:height
+
+           for i=1:height
                 
-                for j=1:width
-                    
-                            x_dach = (A(i,j,k) - mu(:,:,k)) / (sqrt(sigma(:,:,k)^2+epsilon));
-                            A(i,j,k)=scale(:,:,k)*x_dach + offset(:,:,k);
+               for j=1:width
                             
-                end
+                            x_dach = (A(i,j,k) - mu(:,:,k)) / (sqrt(sigma(:,:,k)+epsilon)); % Varainz = trained Mean ==> nicht mehr quadrieren!!!
+                            A(i,j,k)= batch_scale(:,:,k).*x_dach + offset(:,:,k); 
+                            
+               end
                 
-            end
+           end
             
          end
         
@@ -194,6 +284,8 @@ function A = batchnormalize(A,mu,offset,scale,sigma,epsilon)
     
 function A = maxPooling2D(A,XY,stride)
     
+
+
 [heightInput,widthInput,NumChannels]=size(A);
 C = sepblockfun(A(:,:,1),[XY(1),XY(2)],'max');
 [height,width]=size(C);
@@ -231,6 +323,8 @@ end
 
 function A = dropout(A,prob)
 
+% Dropout wird fuer trainiertes Netz nicht verwendet
+
 [height,width,NumChannels]=size(A);
 
         for k=1:NumChannels
@@ -265,7 +359,7 @@ for i=1:height
     
     for k=1:width
         
-        B(i,:)=B(i,:) + A(k)*weights(i,k);
+        B(i,:)=B(i,:)+A(k)*weights(i,k);
         
     end
     
@@ -328,11 +422,6 @@ end
 
 
 
-
-
-
-
-
 B=C;
 
 [heightOutput,widthOutput,NumChannels]=size(B);
@@ -367,7 +456,7 @@ end
 
 function C = maxPoolingSelf13x1(A,kernel,stride)
 
-% EIngangsmatrix muss durch kernel teilbar sein
+% Eingangsmatrix muss durch kernel teilbar sein
 % hier fuer 13 x 1 kernel
 % region of interest beachten
  
@@ -390,4 +479,3 @@ C=zeros(height/kernel(1),width,NumChannels); % Array mit groesse nach pooling
     
 end
 end
-
