@@ -1,0 +1,79 @@
+# CompilerName=gcc
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/glnxa64
+matlabdir = /usr/local/MATLAB/R2020a
+startdir = /home/alf/Schreibtisch/Master_Soft/Simulink/Spracherkennung/Extract_Features
+
+# Toolchain information
+cc = gcc
+cxx = /usr/bin/g++
+linker = gcc
+linkerxx = /usr/bin/g++
+
+cflags =  -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -fvisibility=hidden -std=c99 -I "$root" -I "$startdir" -I "$matlabdir/extern/include/mkldnn" -I "$root/interface" -I "$matlabdir/extern/include" -I "." -DMODEL=SECodegen_mex -DMW_NEEDS_VERSION_H -c -fopenmp -DOMPLIBNAME="$matlabdir/sys/os/glnxa64/libiomp5.so" 
+
+cxxflags =  -fexceptions -fPIC -fno-omit-frame-pointer -pthread -std=c++11 -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -fvisibility=hidden -std=c++11 -I "$root" -I "$startdir" -I "$matlabdir/extern/include/mkldnn" -I "$root/interface" -I "$matlabdir/extern/include" -I "." -DMODEL=SECodegen_mex -DMW_NEEDS_VERSION_H -c -fopenmp -DOMPLIBNAME="$matlabdir/sys/os/glnxa64/libiomp5.so" 
+
+ldflags =  -pthread -Wl,--no-undefined  -shared -Wl,--as-needed -Wl,-rpath-link,$matlabdir/bin/glnxa64 -L"$matlabdir/bin/glnxa64" -Wl,-rpath-link,$matlabdir/extern/bin/glnxa64 -L"$matlabdir/extern/bin/glnxa64" -lMatlabDataArray -lmx -lmex -lmat -lm -lstdc++  -o SECodegen_mex.mexa64 -L"$matlabdir/bin/glnxa64" -L"$matlabdir/sys/os/glnxa64" -lmwmkldnn -liomp5 -lmwblas -lemlrt -lcovrt -lut -lmwmathutil -fPIC -L"$matlabdir/sys/os/glnxa64" -liomp5
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker $in $ldflags
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/MWElementwiseAffineLayer.o : cxx $root/MWElementwiseAffineLayer.cpp
+build $builddir/MWFusedConvReLULayer.o : cxx $root/MWFusedConvReLULayer.cpp
+build $builddir/cnn_api.o : cxx $root/cnn_api.cpp
+build $builddir/MWCNNLayerImpl.o : cxx $root/MWCNNLayerImpl.cpp
+build $builddir/MWElementwiseAffineLayerImpl.o : cxx $root/MWElementwiseAffineLayerImpl.cpp
+build $builddir/MWFusedConvReLULayerImpl.o : cxx $root/MWFusedConvReLULayerImpl.cpp
+build $builddir/MWTargetNetworkImpl.o : cxx $root/MWTargetNetworkImpl.cpp
+build $builddir/MWMkldnnUtils.o : cxx $root/MWMkldnnUtils.cpp
+build $builddir/rt_nonfinite.o : cxx $root/rt_nonfinite.cpp
+build $builddir/SECodegen_mexutil.o : cxx $root/SECodegen_mexutil.cpp
+build $builddir/SECodegen_data.o : cxx $root/SECodegen_data.cpp
+build $builddir/SECodegen_initialize.o : cxx $root/SECodegen_initialize.cpp
+build $builddir/SECodegen_terminate.o : cxx $root/SECodegen_terminate.cpp
+build $builddir/SECodegen.o : cxx $root/SECodegen.cpp
+build $builddir/eml_int_forloop_overflow_check.o : cxx $root/eml_int_forloop_overflow_check.cpp
+build $builddir/iseven.o : cxx $root/iseven.cpp
+build $builddir/DeepLearningNetwork.o : cxx $root/DeepLearningNetwork.cpp
+build $builddir/classify.o : cxx $root/classify.cpp
+build $builddir/predict.o : cxx $root/predict.cpp
+build $builddir/designAuditoryFilterBank.o : cxx $root/designAuditoryFilterBank.cpp
+build $builddir/bark2hz.o : cxx $root/bark2hz.cpp
+build $builddir/designMelFilterBank.o : cxx $root/designMelFilterBank.cpp
+build $builddir/spectrogram.o : cxx $root/spectrogram.cpp
+build $builddir/pspectrogram.o : cxx $root/pspectrogram.cpp
+build $builddir/welchparse.o : cxx $root/welchparse.cpp
+build $builddir/strcmp.o : cxx $root/strcmp.cpp
+build $builddir/psdoptions.o : cxx $root/psdoptions.cpp
+build $builddir/ifWhileCond.o : cxx $root/ifWhileCond.cpp
+build $builddir/ismember.o : cxx $root/ismember.cpp
+build $builddir/getSTFTColumns.o : cxx $root/getSTFTColumns.cpp
+build $builddir/computeDFT.o : cxx $root/computeDFT.cpp
+build $builddir/psdfreqvec.o : cxx $root/psdfreqvec.cpp
+build $builddir/computepsd.o : cxx $root/computepsd.cpp
+build $builddir/indexShapeCheck.o : cxx $root/indexShapeCheck.cpp
+build $builddir/circshift.o : cxx $root/circshift.cpp
+build $builddir/mtimes.o : cxx $root/mtimes.cpp
+build $builddir/_coder_SECodegen_api.o : cxx $root/interface/_coder_SECodegen_api.cpp
+build $builddir/_coder_SECodegen_mex.o : cxx $root/interface/_coder_SECodegen_mex.cpp
+build $builddir/_coder_SECodegen_info.o : cxx $root/interface/_coder_SECodegen_info.cpp
+build $builddir/cpp_mexapi_version.o : cxx $matlabdir/extern/version/cpp_mexapi_version.cpp
+
+# Link
+build $root/SECodegen_mex.mexa64 : linkxx $builddir/MWElementwiseAffineLayer.o $builddir/MWFusedConvReLULayer.o $builddir/cnn_api.o $builddir/MWCNNLayerImpl.o $builddir/MWElementwiseAffineLayerImpl.o $builddir/MWFusedConvReLULayerImpl.o $builddir/MWTargetNetworkImpl.o $builddir/MWMkldnnUtils.o $builddir/rt_nonfinite.o $builddir/SECodegen_mexutil.o $builddir/SECodegen_data.o $builddir/SECodegen_initialize.o $builddir/SECodegen_terminate.o $builddir/SECodegen.o $builddir/eml_int_forloop_overflow_check.o $builddir/iseven.o $builddir/DeepLearningNetwork.o $builddir/classify.o $builddir/predict.o $builddir/designAuditoryFilterBank.o $builddir/bark2hz.o $builddir/designMelFilterBank.o $builddir/spectrogram.o $builddir/pspectrogram.o $builddir/welchparse.o $builddir/strcmp.o $builddir/psdoptions.o $builddir/ifWhileCond.o $builddir/ismember.o $builddir/getSTFTColumns.o $builddir/computeDFT.o $builddir/psdfreqvec.o $builddir/computepsd.o $builddir/indexShapeCheck.o $builddir/circshift.o $builddir/mtimes.o $builddir/_coder_SECodegen_api.o $builddir/_coder_SECodegen_mex.o $builddir/_coder_SECodegen_info.o $builddir/cpp_mexapi_version.o 
