@@ -1,0 +1,2 @@
+3dslam_alfons:iai_kinect2/iai_kinect2:iai_kinect2/kinect2_bridge:iai_kinect2/kinect2_calibration:iai_kinect2/kinect2_registration:iai_kinect2/kinect2_viewer:ira_laser_tools:loc_alfons:ralfmain:slam_alfons
+-DCATKIN_DEVEL_PREFIX=/home/alf/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/alf/catkin_ws/install -G Unix Makefiles

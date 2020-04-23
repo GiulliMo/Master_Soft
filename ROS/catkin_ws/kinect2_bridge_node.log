@@ -1,0 +1,53 @@
+[sudo] password for alf: [0m[ INFO] [32m[Kinect2Bridge::initialize] [0mparameter:
+        base_name: [36mkinect2[0m
+           sensor: [36mdefault[0m
+        fps_limit: [36m-1[0m
+       calib_path: [36m/home/alf/catkin_ws/src/iai_kinect2/kinect2_bridge/data/[0m
+          use_png: [36mfalse[0m
+     jpeg_quality: [36m90[0m
+        png_level: [36m1[0m
+     depth_method: [36mopengl[0m
+     depth_device: [36m-1[0m
+       reg_method: [36mdefault[0m
+       reg_device: [36m-1[0m
+        max_depth: [36m12[0m
+        min_depth: [36m0.1[0m
+       queue_size: [36m2[0m
+ bilateral_filter: [36mtrue[0m
+edge_aware_filter: [36mtrue[0m
+       publish_tf: [36mfalse[0m
+     base_name_tf: [36mkinect2[0m
+   worker_threads: [36m4[0m[0m[0m
+[Info] [Freenect2Impl] enumerating devices...
+[Info] [Freenect2Impl] 15 usb devices connected
+[Info] [Freenect2Impl] found valid Kinect v2 @4:3 with serial 004199564147
+[Info] [Freenect2Impl] found valid Kinect v2 @2:3 with serial 004077364147
+[Info] [Freenect2Impl] found 2 devices
+[0m[ INFO] [32m[Kinect2Bridge::initDevice] [0mKinect2 devices found: [0m[0m
+[0m[ INFO] [32m[Kinect2Bridge::initDevice] [0m  0: [36m004199564147[33m (selected)[0m[0m[0m
+[0m[ INFO] [32m[Kinect2Bridge::initDevice] [0m  1: [36m004077364147[0m[0m[0m
+[Info] [Freenect2DeviceImpl] opening...
+[Info] [Freenect2DeviceImpl] transfer pool sizes rgb: 20*16384 ir: 60*8*33792
+[Info] [Freenect2DeviceImpl] opened
+[0m[ INFO] [32m[Kinect2Bridge::initDevice] [0mstarting kinect2[0m[0m
+[Info] [Freenect2DeviceImpl] starting...
+[Info] [Freenect2DeviceImpl] submitting rgb transfers...
+[Info] [Freenect2DeviceImpl] submitting depth transfers...
+[Info] [Freenect2DeviceImpl] started
+[0m[ INFO] [32m[Kinect2Bridge::initDevice] [0mdevice serial: [36m004199564147[0m[0m[0m
+[0m[ INFO] [32m[Kinect2Bridge::initDevice] [0mdevice firmware: [36m2.3.3913.0[0m[0m[0m
+[Info] [Freenect2DeviceImpl] stopping...
+[Info] [Freenect2DeviceImpl] canceling rgb transfers...
+[Info] [Freenect2DeviceImpl] canceling depth transfers...
+[Info] [Freenect2DeviceImpl] stopped
+[33m[ WARN] [33m[Kinect2Bridge::initCalibration] [33musing sensor defaults for color intrinsic parameters.[0m[0m
+[33m[ WARN] [33m[Kinect2Bridge::initCalibration] [33musing sensor defaults for ir intrinsic parameters.[0m[0m
+[33m[ WARN] [33m[Kinect2Bridge::initCalibration] [33musing defaults for rotation and translation.[0m[0m
+[33m[ WARN] [33m[Kinect2Bridge::initCalibration] [33musing defaults for depth shift.[0m[0m
+[0m[ INFO] [32m[DepthRegistration::New] [0mUsing CPU registration method![0m[0m
+[0m[ INFO] [32m[DepthRegistration::New] [0mUsing CPU registration method![0m[0m
+[0m[ INFO] [32m[Kinect2Bridge::main] [0mwaiting for clients to connect[0m[0m
+[0m[ INFO] [32m[Kinect2Bridge::callbackStatus] [0mclient connected. starting device...[0m[0m
+[Info] [Freenect2DeviceImpl] starting...
+[Error] [protocol::UsbControl] failed to set video transfer function state! LIBUSB_ERROR_IO Input/Output Error. Try debugging with environment variable: export LIBUSB_DEBUG=3 .
+[31m[ERROR] [31m[Kinect2Bridge::callbackStatus] [31mcould not start device![0m[0m

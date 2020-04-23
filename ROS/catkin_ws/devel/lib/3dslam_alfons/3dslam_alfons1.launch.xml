@@ -1,0 +1,26 @@
+<launch>
+
+
+<!--Kamera hinten-->
+
+  <node pkg="nodelet" type="nodelet" name="rgbd_sync1" args="standalone rtabmap_ros/rgbd_sync" output="screen">
+    <remap from="rgb/image"        to="kinect1/qhd/image_color_rect"/>
+    <remap from="depth/image"      to="kinect1/qhd/image_depth_rect"/>
+    <remap from="rgb/camera_info"  to="kinect1/qhd/camera_info"/>
+    <remap from="rgbd_image"       to="rtabmap/rgbd_image0"/> 
+    <param name="approx_sync"       value="true"/> 
+  </node>
+
+<!--Kamera vorne-->
+
+  <node pkg="nodelet" type="nodelet" name="rgbd_sync2" args="standalone rtabmap_ros/rgbd_sync" output="screen">
+    <remap from="rgb/image"        to="kinect2/qhd/image_color_rect"/>
+    <remap from="depth/image"      to="kinect2/qhd/image_depth_rect"/>
+    <remap from="rgb/camera_info"  to="kinect2/qhd/camera_info"/>
+    <remap from="rgbd_image"       to="rtabmap/rgbd_image1"/> 
+    <param name="approx_sync"       value="true"/> 
+  </node>
+
+</launch>
+
+

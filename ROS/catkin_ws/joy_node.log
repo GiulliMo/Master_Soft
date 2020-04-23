@@ -1,0 +1,5 @@
+[31m[ERROR] [1586417505.373551772]: Couldn't open joystick /dev/input/js0. Will retry every second.[0m
+[31m[ERROR] [1586417512.420555492]: Couldn't open joystick force feedback![0m
+[31m[ERROR] [1586417811.380437624]: Connection to joystick device lost unexpectedly. Will reopen.[0m
+[31m[ERROR] [1586417811.380733129]: Couldn't open joystick /dev/input/js0. Will retry every second.[0m
+[31m[ERROR] [1586417862.424537065]: Couldn't open joystick force feedback![0m
