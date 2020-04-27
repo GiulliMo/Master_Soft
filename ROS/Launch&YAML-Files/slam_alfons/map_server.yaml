@@ -1,4 +1,4 @@
-image: /home/alf/static_map.pgm
+image: /home/alf/kinectHector_door.pgm
 resolution: 0.025
 origin: [-12.5, -12.5, 0.0]
 occupied_thresh: 0.65

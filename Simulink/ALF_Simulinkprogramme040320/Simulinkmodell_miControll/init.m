@@ -72,12 +72,12 @@ Imax = 14;                                                                 % max
 
 %% ROS-Operations
 
-% rosshutdown;                                                               %ROS wird heruntergfahren
-% rosinit;                                                                   %ROS wird gestartet
-% 
-% r=rosdevice('alf-desktop','alf','lucky123');                               %Definition des ROS-Master   
-% r.CatkinWorkspace='~/catkin_ws';
-% runNode(r,'joy');                                                          %RALFJoystick_node wird gestartet
+rosshutdown;                                                               %ROS wird heruntergfahren
+rosinit;                                                                   %ROS wird gestartet
+
+r=rosdevice('alf-desktop','alf','lucky123');                               %Definition des ROS-Master   
+r.CatkinWorkspace='~/catkin_ws';
+runNode(r,'joy');                                                          %RALFJoystick_node wird gestartet
 
 
 %% Reglerauslegung
@@ -123,4 +123,4 @@ pwinkel=1/20; %1/20
 pwinkel_vel=-4;
 pwinkel_R=100;                                                             %P-Faktor Winkel Rueckkopplung
 pdrehzahl_R=40;
-nmax=1000;
+nmax=200;
