@@ -1,11 +1,12 @@
 obstacle_range: 2.5
 raytrace_range: 3.0
-footprint: [ [0.0, 0.36], [0.78, 0.36], [0.78, -0.36], [-0.78, -0.36], [-0.78, 0.36] ]
+footprint: [ [0.0, 0.38], [0.75, 0.38], [0.75, -0.29], [-0.78, -0.29], [-0.78, 0.38] ]
 #robot_radius: ir_of_robot
 inflation_radius: 0.8
 
-observation_sources: laser_scan_sensor 
+observation_sources: kinect_sensor_front kinect_sensor_back #laser_scan_sensor #lidar 
 
-laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan_multi, marking: true, clearing: true}
-
-
+#laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan_multi, marking: true, clearing: true}
+kinect_sensor_front: {sensor_frame: cam_front, data_type: LaserScan, topic: scan1, marking: true, clearing: true}
+kinect_sensor_back: {sensor_frame: cam_back, data_type: LaserScan, topic: scan2, marking: true, clearing: true}
+#lidar: {sensor_frame: laser, data_type: LaserScan, topic: scan_multi, marking: true, clearing: true}

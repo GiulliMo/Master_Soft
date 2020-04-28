@@ -18,8 +18,8 @@
 
 <!--RALFMain-->
 
-<!--<node name="ralfmain"  pkg="ralfmain"  type="ralfmain_node" clear_params="true">
-  </node>-->
+<node name="ralfmain"  pkg="ralfmain_slam"  type="ralfmain_slam_node" clear_params="true">
+  </node>
 
 <!--ICP Odometry-->
 
@@ -146,7 +146,7 @@
     <remap from="camera_info" to="kinect2/qhd/camera_info"/>
     <remap from="scan" to="scan2"/>
 	<param name="scan_height" type="int" value="230"/>
-    <param name="range_max" type="double" value="4.0"/>
+    <param name="range_max" type="double" value="5.0"/>
   </node>
 
 
@@ -159,7 +159,7 @@
     <remap from="camera_info" to="kinect1/qhd/camera_info"/>
     <remap from="scan" to="scan1"/>
 	<param name="scan_height" type="int" value="230"/>
-	<param name="range_max" type="double" value="4.0"/>
+	<param name="range_max" type="double" value="5.0"/>
   </node>
 
 <!--Laser Merge-->
