@@ -4,32 +4,14 @@ close all;
 
 
 load('commandNet.mat') % beinhaltet trainedNet und wird hier in das Workspace geladen 
-%load('left_test.mat')
-
+load('left_test.mat')
+%y=audio_data(:,1);
 classificationRate = 20; % Rate?
 fs=16000;
-adr = audioDeviceReader('SampleRate',fs,'SamplesPerFrame',floor(fs/classificationRate)); % stelt das Standartaudiogerät auf die entsprechenden Werte
-audioBuffer = dsp.AsyncBuffer(fs); % auslesen des Audibuffers
 [filterBank2,CF2] = designAuditoryFilterBank(fs,'FFTLength',512,'NumBands',50,"FrequencyScale","bark",'Normalization','none');
 win = hann(400,'periodic');  
-%[y,fs] = audioread('left.wav');
 
-  %y2=audio_data(:,:,1);
-  
 h = figure('Units','normalized','Position',[0.2 0.1 0.6 0.8]);
-
-timeLimit = inf; % Zeit der Ausführung
-
-tic;
-
-    
-  while ishandle(h) && toc < timeLimit
-
-    % Extract audio samples from the audio device and add the samples to
-    % the buffer.
-    x = adr();
-    write(audioBuffer,x);
-    y = read(audioBuffer,fs,fs-adr.SamplesPerFrame);
 
   
   %% Compute spectrogram
@@ -56,14 +38,6 @@ tic;
 % Take the log. 
   features = log10(features + epsil)';
  
-  [YPredicted,probs] = classify(trainedNet,features,'ExecutionEnvironment','cpu');
-  
-  YPredicted
-  
- end
-  
-  SBark2 = ptoPperfreq(SBark,ftoBarks(F));
-
 
 function s = ptoPperfreq(s,f)
 
