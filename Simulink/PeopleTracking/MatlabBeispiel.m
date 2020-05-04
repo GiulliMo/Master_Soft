@@ -1,5 +1,5 @@
 % Load the monoCamera object that contains the camera information.
-d = load('TrackingDemoMonoCameraSensor.mat', 'sensor');
+%d = load('TrackingDemoMonoCameraSensor.mat', 'sensor');
 
 intrinsics2 = cameraIntrinsics([540.6860,479.750],[540.6860,269.7500],[540,960]);
 sensor2 = monoCamera(intrinsics2,1.0,'Yaw',0);
@@ -7,11 +7,14 @@ d2.sensor = sensor2;
 
 d=d2;
 
+sub = rossubscriber('/kinect1/qhd/image_color/compressed')
+
 % Load a pretrained ACF people detector. The ACF detector uses "Aggregate
 % Channel Features", which is fast to compute in practice. The 'caltech'
 % model is trained on caltech pedestrian dataset, which can detect people
 % at the minimum resolution of 50x21 pixels.
 detector = peopleDetectorACF('caltech');
+peopleDetector = vision.PeopleDetector;
 
 % Configure the detector using the sensor information. The detector only
 % tries to find people at image regions above the ground plane. This can
@@ -35,25 +38,32 @@ detector = configureDetectorMonoCamera(detector, d2.sensor, pedWidth);
 
 
 % Setup Video Reader and Player
-videoFile = 'video_alfons.avi';
-videoReader = VideoReader(videoFile);
-videoPlayer = vision.DeployableVideoPlayer();
+% videoFile = 'video_alfons.avi';
+% videoReader = VideoReader(videoFile);
+ videoPlayer = vision.DeployableVideoPlayer();
 
 currentStep = 0;
 snapshot = [];
 snapTimeStamp = 100;
-cont = hasFrame(videoReader);
+cont = 1
 while cont
     % Update frame counters.
     currentStep = currentStep + 1;
 
     % Read the next frame.
-    frame = readFrame(videoReader);
+    frame = readImage(receive(sub));
     
     % Run the detector and package the returned results into an object
     % required by multiObjectTracker.  You can find the |detectObjects|
     % function at the end of this example.
     detections = detectObjects(detector, frame, currentStep);
+    
+    peopleDetector = vision.PeopleDetector;
+    [bboxes2,scores2] = peopleDetector(frame);
+    
+    I = insertObjectAnnotation(frame,'rectangle',bboxes2,scores2);
+    videoPlayer(I);
+    title('Detected people and detection scores');
     
     % Using the list of objectDetections, return the tracks, updated for
     % 'currentStep' time. After the first frame, a helper function
@@ -77,7 +87,7 @@ while cont
     frameWithAnnotations = insertTrackBoxes(frame, confirmedTracks, positionSelector, d.sensor);
 
     % Display the annotated frame.    
-    videoPlayer(frameWithAnnotations);  
+    %videoPlayer(frameWithAnnotations);  
     
     % Take snapshot for publishing at snapTimeStamp seconds
     if currentStep == snapTimeStamp
@@ -85,7 +95,7 @@ while cont
     end   
     
     % Exit the loop if the video player figure is closed by user.
-    cont = hasFrame(videoReader) && isOpen(videoPlayer);
+    cont = 1;
 end
 
 if ~isempty(snapshot)
@@ -124,7 +134,7 @@ function filter = initBboxFilter(Detection)
 %        0  0 0  0 0  0 0  1]
 %   Assume dt = 1. This example does not consider time-variant transition
 %   model for linear Kalman filter.
-    dt = 1;
+    dt = 2;
     cvel =[1 dt; 0 1];
     A = blkdiag(cvel, cvel, cvel, cvel);
  
@@ -241,7 +251,9 @@ function I = insertTrackBoxes(I, tracks, positionSelector, sensor)
         xyImageLoc(2) = min(xyImageLoc(2), size(I, 1));
         
         % Convert to vehicle coordinates using monoCamera object
-        xyVehicle = imageToVehicle(sensor, xyImageLoc);
+        xyVehicle = imageToVehicle(sensor, xyImageLoc)
+        tracks(i,1).TrackID
+        
         
         labels{i} = sprintf('x=%.1f,y=%.1f',xyVehicle(1),xyVehicle(2));
     end
