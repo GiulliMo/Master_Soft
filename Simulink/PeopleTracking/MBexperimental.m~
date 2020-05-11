@@ -1,7 +1,7 @@
 % Load the monoCamera object that contains the camera information.
 %d = load('TrackingDemoMonoCameraSensor.mat', 'sensor');
 
-intrinsics2 = cameraIntrinsics([540.6860,540.6860],[479.750,269.7500],[540,960]);
+intrinsics2 = cameraIntrinsics([540.6860,479.750],[540.6860,269.7500],[540,960]);
 sensor2 = monoCamera(intrinsics2,1.0,'Yaw',0);
 d2.sensor = sensor2;
 
@@ -14,7 +14,7 @@ sub = rossubscriber('/kinect1/qhd/image_color/compressed')
 % model is trained on caltech pedestrian dataset, which can detect people
 % at the minimum resolution of 50x21 pixels.
 detector = peopleDetectorACF('caltech');
-peopleDetector = vision.PeopleDetector('ClassificationModel','UprightPeople_128x64');
+peopleDetector = vision.PeopleDetector;
 
 % Configure the detector using the sensor information. The detector only
 % tries to find people at image regions above the ground plane. This can
@@ -26,13 +26,16 @@ peopleDetector = vision.PeopleDetector('ClassificationModel','UprightPeople_128x
 pedWidth = [0.5, 1.5];
 
 % Configure the detector using the monoCamera sensor and desired width.
-%detector = configureDetectorMonoCamera(detector, d2.sensor, pedWidth);
-
+detector = configureDetectorMonoCamera(detector, d2.sensor, pedWidth);
+%dstr = struct(detector);
 % Initialize an multi-object tracker including setting the filter,
 % the detection-to-track assignment threshold, the coasting and
 % confirmation parameters. You can find the |setupTracker| function at the
 % end of this example.
 [tracker, positionSelector] = setupTracker();
+
+
+
 
 % Setup Video Reader and Player
 % videoFile = 'video_alfons.avi';
@@ -43,36 +46,25 @@ currentStep = 0;
 snapshot = [];
 snapTimeStamp = 100;
 cont = 1
-
-v=VideoWriter('test.avi');
-v2=VideoWriter('test_boxes.avi');
-open(v);
-open(v2);
-
 while cont
     % Update frame counters.
     currentStep = currentStep + 1;
 
     % Read the next frame.
     frame = readImage(receive(sub));
- 
-    %[bboxes1, scores1] = detect(detector, frame);
-   
-    writeVideo(v,frame)
+    
     % Run the detector and package the returned results into an object
     % required by multiObjectTracker.  You can find the |detectObjects|
     % function at the end of this example.
+    detections = detectObjects(detector, frame, currentStep);
     
-    [detections,bboxes,scores] = detectObjects(peopleDetector, frame, currentStep);
-   
-    
-    if isempty(detections)
-      display('keine detection')
-    else
-    I = insertObjectAnnotation(frame,'rectangle',bboxes,scores);
-   % videoPlayer(I);
-   % title('Detected people and detection scores');
-    end
+
+%     peopleDetector = vision.PeopleDetector;
+%     [bboxes2,scores2] = peopleDetector(frame);
+%     
+%     I = insertObjectAnnotation(frame,'rectangle',bboxes2,scores2);
+%     videoPlayer(I);
+%     title('Detected people and detection scores');
     
     % Using the list of objectDetections, return the tracks, updated for
     % 'currentStep' time. After the first frame, a helper function
@@ -83,9 +75,8 @@ while cont
         [confirmedTracks,~,allTracks] = updateTracks(tracker, detections, currentStep, ...
             costMatrix);
     else
-        [costMatrix,costMatrix2] = detectionToTrackCost(allTracks, detections, ...
-            positionSelector, tracker.AssignmentThreshold,bboxes);
-        disp(costMatrix)
+        costMatrix = detectionToTrackCost(allTracks, detections, ...
+            positionSelector, tracker.AssignmentThreshold);
         [confirmedTracks,~,allTracks] = updateTracks(tracker, detections, currentStep, ...
             costMatrix);
     end
@@ -98,19 +89,16 @@ while cont
 
     % Display the annotated frame.    
     videoPlayer(frameWithAnnotations);  
-    writeVideo(v2,frameWithAnnotations);
+    
     % Take snapshot for publishing at snapTimeStamp seconds
     if currentStep == snapTimeStamp
         snapshot = frameWithAnnotations;
     end   
     
     % Exit the loop if the video player figure is closed by user.
-    if currentStep==150
-        cont = 0;
-    end
+    cont = 1;
 end
-close(v);
-close(v2);
+
 if ~isempty(snapshot)
     figure
     imshow(snapshot)
@@ -123,7 +111,6 @@ function [tracker, positionSelector] = setupTracker()
         'DeletionThreshold', 5, ... 
         'ConfirmationThreshold', [3 5], ...
         'HasCostMatrixInput', true);
-    
 
     % The State vector is: [x; vx; y; vy; w; vw; h; vh]
     % [x;y;w;h] = positionSelector * State
@@ -132,6 +119,7 @@ function [tracker, positionSelector] = setupTracker()
                         0 0 0 0 1 0 0 0; ...
                         0 0 0 0 0 0 1 0]; 
 end
+
 
 function filter = initBboxFilter(Detection)
 % Step 1: Define the motion model and state.
@@ -155,7 +143,7 @@ function filter = initBboxFilter(Detection)
 % Step 2: Define the process noise. 
 %   The process noise represents the parts of the process that the model
 %   does not take into account. For example, in a constant velocity model,
-%   the acceleratio1n is neglected.
+%   the acceleration is neglected.
     G1d = [dt^2/2; dt];
     Q1d = G1d*G1d';
     Q = blkdiag(Q1d, Q1d, Q1d, Q1d);
@@ -208,13 +196,9 @@ function filter = initBboxFilter(Detection)
 end
 
 
-function [detections,bboxes,scores] = detectObjects(detector, frame, frameCount)
+function detections = detectObjects(detector, frame, frameCount)
     % Run the detector and return a list of bounding boxes: [x, y, w, h]
-   
-    [bboxes, scores] = detector(frame);
-    
-   
-   % bboxes = detect(detector, frame);
+    bboxes = detectalf(detector, frame);
     
     % Define the measurement noise.
     L = 100;
@@ -228,7 +212,7 @@ function [detections,bboxes,scores] = detectObjects(detector, frame, frameCount)
     detections = cell(numDetections, 1);                      
     for i = 1:numDetections
         detections{i} = objectDetection(frameCount, bboxes(i, :), ...
-            'MeasurementNoise', measurementNoise,'ObjectAttributes',{struct()})
+            'MeasurementNoise', measurementNoise);
     end
 end
 
@@ -280,12 +264,11 @@ function I = insertTrackBoxes(I, tracks, positionSelector, sensor)
         'FontSize', 10, 'TextBoxOpacity', .8, 'LineWidth', 2);
 end
 
-function [costMatrix,costMatrix2] = detectionToTrackCost(tracks, detections, ...
-                                positionSelector, threshold,bboxes)
+function costMatrix = detectionToTrackCost(tracks, detections, ...
+                                positionSelector, threshold)
 
     if isempty(tracks) || isempty(detections)
         costMatrix = zeros(length(tracks), length(detections));
-        costMatrix2 = zeros(length(tracks), length(detections));
         return
     end
     
@@ -302,36 +285,15 @@ function [costMatrix,costMatrix2] = detectionToTrackCost(tracks, detections, ...
     trackBboxes(:, 4) = max(eps, trackBboxes(:, 4));
     
     % Extract the detected bounding box from all the detections.
-     allDetections = [detections{:}];
-     
-    bboxes2 = reshape([allDetections(:).Measurement], 4, length(detections))';
-     
-    costMatrix = 1 - bboxOverlapRatio(trackBboxes, bboxes);
+    allDetections = [detections{:}];
+    bboxes = reshape([allDetections(:).Measurement], 4, length(detections))';
     
-    costMatrix2 = 1 - bboxOverlapRatio(trackBboxes, bboxes2);
     % Compute all pairwise assignment costs.
-    costMatrix2(costMatrix2(:) > threshold) = Inf
+    costMatrix = 1 - bboxOverlapRatio(trackBboxes, bboxes);
     % Set unrealistic assignment cost to Inf if there is little box
     % overlap.
-    disp('height width')
-    [height,width] = size(costMatrix)
-    
-    for i=1:height
-        for j=1:width
-            
-            if costMatrix(i,j) > threshold(1)
-            
-                
-                costMatrix(i,j) = inf;
-                
-            else
-                disp('1')
-               % costMatrix(i,j) = costMatrix(i,j);
-            end
-        end
-    end
-end 
+    costMatrix(costMatrix(:) > threshold) = Inf;
+end
 
- 
 
 
