@@ -25,7 +25,7 @@ def callback(msg):
 		
 		image = imutils.resize(cv_image, width=min(400, cv_image.shape[1]))
 		orig = image.copy()
-
+		cv2.imshow("Frame:anfang", image)
 
 
 		# grab the updated bounding box coordinates (if any) for each
