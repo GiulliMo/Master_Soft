@@ -44,10 +44,10 @@ snapshot = [];
 snapTimeStamp = 100;
 cont = 1
 
-v=VideoWriter('test.avi');
-v2=VideoWriter('test_boxes.avi');
-open(v);
-open(v2);
+% v=VideoWriter('test.avi');
+% v2=VideoWriter('test_boxes.avi');
+% open(v);
+% open(v2);
 
 while cont
     % Update frame counters.
@@ -58,7 +58,7 @@ while cont
  
     %[bboxes1, scores1] = detect(detector, frame);
    
-    writeVideo(v,frame)
+  %  writeVideo(v,frame)
     % Run the detector and package the returned results into an object
     % required by multiObjectTracker.  You can find the |detectObjects|
     % function at the end of this example.
@@ -98,7 +98,7 @@ while cont
 
     % Display the annotated frame.    
     videoPlayer(frameWithAnnotations);  
-    writeVideo(v2,frameWithAnnotations);
+   % writeVideo(v2,frameWithAnnotations);
     % Take snapshot for publishing at snapTimeStamp seconds
     if currentStep == snapTimeStamp
         snapshot = frameWithAnnotations;
@@ -109,8 +109,8 @@ while cont
         cont = 0;
     end
 end
-close(v);
-close(v2);
+% close(v);
+% close(v2);
 if ~isempty(snapshot)
     figure
     imshow(snapshot)

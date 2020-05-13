@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="38826e6f-e231-47df-9486-030a50c6ffd1" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1bqRCrQnxJ381rqKb0Lp1Zo0l9U" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunManager" selected="Python.speechRecognition_IBM">
+    <configuration name="google" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="SpeechRecognition" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/google.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="speechRecognition_IBM" type="PythonConfigurationType" factoryName="Python">
+      <module name="SpeechRecognition" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/speechRecognition_IBM.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.google" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="38826e6f-e231-47df-9486-030a50c6ffd1" name="Default Changelist" comment="" />
+      <created>1589357512110</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589357512110</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-1131" y="169" key="#googlecloudSR" timestamp="1589376942266">
+      <screen x="-1680" y="23" width="1680" height="1027" />
+    </state>
+    <state x="-1131" y="169" key="#googlecloudSR/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589376942266" />
+    <state x="-1131" y="169" key="#speechRecognition_IBM" timestamp="1589376968373">
+      <screen x="-1680" y="23" width="1680" height="1027" />
+    </state>
+    <state x="-1131" y="169" key="#speechRecognition_IBM/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589376968373" />
+    <state x="625" y="336" key="FileChooserDialogImpl" timestamp="1589377463719">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state x="625" y="336" key="FileChooserDialogImpl/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377463719" />
+    <state width="1659" height="255" key="GridCell.Tab.0.bottom" timestamp="1589377060690">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state width="1659" height="272" key="GridCell.Tab.0.bottom/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001366" />
+    <state width="1659" height="255" key="GridCell.Tab.0.bottom/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377060690" />
+    <state width="1659" height="272" key="GridCell.Tab.0.bottom/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589376273431" />
+    <state width="1659" height="255" key="GridCell.Tab.0.center" timestamp="1589377060688">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state width="1659" height="272" key="GridCell.Tab.0.center/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001365" />
+    <state width="1659" height="255" key="GridCell.Tab.0.center/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377060688" />
+    <state width="1659" height="272" key="GridCell.Tab.0.center/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589376273427" />
+    <state width="1659" height="255" key="GridCell.Tab.0.left" timestamp="1589377060687">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state width="1659" height="272" key="GridCell.Tab.0.left/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001365" />
+    <state width="1659" height="255" key="GridCell.Tab.0.left/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377060687" />
+    <state width="1659" height="272" key="GridCell.Tab.0.left/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589376273423" />
+    <state width="1659" height="255" key="GridCell.Tab.0.right" timestamp="1589377060689">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state width="1659" height="272" key="GridCell.Tab.0.right/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001366" />
+    <state width="1659" height="255" key="GridCell.Tab.0.right/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377060689" />
+    <state width="1659" height="272" key="GridCell.Tab.0.right/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589376273429" />
+    <state width="1659" height="336" key="GridCell.Tab.1.bottom" timestamp="1589377001358">
+      <screen x="-1680" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1659" height="336" key="GridCell.Tab.1.bottom/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001358" />
+    <state width="1659" height="336" key="GridCell.Tab.1.bottom/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589374713261" />
+    <state width="1659" height="336" key="GridCell.Tab.1.center" timestamp="1589377001357">
+      <screen x="-1680" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1659" height="336" key="GridCell.Tab.1.center/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001357" />
+    <state width="1659" height="336" key="GridCell.Tab.1.center/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589374713260" />
+    <state width="1659" height="336" key="GridCell.Tab.1.left" timestamp="1589377001356">
+      <screen x="-1680" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1659" height="336" key="GridCell.Tab.1.left/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001356" />
+    <state width="1659" height="336" key="GridCell.Tab.1.left/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589374713259" />
+    <state width="1659" height="336" key="GridCell.Tab.1.right" timestamp="1589377001357">
+      <screen x="-1680" y="23" width="1680" height="1027" />
+    </state>
+    <state width="1659" height="336" key="GridCell.Tab.1.right/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589377001357" />
+    <state width="1659" height="336" key="GridCell.Tab.1.right/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589374713260" />
+    <state x="347" y="213" key="SettingsEditor" timestamp="1589377465473">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state x="347" y="213" key="SettingsEditor/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377465473" />
+    <state x="-1333" y="223" key="SettingsEditor/0.23.1680.977/-1680.23.1680.1027@-1680.23.1680.1027" timestamp="1589375091024" />
+    <state x="669" y="345" key="com.intellij.ide.util.TipDialog" timestamp="1589377045111">
+      <screen x="0" y="23" width="1680" height="977" />
+    </state>
+    <state x="669" y="345" key="com.intellij.ide.util.TipDialog/-2960.23.1280.777/0.23.1680.977/-1680.23.1680.1027@0.23.1680.977" timestamp="1589377045111" />
+  </component>
+</project>
