@@ -8,6 +8,7 @@ import imutils
 import cv2
 import rospy
 import sys
+import time
 from sensor_msgs.msg import Image, PointCloud2
 import sensor_msgs.point_cloud2 as pc2
 from cv_bridge import CvBridge, CvBridgeError
@@ -26,7 +27,8 @@ class PeopleTracktion:
         self.bridge = CvBridge()
         self.detections = np.empty(0)
         self.orig = np.empty(0)
-        self.imagebgr = np.empty(0)
+        self.imagebgrqhd = np.empty(0)
+        self.imagebgrhd = np.empty(0)
         self.xcenter = 0
         self.ycenter = 0
         self.mindepth = rospy.get_param("/" + namespaceofcamera + "_bridge/min_depth")
@@ -34,8 +36,8 @@ class PeopleTracktion:
         self.listofroi = []
         self.pc_list = []
         self.knownfaces = []
+        self.unknownfaces = []
         self.pointcloudmsg = 0
-        self.counter = 0
         self.OPENCV_OBJECT_TRACKERS = {
             "kcf": cv2.TrackerKCF_create,
             "boosting": cv2.TrackerBoosting_create,
@@ -45,19 +47,29 @@ class PeopleTracktion:
             "mosse": cv2.TrackerMOSSE_create
         }
 
-    def processing_rgb(self, msg):
+    def processing_qhd(self, msg):
         try:
-            self.imagebgr = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            self.framebgrsmall = imutils.resize(self.imagebgr, width=min(400, self.imagebgr.shape[1]))
-            self.orig = self.framebgrsmall.copy()
-            #cv2.imshow("Frame:anfang", self.framebgrsmall)
-            #cv2.waitKey(3)
+            self.imagebgrqhd = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            self.framebgrsmall = imutils.resize(self.imagebgrqhd, width=min(400, self.imagebgrqhd.shape[1]))
+            #self.orig = self.framebgrsmall.copy()
+            cv2.imshow("Frame:anfang", self.framebgrsmall)
+            cv2.waitKey(3)
+            #start = time.time()
             self.getdetections()
-            self.getids()
-            self.getdistance()
-            self.getfaces()
+            self.getbodyid()
+            #self.getdistance()
+            self.getfaceid()
+            #ende = time.time()
+            #print(str(ende - start))
         except CvBridgeError as e:
             print(e)
+    """
+    def processing_hd(self, msg):
+        try:
+            self.imagebgrhd = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError as e:
+            print(e)
+    """
     """
     def callback_depth(self, msg):
         try:
@@ -80,7 +92,7 @@ class PeopleTracktion:
         self.detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
         # draw the final bounding boxes
 
-    def getids(self):
+    def getbodyid(self):
         for (xA, yA, xB, yB) in self.detections:
             cv2.rectangle(self.framebgrsmall, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
@@ -95,16 +107,10 @@ class PeopleTracktion:
             cv2.putText(self.framebgrsmall, text, (centroid[0] - 10, centroid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 255, 0), 2)
             cv2.circle(self.framebgrsmall, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
-        # show the output frame
-        #cv2.imshow("Frame", self.framebgrsmall)
-        #cv2.waitKey(3)
+
 
     def getdistance(self):
         for (xupleft, yupleft, xbellowright, ybellowright) in self.detections:
-            #xupleft = 0
-            #yupleft = 52
-            #xbellowright = 61
-            #ybellowright = 191
             shrinkfactor = 5
             self.xcenter = xupleft + (xbellowright - xupleft)/2
             self.ycenter = yupleft + (ybellowright - yupleft)/2
@@ -118,11 +124,11 @@ class PeopleTracktion:
             valuecount = 0
             for row in range(ysmallrectupleft, ysmallrectbellowright):
                 for column in range(xsmallrectupleft, xsmallrectbellowright):
-                    """
-                    Erstellen einer Liste mit der entprechenden ROI (im qhd Bild ca. 500 Messpunkte pro Objekt). 
-                    Fuer mehr Messpunkte muessen die neuen Koordinaten mit 4.8 multipliziert werden. 
-                    Das Verfahren ist dasselbe.
-                    """
+                    
+                    #Erstellen einer Liste mit der entprechenden ROI (im qhd Bild ca. 500 Messpunkte pro Objekt).
+                    #Fuer mehr Messpunkte muessen die neuen Koordinaten mit 4.8 multipliziert werden.
+                    #Das Verfahren ist dasselbe.
+                    
                     self.listofroi.append([int(column*4.8), int(row*4.8)])
 
             pc = pc2.read_points(self.pointcloudmsg, skip_nans=True, field_names=("x", "y", "z"), uvs=self.listofroi)
@@ -146,47 +152,90 @@ class PeopleTracktion:
         cv2.imshow("Frame..", self.framebgrsmall)
         cv2.waitKey(3)
 
-    def getfaces(self):
+    def getfaceid(self):
+        image = self.imagebgrqhd
+        if len(image) == 540:
+            factor = 2.4
+        elif len(image) == 1080:
+            factor = 4.8
         for (xupleft, yupleft, xbellowright, ybellowright) in self.detections:
-
-            img = self.imagebgr[int(yupleft*2.4):int((ybellowright/2)*2.4), int(xupleft*2.4):int(xbellowright*2.4)]
-            cv2.imshow("Frame:cut", img)
+            #print(int(xupleft * factor), int(yupleft * factor), int(xbellowright * factor), int((yupleft + ((ybellowright - yupleft) / 3)) * factor), factor)
+            """
+            ROI der Person wird an das Gesicht angepasst, um Rechenzeit zu sparen.
+            """
+            facexupleft = int((xupleft + ((xbellowright - xupleft)/4) ) * factor)
+            faceyupleft = int((yupleft + ((ybellowright - yupleft)/10) ) * factor)
+            facexbottomright = int((xbellowright - ((xbellowright - xupleft)/4) ) * factor)
+            faceybottomright = int((yupleft + ((ybellowright - yupleft)/4) ) * factor)
+            #imagecut = image[int(yupleft * factor):int((yupleft + ((ybellowright - yupleft) / 3)) * factor), int(xupleft * factor):int(xbellowright * factor)]
+            imagecut = image[faceyupleft:faceybottomright, facexupleft:facexbottomright]
+            cv2.imshow("Frame:cut", imagecut)
             cv2.waitKey(3)
-            rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            rgb = cv2.cvtColor(imagecut, cv2.COLOR_BGR2RGB)
             boxes = face_recognition.face_locations(rgb)
-            print(boxes)
+            #print(boxes)
+            """
+            Fuer jedes erkannte Gesicht wird geprueft, ob es bekannt ist. Wenn nicht wird ein neues hinzugefuegt
+            und wenn die Liste aller bekannten Gesichter leer ist wird das erste Gesicht sofort hinzugefuegt.  
+            """
             for (top, right, bottom, left) in boxes:
                 face = face_recognition.face_encodings(rgb, boxes)[0]
-                #if self.counter == 0:
-                #    self.knownfaces.append(face)
-                #    self.counter += 1
-                isknown = face_recognition.compare_faces(self.knownfaces, face, 0.6)
+                isknown = face_recognition.compare_faces(self.knownfaces, face, 0.5)
                 if isknown == []:
                     self.knownfaces.append(face)
+
                 for index, element in enumerate(isknown):
+                    #print(index, isknown[index], element, len(isknown))
+
                     if isknown[index] == True:
+                        print("ID " + str(index) + " wurde erkannt")
                         text = "ID " + str(index)
-                        cv2.putText(self.framebgrsmall, text, (left, top),
+                        cv2.putText(self.framebgrsmall, text, (int(facexupleft/factor), int(faceyupleft/factor)),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                                     (0, 255, 0), 2)
                         break
+
                     elif index + 1 == len(isknown):
-                        print("b")
-                        self.knownfaces.append(face)
+                        #self.knownfaces.append(face)
+                        self.checkunknownfaces(face)
 
-
-                print(face)
-                print(self.knownfaces)
-                print(isknown)
-                cv2.rectangle(self.framebgrsmall, (int(xupleft+left/2.4), int(yupleft+top/2.4)),
-                              (int(xupleft+right/2.4), int(yupleft+bottom/2.4)), (0, 255, 0), 2)
+                cv2.rectangle(self.framebgrsmall, (int(facexupleft/factor), int(faceyupleft/factor)),
+                              (int(facexbottomright/factor), int(faceybottomright/factor)), (0, 255, 0), 2)
                 cv2.imshow("Frame:face", self.framebgrsmall)
                 cv2.waitKey(3)
 
+    def checkunknownfaces(self, face, toknownfacesthreshold = 5):
+        print("Unbekanntes Gesicht wird geprueft...")
+
+        if self.unknownfaces == []:
+            self.unknownfaces.append(face)
+
+        count = 0
+        isunknown = face_recognition.compare_faces(self.unknownfaces, face, 0.4)
+        print(isunknown)
+        for index, element in enumerate(isunknown):
+            if isunknown[index]:
+                count += 1
+
+            else:
+                count = 0
+
+            if count == toknownfacesthreshold:
+                self.knownfaces.append(face)
+                break
+
+            if index + 1 == len(isunknown):
+                self.unknownfaces.append(face)
+
+            if index + 1 == toknownfacesthreshold:
+                self.unknownfaces.remove(self.unknownfaces[0])
+
+            print("Unb. Gesicht wurde " + str(count) + " Mal erkannt")
 
     def startnode(self):
         rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("/" + self.namespaceofcamera + "/qhd/image_color", Image, self.processing_rgb)
+        rospy.Subscriber("/" + self.namespaceofcamera + "/qhd/image_color", Image, self.processing_qhd)
+        #rospy.Subscriber("/" + self.namespaceofcamera + "/hd/image_color", Image, self.processing_hd)
         rospy.Subscriber("/" + self.namespaceofcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
         #rospy.Subscriber("/" + self.namespaceofcamera + "/qhd/image_depth_rect", Image, self.callback_depth)
         #rospy.Subscriber("/" + self.namespaceofcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
