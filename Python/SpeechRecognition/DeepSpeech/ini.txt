@@ -1,0 +1,23 @@
+- Version von Modellen muss passend zur Version von DeepSpeech sein
+
+1. Virtuelles Environment
+virtualenv -p python deepspeech-venv // ggf. python3
+
+2.Venv aktivieren
+source ./deepspeech-venv2/bin/activate
+
+3. Tensorflow
+pip install tensorflow==1.15.0
+
+4. Deepspeech Package
+pip install deepspeech==0.6.1 maximal für python2 ==> lm-binary trie wird benötigt
+
+bei 
+pip3 install deepspeech=0.7.1 für Python3 scorer Model und pbmm werden benötigt
+
+5. PortAudio. pyaudio etc. je nach Fehlermeldung
+
+
+
+
+
