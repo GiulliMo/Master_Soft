@@ -17,6 +17,9 @@ pip3 install deepspeech=0.7.1 für Python3 scorer Model und pbmm werden benötig
 
 5. PortAudio. pyaudio etc. je nach Fehlermeldung
 
+main.py für Aufnahme und Erkennung auf gleichem Gerät
+
+main_ros.py für Aufnahme und Erkennung auf ALF/LAptop und Raspberry pi
 
 
 
