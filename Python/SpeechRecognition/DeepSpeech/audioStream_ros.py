@@ -1,7 +1,7 @@
 import pyaudio
 import rospy
 import numpy as np
-from std_msgs.msg import Int32MultiArray
+from std_msgs.msg import Int16MultiArray
 from rospy.numpy_msg import numpy_msg
 import pyaudio
 
@@ -15,13 +15,11 @@ format = pyaudio.paInt16
 
 
 def talker():
-        pub = rospy.Publisher('audio_stream', Int32MultiArray, queue_size=159743)
+        pub = rospy.Publisher('audio_stream', Int16MultiArray, queue_size=159743)
         rospy.init_node('audio', anonymous=True)
-        rate = rospy.Rate(0.1) # 10hz
-        while not rospy.is_shutdown():
-                stream = audio.open(format=format, rate=rate, channels=channels,
-                                     input_device_index=devIndex, input=True,
-                                     frames_per_buffer=chunksize)
+        rate = rospy.Rate(1) # 10hz
+	stream = audio.open(format=format, rate=rate, channels=channels, input_device_index=devIndex, input=True, frames_per_buffer=chunksize)
+	while not rospy.is_shutdown():
                 print("recording...")
                 frames = []
 

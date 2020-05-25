@@ -1,6 +1,7 @@
 from scipy.misc import bytescale
 import math
 import tf
+from geometry_msgs.msg import PoseStamped
 
 from centroidtracker import CentroidTracker
 from imutils.object_detection import non_max_suppression
@@ -21,8 +22,10 @@ class PeopleTracktion:
     def __init__(self, namespaceofcamera, maxdetectionsbeforetrack=5):
         self.framebgrsmall = np.empty(0)
         self.frame_depth = np.empty(0)
+        self.publisher = None
         # self.net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel")
         self.trackers = cv2.MultiTracker_create()
+        self.tfbroadcaster = tf.TransformBroadcaster()
         self.ct = CentroidTracker(maxdetectionsbeforetrack)
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -34,8 +37,10 @@ class PeopleTracktion:
         self.imagebgrhd = np.empty(0)
         self.xcenter = 0
         self.ycenter = 0
-        self.xposperson = 0
-        self.yposperson = 0
+        self.xpospersonlocal = 0
+        self.ypospersonlocal = 0
+        self.xpospersonglobal = 0
+        self.ypospersonglobal = 0
         self.depthaverage = 0
         self.mindepth = rospy.get_param("/" + namespaceofcamera + "_bridge/min_depth")
         self.maxdepth = rospy.get_param("/" + namespaceofcamera + "_bridge/max_depth")
@@ -66,7 +71,7 @@ class PeopleTracktion:
             self.getbodyid()
             self.getdistance()
             self.getfaceid()
-            self.gettransforms()
+            self.dotransforms()
             self.getxycoordinates()
             # ende = time.time()
             # print(str(ende - start))
@@ -234,21 +239,30 @@ class PeopleTracktion:
 
             print("Unb. Gesicht wurde " + str(count) + " Mal erkannt")
 
-    def gettransforms(self):
+    def dotransforms(self):
         try:
             (trans, rot) = self.listener.lookupTransform('/map', '/cam_front', rospy.Time(0))
-            #print(trans, rot)
+            """
+            msg = PoseStamped()
+            msg.header.frame_id = "cam_front"
+            msg.pose.position.y = -self.xpospersonlocal
+            msg.pose.position.x = self.ypospersonlocal
+            msg.header.stamp = rospy.Time.now()
+            self.publisher.publish(msg)
+            """
+
+
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             print("No tf message received...")
 
     def getxycoordinates(self):
-        fovhorizontal = 75
+        fovhorizontal = 80
         fovhorizontaldegree = fovhorizontal*(math.pi/180)
         pixelhorizontal = len(self.framebgrsmall[1])
         focallength = pixelhorizontal / (2 * math.tan(fovhorizontaldegree/2))
-        self.xposperson = ((self.xcenter-(pixelhorizontal/2))/focallength) * self.depthaverage
-        self.yposperson = math.sqrt(self.depthaverage**2 - self.xposperson**2)
-        print(self.xposperson, self.yposperson)
+        self.xpospersonlocal = ((self.xcenter - (pixelhorizontal / 2)) / focallength) * self.depthaverage
+        self.ypospersonlocal = math.sqrt(self.depthaverage ** 2 - self.xpospersonlocal ** 2)
+        #print(self.xposperson, self.yposperson)
 
     def startnode(self):
         rospy.init_node('listener', anonymous=True)
@@ -258,6 +272,7 @@ class PeopleTracktion:
         rospy.Subscriber("/" + self.namespaceofcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
         # rospy.Subscriber("/" + self.namespaceofcamera + "/qhd/image_depth_rect", Image, self.callback_depth)
         # rospy.Subscriber("/" + self.namespaceofcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
+        #self.publisher = rospy.Publisher('/tracked_people/pose', PoseStamped, queue_size=10)
         try:
             rospy.spin()
             print("\nShutdown...")
