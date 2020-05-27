@@ -17,7 +17,7 @@ t=0:tSample:tSample*(length(data)-1);
 A = [0.5 -0.06;0.06 0.6];
 B = [0.5 -0.06;0.06 0.6];
 H = [0.5;0.5]';
-R = 0.1;
+R = 0.01;
 Q = eye(2)*0.5;
 
 % start 
@@ -26,13 +26,13 @@ x_pred_start2 = [data(2);data(3)]; % k+1
 
 % Start Prio error cov
 P_k = 1*eye(2);
-P_post0 = 1*eye(2);                  % P(k-1) 
-P_post1 = 1*eye(2);                 % P(k+1)
-P_post2 = 1*eye(2);                 % P(k-1,k+1) 
-P_post3 = 1*eye(2);                 % P(k+1,k-1) 
-P_post4 = 1*eye(2);                 % P(k+1,k-1) an -1
+P_post0 = .1*eye(2);                  % P(k-1) 
+P_post1 = .1*eye(2);                 % P(k+1)
+P_post2 = .1*eye(2);                 % P(k-1,k+1) 
+P_post3 = .1*eye(2);                 % P(k+1,k-1) 
+P_post4 = .1*eye(2);                 % P(k+1,k-1) an -1
 P_post5 = P_post3 +Q;               % P(k+1,k-1) an +1
-P_post6 = 1*eye(2);                 % P(k-1,k+1) an -1
+P_post6 = .1*eye(2);                 % P(k-1,k+1) an -1
 P_post7 = P_post2 +Q;              % P(k-1,k+1) an +1
 
 x_k_save=zeros(length(data)-1,2)';

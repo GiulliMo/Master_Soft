@@ -26,7 +26,7 @@ def initRecognizer():
 def initModel(VERSION):
     # load and initialzie model for python3
     if VERSION == 'PYTHON3':
-        model_file_path = 'deepspeech-0.7.1-models.pbmm'
+        model_file_path = 'deepspeech-0.7.1-models.tflite'
         model = deepspeech.Model(model_file_path)
         model.enableExternalScorer('deepspeech-0.7.1-models.scorer')
         model.setScorerAlphaBeta(alpha=0.75, beta=1.1)  # alpha=0.931289039105002, beta=1.1834137581510284)
@@ -55,7 +55,7 @@ class SpeechRecognition:
         self.Version = pyVersion
         self.speech = ''
         self.channels = 1
-        self.Format = pyaudio.paInt16
+    #    self.Format = pyaudio.paInt16
         self.rate = 16000
         self.chunksize = 2048
         self.recsec = 10
@@ -67,7 +67,7 @@ class SpeechRecognition:
         self.buffer = np.empty(0)
         self.speech_to_text = SpeechToTextV1(iam_apikey="wsDeuwes_FSm3bo_QiLLQl1Er81u1sqIQxMNZFB67aVq",
                                              url="https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/472d7157-6ba9-4041-b3f3-8b014ebd62cf")
-
+    '''
     # create wav file
     def createWav(self, filename):
         if os.path.exists(filename):
@@ -95,7 +95,7 @@ class SpeechRecognition:
         waveFile.setframerate(self.rate)
         waveFile.writeframes(b''.join(frames))
         waveFile.close()
-
+    '''
     # read data from wav file
     def getBuffer(self, w):
         frames = w.getnframes()
@@ -108,7 +108,7 @@ class SpeechRecognition:
         if record:
             try:
                 # record a wav file, bei ROS nur buffer
-                self.createWav(self.filename)
+           #     self.createWav(self.filename)
 
                 # predict Audio deepspeech
                 buffer = self.getBuffer(wave.open(filename, 'r'))
@@ -216,6 +216,7 @@ class SpeechRecognition:
 
 
 if __name__ == '__main__':
-    s = SpeechRecognition(newRecord=False, filename='berg.wav', pyVersion='PYTHON3')
+    s = SpeechRecognition(newRecord=False, filename='test.wav', pyVersion='PYTHON3')
     s.speechRecognitionDNN(s.record, s.filename)
     s.speechRecognitionIBM(s.filename)
+
