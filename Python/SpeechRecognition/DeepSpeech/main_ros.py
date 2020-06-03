@@ -1,36 +1,41 @@
 
+
 import os
 import deepspeech
 import wave
 import numpy as np
-import speech_recognition as sr
-from watson_developer_cloud import SpeechToTextV1
 import json
 import rospy
 from std_msgs.msg import String, Int16MultiArray
 import time
 import threading
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--RECSEC", help="Laenge der Aufnahme",
+                    type=int)
+parser.add_argument("-lm", "--LANGUAGE", help="Sprachmodell, de oder gb")
+args = parser.parse_args()
 
 def initModel(VERSION):
-    # load and initialzie model for python3
-    if VERSION == 'PYTHON3':
+    # load and initialzie model for deepspeechenglish, ds 0.7.1 hast to be installed
+    if VERSION == 'gb':
         model_file_path = 'deepspeech-0.7.1-models.tflite'
         model = deepspeech.Model(model_file_path)
         model.enableExternalScorer('deepspeech-0.7.1-models.scorer')
         model.setScorerAlphaBeta(alpha=0.75, beta=1.1)  # alpha=0.931289039105002, beta=1.1834137581510284)
         print('load finished')
 
-    elif VERSION == 'PYTHON2':
-        # load and initialize model for python2
-        DEEPSPEECH_MODEL_DIR = 'models'
-        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.pbmm')
+    elif VERSION == 'de':
+        # load and initialize model for deepspeech-german, ds 0.6.1 hast to be installed
+        DEEPSPEECH_MODEL_DIR = 'models-de'
+        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.tflite')
         BEAM_WIDTH = 500
         LM_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'lm.binary')
         TRIE_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'trie')
-        LM_ALPHA = 0.75
+        LM_ALPHA = 0.4
         LM_BETA = 1.85
-        model = deepspeech.Model(model_file_path, BEAM_WIDTH)
+        model = deepspeech.Model(model_file_path)
         model.enableDecoderWithLM(LM_FILE_PATH, TRIE_FILE_PATH, LM_ALPHA, LM_BETA)
         print('load finished')
 
@@ -55,22 +60,23 @@ class SpeechRecognition:
         self.cnt = 0
         self.start = 0
         self.lstMsg = np.zeros(self.chunksize)
+        self.text=''
     def speechRecognitionDNN(self, stream):
         # Recognition from record
         try:
             print("Start recognition")
-            text = self.model.stt(stream)
-            print(text)
+            self.text = self.model.stt(stream)
+            self.talker(len(self.text), self.text)
+            print(self.text)
             print("Speech recognition finished")
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
 
     def callback(self, msg):
-        self.buffer = np.asarray(msg.data)
-
+        self.buffer = np.int16(np.asarray(msg.data))
     def processDataStream(self,data):
-        self.lstMsg=np.asarray(data)
+        self.lstMsg=np.int16(np.asarray(data))
         try:
             if self.cnt==0:
                 print("start recording...")
@@ -80,11 +86,11 @@ class SpeechRecognition:
             if self.cnt<=int(self.rate / self.chunksize * self.recsec):
                 self.frames.append(np.asarray(data))
                 self.cnt = self.cnt + 1
-                print(self.cnt)
             else:
                 print("finished recording!")
                 print(time.time()-self.start)
                 data16 = np.frombuffer(np.asarray(self.frames), dtype=np.int16)
+                print(len(data16))
                 self.speechRecognitionDNN(data16)
                 self.cnt=0
         except KeyBoardInterrupt:
@@ -92,7 +98,7 @@ class SpeechRecognition:
         pass
     def listener(self):
 
-        rospy.init_node('read_audio_stream', anonymous=True)
+        rospy.init_node('SpeechRecognition', anonymous=True)
         rospy.Subscriber("audio_stream", Int16MultiArray, self.callback)
         # spin() simply keeps python from exiting until this node is stopped
         while not rospy.is_shutdown():
@@ -104,6 +110,15 @@ class SpeechRecognition:
             except KeyBoardInterrupt:
                 print("Keyboard Interrupt")
             pass
+
+    def talker(self, size, text):
+        pub = rospy.Publisher('recognized_text', String, queue_size=size)
+        rospy.loginfo(text)
+        pub.publish(text)
+
+
+
 if __name__ == '__main__':
-    s = SpeechRecognition(recsec=10, pyVersion='PYTHON3')
+    s = SpeechRecognition(args.RECSEC, args.LANGUAGE)
     s.listener()
+
