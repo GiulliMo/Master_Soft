@@ -1,44 +1,59 @@
 import pyaudio
 import rospy
 import numpy as np
-from std_msgs.msg import Int16MultiArray
-from rospy.numpy_msg import numpy_msg
-import pyaudio
+from std_msgs.msg import Int16MultiArray, String
+import argparse
+import sounddevice as sd
 
-channels = 1
-rate = 16000
-chunksize = 2048
-recsec = 10
-devIndex = 0  # 0=Boltune, 1= boltune, 2 = builtin
-audio = pyaudio.PyAudio()
-format = pyaudio.paInt16
+print sd.query_devices()
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-tp", "--topicname", help="Name der veroeffentlichten Topic")
+parser.add_argument("-nn", "--nodename", help="Name des Knotens")
+parser.add_argument("-di", "--device", help="Device ID/n",type=int)
+args = parser.parse_args()
+
+class AudioStream:
+    def __init__(self, topicname, nodename, dev):
+        self.topicname = topicname
+        self.nodename = nodename
+        self.channels = 1
+        self.rate = 16000
+        self.chunksize = 2048
+        self.devIndex = dev
+        self.msg = Int16MultiArray()
+        self.msg.data = []
+        self.format = pyaudio.paInt16
+        self.audio = pyaudio.PyAudio()
 
 
-def talker():
-        pub = rospy.Publisher('audio_stream', Int16MultiArray, queue_size=159743)
-        rospy.init_node('audio', anonymous=True)
-        rate = rospy.Rate(1) # 10hz
-	stream = audio.open(format=format, rate=rate, channels=channels, input_device_index=devIndex, input=True, frames_per_buffer=chunksize)
-	while not rospy.is_shutdown():
-                print("recording...")
-                frames = []
+    def createAudioStream(self):
 
-                for i in range(0, int(rate / chunksize * recsec)):
-                    data = stream.read(chunksize)
-                    frames.append(data)
+        stream = self.audio.open(format=self.format, rate=self.rate, channels=self.channels,
+                                 input_device_index=self.devIndex, input=True,
+                                 frames_per_buffer=self.chunksize)
+        self.msg.data = []
+        self.msg.data = np.frombuffer(np.asarray(stream.read(self.chunksize)), dtype=np.int16)
 
-                print("finished recording!")
+        stream.stop_stream()
+        stream.close()
 
-                stream.stop_stream()
-                stream.close()
-                audio.terminate()
-                data16 = np.frombuffer(frames, dtype=np.int16)
-                rospy.loginfo(data16)
-                pub.publish(data16)
-                rate.sleep()
+    def startNode(self):
+        pub = rospy.Publisher(self.topicname, Int16MultiArray, queue_size=self.chunksize)
+        rospy.init_node(self.nodename, anonymous=True)
+        r = rospy.Rate(0.2)
+        rospy.loginfo("Streaming Audio...")
+        while not rospy.is_shutdown():
+            try:
+               self.createAudioStream()
+               pub.publish(self.msg)
+            except KeyboardInterrupt:
+                print("KeyBoard interrupt")
+            pass
+
+
 if __name__ == '__main__':
-    try:
-        talker()
-    except rospy.ROSInterruptException:
-        pass
+
+    s = AudioStream(args.topicname, args.nodename, args.device)
+    s.startNode()
 
