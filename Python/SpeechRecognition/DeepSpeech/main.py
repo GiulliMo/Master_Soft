@@ -1,21 +1,21 @@
 import os
 from os.path import join
+
 import deepspeech
 import wave
 import numpy as np
 import pyaudio
-from pydub import AudioSegment
 import speech_recognition as sr
 from watson_developer_cloud import SpeechToTextV1
 import json
-
+import fuzzy
 
 # import rospy
 # from std_msgs.msg import String
 
 
 def initRecognizer():
-    # recognizer for ibm cloud
+    #recognizer for ibm cloud
     recognizer = sr.Recognizer()
     speech_to_text = SpeechToTextV1(
         iam_apikey="wsDeuwes_FSm3bo_QiLLQl1Er81u1sqIQxMNZFB67aVq",
@@ -24,23 +24,24 @@ def initRecognizer():
 
 
 def initModel(VERSION):
-    # load and initialzie model for python3
+    # load and initialzie model for python3 #deepspeech 0.6.1
     if VERSION == 'PYTHON3':
-        model_file_path = 'deepspeech-0.7.1-models.tflite'
+        model_file_path = 'models/deepspeech-0.7.1-models.pbmm'
         model = deepspeech.Model(model_file_path)
-        model.enableExternalScorer('deepspeech-0.7.1-models.scorer')
-        model.setScorerAlphaBeta(alpha=0.75, beta=1.1)  # alpha=0.931289039105002, beta=1.1834137581510284)
+        model.enableExternalScorer('models/deepspeech-0.7.1-models.scorer')
+        model.setScorerAlphaBeta(alpha=1, beta=1.1)  # alpha=0.931289039105002, beta=1.1834137581510284)
         print('load finished')
 
     elif VERSION == 'PYTHON2':
-        # load and initialize model for python2
-        DEEPSPEECH_MODEL_DIR = 'models'
-        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.pbmm')
+        # load and initialize model for python2# pbmm deepspeech 0.6.1
+        DEEPSPEECH_MODEL_DIR = 'models-De'
+        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.pb')
         BEAM_WIDTH = 500
         LM_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'lm.binary')
         TRIE_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'trie')
-        LM_ALPHA = 0.75
-        LM_BETA = 1.85
+        ALPHABET_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'alphabet.txt')
+        LM_ALPHA = 0.6
+        LM_BETA = 1.18
         model = deepspeech.Model(model_file_path, BEAM_WIDTH)
         model.enableDecoderWithLM(LM_FILE_PATH, TRIE_FILE_PATH, LM_ALPHA, LM_BETA)
         print('load finished')
@@ -55,7 +56,7 @@ class SpeechRecognition:
         self.Version = pyVersion
         self.speech = ''
         self.channels = 1
-    #    self.Format = pyaudio.paInt16
+        self.Format = pyaudio.paInt16
         self.rate = 16000
         self.chunksize = 2048
         self.recsec = 10
@@ -65,9 +66,14 @@ class SpeechRecognition:
         self.model = initModel(self.Version)
         self.recognizer = sr
         self.buffer = np.empty(0)
+        self.transitionsName = "transition.json"
+        self.buzzwordName = "buzzwords.json"
+        self.buzzwords = []
+        self.transitions = []
+        self.transcript = ""
         self.speech_to_text = SpeechToTextV1(iam_apikey="wsDeuwes_FSm3bo_QiLLQl1Er81u1sqIQxMNZFB67aVq",
                                              url="https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/472d7157-6ba9-4041-b3f3-8b014ebd62cf")
-    '''
+
     # create wav file
     def createWav(self, filename):
         if os.path.exists(filename):
@@ -95,7 +101,7 @@ class SpeechRecognition:
         waveFile.setframerate(self.rate)
         waveFile.writeframes(b''.join(frames))
         waveFile.close()
-    '''
+
     # read data from wav file
     def getBuffer(self, w):
         frames = w.getnframes()
@@ -108,7 +114,7 @@ class SpeechRecognition:
         if record:
             try:
                 # record a wav file, bei ROS nur buffer
-           #     self.createWav(self.filename)
+                self.createWav(self.filename)
 
                 # predict Audio deepspeech
                 buffer = self.getBuffer(wave.open(filename, 'r'))
@@ -117,7 +123,6 @@ class SpeechRecognition:
                 type(data16)
                 text = self.model.stt(data16)
                 print(text)
-
                 print("Speech recognition finished")
             except KeyboardInterrupt:
                 print("Keyboard Interrupt")
@@ -127,10 +132,12 @@ class SpeechRecognition:
             try:
                 buffer = self.getBuffer(wave.open(filename, 'r'))
                 data16 = np.frombuffer(buffer, dtype=np.int16)
-                type(data16)
-                print(type(data16))
                 text = self.model.stt(data16)
-                print(text)
+                stream = self.model.createStream()
+                stream.feedAudioContent(data16)
+                print(stream.finishStreamWithMetadata(num_results=2))
+                #print(text)
+                #print(self.model.sttWithMetadata(data16))
                 print("Speech recognition finished")
             except KeyboardInterrupt:
                 print("Keyboard Interrupt")
@@ -145,28 +152,43 @@ class SpeechRecognition:
                                                                    content_type='audio/wav').get_result()
         print(json.dumps(speech_recognition_results, indent=2))
 
-    '''
-    def processing_qhd(self, msg):
-        try:
-            self.imagebgrqhd = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            self.framebgrsmall = imutils.resize(self.imagebgrqhd, width=min(400, self.imagebgrqhd.shape[1]))
-        except CvBridgeError as e:
-            print(e)
+    def Rabin_Karp_Matcher(self, text, pattern, d, q):
+        n = len(text)
+        m = len(pattern)
+        h = pow(d, m - 1) % q
+        p = 0
+        t = 0
+        result = []
+        for i in range(m):  # preprocessing
+            p = (d * p + ord(pattern[i])) % q
+            t = (d * t + ord(text[i])) % q
+        for s in range(n - m + 1):  # note the +1
+            if p == t:  # check character by character
+                match = True
+                for i in range(m):
+                    if pattern[i] != text[s + i]:
+                        match = False
+                        break
+                if match:
+                    result = result + [s]
+            if s < n - m:
+                t = (t - h * ord(text[s])) % q  # remove letter s
+                t = (t * d + ord(text[s + m])) % q  # add letter s+m
+                t = (t + q) % q  # make sure that t >= 0
+        return result #begin of string position
+
+    def sortBuzzwords(self, transcript): #schlagwoerter nach auftauchen sortieren
+        for i in range(len(self.buzzwords)):
+            self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11)
 
 
-    def startnode(self):
-        rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("/" + self.namespaceofcamera + "/qhd/image_color", Image, self.processing_qhd)
-        try:
-            rospy.spin()
-
-        except KeyboardInterrupt:
-            print("Shutting down")
-        cv2.destroyAllWindows()
-    '''
-
-    # Recognition from stream
-
+    def loadJsons(self):
+        f = open(self.buzzwordName, "r")
+        f2 = open(self.transitionsName, "r")
+        self.buzzwords = json.loads(f.read())
+        self.transitions = json.loads(f2.read())
+        f.close()
+        f2.close()
     '''
     # Audio Params
     audio = pyaudio.PyAudio()
@@ -216,7 +238,9 @@ class SpeechRecognition:
 
 
 if __name__ == '__main__':
-    s = SpeechRecognition(newRecord=False, filename='test.wav', pyVersion='PYTHON3')
+    s = SpeechRecognition(newRecord=False, filename='berg.wav', pyVersion='PYTHON3')
+    s.loadJsons()
+    s.transcript="localization change to state"
     s.speechRecognitionDNN(s.record, s.filename)
-    s.speechRecognitionIBM(s.filename)
+   # s.speechRecognitionIBM(s.filename)
 

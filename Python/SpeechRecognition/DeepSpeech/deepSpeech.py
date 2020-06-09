@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import tensorflow as tf
-import tflite_runtime as tflite
 import deepspeech
 import argparse
 
@@ -61,6 +60,7 @@ open("converted_model1.tflite", "wb").write(tflite_model)
 
 
 interpreter = tf.lite.Interpreter("models-DE/output_graph.tflite")
+print("1")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
