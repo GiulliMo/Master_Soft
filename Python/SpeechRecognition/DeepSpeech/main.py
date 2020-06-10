@@ -8,7 +8,7 @@ import pyaudio
 import speech_recognition as sr
 from watson_developer_cloud import SpeechToTextV1
 import json
-import fuzzy
+import phonetics
 
 # import rospy
 # from std_msgs.msg import String
@@ -66,11 +66,10 @@ class SpeechRecognition:
         self.model = initModel(self.Version)
         self.recognizer = sr
         self.buffer = np.empty(0)
-        self.transitionsName = "transition.json"
+        self.transitions = "transition.json"
         self.buzzwordName = "buzzwords.json"
         self.buzzwords = []
-        self.transitions = []
-        self.transcript = ""
+        self.transcript = []
         self.speech_to_text = SpeechToTextV1(iam_apikey="wsDeuwes_FSm3bo_QiLLQl1Er81u1sqIQxMNZFB67aVq",
                                              url="https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/472d7157-6ba9-4041-b3f3-8b014ebd62cf")
 
@@ -115,10 +114,8 @@ class SpeechRecognition:
             try:
                 # record a wav file, bei ROS nur buffer
                 self.createWav(self.filename)
-
                 # predict Audio deepspeech
                 buffer = self.getBuffer(wave.open(filename, 'r'))
-
                 data16 = np.frombuffer(buffer, dtype=np.int16)
                 type(data16)
                 text = self.model.stt(data16)
@@ -177,14 +174,35 @@ class SpeechRecognition:
                 t = (t + q) % q  # make sure that t >= 0
         return result #begin of string position
 
-    def sortBuzzwords(self, transcript): #schlagwoerter nach auftauchen sortieren
-        for i in range(len(self.buzzwords)):
-            self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11)
+    def getAlfTransition(self, transcript): #schlagwoerter suchen und transition finden
+        recognizedBuzzwords = []
+        transitionCandidates = []
+        firstrun = True
 
+        for i in range(len(self.buzzwords)):
+          if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11): #is there a buzzword?
+              recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])#Buzzword to list
+
+        print(recognizedBuzzwords)
+
+        for j in range(len(self.transitions)):
+            score = 0
+            for k in range(len(recognizedBuzzwords)):
+                if self.Rabin_Karp_Matcher(self.transitions[j]['transition'][0]['signature'], recognizedBuzzwords[k], 257, 11):
+                    score = score + 1  # anzahl matches
+                    if firstrun:
+                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])
+                        firstrun = False
+                    elif not firstrun:
+                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])
+                        if transitionCandidates[len(transitionCandidates)-1][0]['name']==transitionCandidates[len(transitionCandidates)-2][0]['name']:
+                            transitionCandidates.remove(transitionCandidates[len(transitionCandidates)-2])
+
+        print(transitionCandidates)
 
     def loadJsons(self):
         f = open(self.buzzwordName, "r")
-        f2 = open(self.transitionsName, "r")
+        f2 = open(self.transitions, "r")
         self.buzzwords = json.loads(f.read())
         self.transitions = json.loads(f2.read())
         f.close()
@@ -240,7 +258,8 @@ class SpeechRecognition:
 if __name__ == '__main__':
     s = SpeechRecognition(newRecord=False, filename='berg.wav', pyVersion='PYTHON3')
     s.loadJsons()
-    s.transcript="localization change to state"
-    s.speechRecognitionDNN(s.record, s.filename)
-   # s.speechRecognitionIBM(s.filename)
+    s.transcript = "drive to location ojdtgjdf"
+    s.getAlfTransition(s.transcript)
+    #s.speechRecognitionDNN(s.record, s.filename)
+    # s.speechRecognitionIBM(s.filename)
 
