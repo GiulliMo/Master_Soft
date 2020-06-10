@@ -178,13 +178,14 @@ class SpeechRecognition:
         recognizedBuzzwords = []
         transitionCandidates = []
         firstrun = True
-
+        sum = 0
+        confidence = np.empty(len(self.transitions))
         for i in range(len(self.buzzwords)):
           if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11): #is there a buzzword?
               recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])#Buzzword to list
 
         print(recognizedBuzzwords)
-
+        ## suchen nach tranistionen mit buzzwords
         for j in range(len(self.transitions)):
             score = 0
             for k in range(len(recognizedBuzzwords)):
@@ -194,11 +195,17 @@ class SpeechRecognition:
                         transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])
                         firstrun = False
                     elif not firstrun:
-                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])
+                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}]) #Kandidaten anhängen
                         if transitionCandidates[len(transitionCandidates)-1][0]['name']==transitionCandidates[len(transitionCandidates)-2][0]['name']:
-                            transitionCandidates.remove(transitionCandidates[len(transitionCandidates)-2])
+                            transitionCandidates.remove(transitionCandidates[len(transitionCandidates)-2]) # gleichamigen Kandidaten loeschen
 
-        print(transitionCandidates)
+        confidence = np.empty(len(transitionCandidates))
+        for n in range(len(transitionCandidates)):
+            sum = sum + transitionCandidates[n][0]['score']
+            confidence[n] = transitionCandidates[n][0]['score']
+
+        print(max(confidence*(1/sum)))
+        print(transitionCandidates[np.argmax(confidence*(1/sum))][0]['name'])
 
     def loadJsons(self):
         f = open(self.buzzwordName, "r")
@@ -258,7 +265,7 @@ class SpeechRecognition:
 if __name__ == '__main__':
     s = SpeechRecognition(newRecord=False, filename='berg.wav', pyVersion='PYTHON3')
     s.loadJsons()
-    s.transcript = "drive to location ojdtgjdf"
+    s.transcript = "drive to location Bergmann"
     s.getAlfTransition(s.transcript)
     #s.speechRecognitionDNN(s.record, s.filename)
     # s.speechRecognitionIBM(s.filename)
