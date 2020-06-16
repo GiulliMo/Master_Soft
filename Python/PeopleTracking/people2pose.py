@@ -168,25 +168,6 @@ class PeopleRec:
 
         print "Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert"
 
-    def showpeople(self, sneak, framebgrsmall, detections):
-        """"
-        if detections:
-            if self.getface(detections[0], detections[1], detections[2], detections[3]):
-                person = self.listofpersons[]:
-                    if person.camera == "front":
-                        cv.rectangle(framebgrsmall, (person.rect[0], person.rect[1]),
-                                     (person.rect[2], person.rect[3]), (0, 255, 0), 2)
-
-                for person in self.listofpersons:
-                    if person.camera == "back":
-                        cv2.rectangle(framebgrsmall, (person.rect[0], person.rect[1]),
-                                      (person.rect[2], person.rect[3]), (0, 255, 0), 2)
-        """
-        cv.imshow("test1", framebgrsmall)
-        cv.waitKey(1)
-        cv2.imshow("test", framebgrsmall)
-        cv2.waitKey(1)
-
     def processing_hd(self, msg):
         try:
             imagebgrhd = self.bridge.imgmsg_to_cv2(msg, "bgr8")
