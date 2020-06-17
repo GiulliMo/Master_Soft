@@ -69,8 +69,9 @@ class PeopleRec:
         self.tfbroadcaster = tf.TransformBroadcaster()
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+        self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
         self.namespaceoffrontcamera = namespaceoffrontcamera
-        self.namespaceofbackcamera = namespaceofbackcamera
+        self.namespaceofrearcamera = namespaceofbackcamera
         self.bridgefront = CvBridge()
         self.bridgeback = CvBridge()
         self.listofroi = []
@@ -78,6 +79,10 @@ class PeopleRec:
         self.knownfaces = []
         self.unknownfaces = []
         self.pointcloudmsg = 0
+        self.frontframebgrsmall = np.array(0)
+        self.rearframebgrsmall = np.array(0)
+        self.frontimagebgrqhd = np.array(0)
+        self.rearimagebgrqhd = np.array(0)
         """
         self.OPENCV_OBJECT_TRACKERS = {
             "kcf": cv2.TrackerKCF_create,
@@ -95,20 +100,16 @@ class PeopleRec:
     # wird, dass einer Peron aehnelt, wird die Methode zur Erkennung losgetreten.
     # @param[in] msg Nachricht der Kamera
     def processingqhdfront(self, msg):
-
-        try:
-            # start = time.time()
-            sneak = "front"
-            # print threading.current_thread()
-            imagebgrqhd = self.bridgefront.imgmsg_to_cv2(msg, "bgr8")
-            framebgrsmall = imutils.resize(imagebgrqhd, width=min(400, imagebgrqhd.shape[1]))
-            detections = self.getdetections(framebgrsmall)
-            self.managepeople(detections, imagebgrqhd, framebgrsmall, sneak)
-            # self.showpeople(sneak, framebgrsmall, detections)
-            # print time.time()-start
-
-        except CvBridgeError as e:
-            print(e)
+            try:
+                sneak = "front"
+                # print threading.current_thread()
+                self.frontimagebgrqhd = self.bridgefront.imgmsg_to_cv2(msg, "bgr8")
+                self.frontframebgrsmall = imutils.resize(self.frontimagebgrqhd, width=min(400, self.frontimagebgrqhd.shape[1]))
+                #detections = self.getdetections(framebgrsmall)
+                #detections = self.trycnn(framebgrsmall)
+                #self.managepeople(detections, frontimagebgrqhd, framebgrsmall, sneak)
+            except CvBridgeError as e:
+                print(e)
 
     ## Callback der vorderen Kamera.
     # Ohne sneak waere die informationsquelle der eingehenden Daten nicht bekannt.
@@ -120,15 +121,69 @@ class PeopleRec:
             # start = time.time()
             sneak = "back"
             # print threading.current_thread()
-            imagebgrqhd = self.bridgeback.imgmsg_to_cv2(msg, "bgr8")
-            framebgrsmall = imutils.resize(imagebgrqhd, width=min(400, imagebgrqhd.shape[1]))
-            detections = self.getdetections(framebgrsmall)
-            self.managepeople(detections, imagebgrqhd, framebgrsmall, sneak)
+            self.rearimagebgrqhd = self.bridgeback.imgmsg_to_cv2(msg, "bgr8")
+            self.rearframebgrsmall = imutils.resize(self.rearimagebgrqhd, width=min(400, self.rearimagebgrqhd.shape[1]))
+            #detections = self.getdetections(framebgrsmall)
+            #detections = self.trycnn(framebgrsmall)
+            #self.managepeople(detections, rearimagebgrqhd, framebgrsmall, sneak)
             # self.showpeople(sneak, framebgrsmall)
             # print time.time() - start
 
         except CvBridgeError as e:
             print(e)
+
+    def trycnn(self, framebgrsmall, sneak):
+        """
+        CLASSES und COLORS auslagern
+        """
+        start = time.time()
+        CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
+                   "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
+                   "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
+                   "sofa", "train", "tvmonitor"]
+        IGNORE = set(["background", "aeroplane", "bicycle", "bird", "boat",
+                   "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
+                   "dog", "horse", "motorbike", "pottedplant", "sheep",
+                   "sofa", "train", "tvmonitor"])
+        COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
+        (h, w) = framebgrsmall.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(framebgrsmall, (300, 300)),
+                                     0.007843, (300, 300), 127.5)
+        bbox = []
+        self.net.setInput(blob)
+        detections = self.net.forward()
+        for i in np.arange(0, detections.shape[2]):
+            # extract the confidence (i.e., probability) associated with
+            # the prediction
+            confidence = detections[0, 0, i, 2]
+            # filter out weak detections by ensuring the `confidence` is
+            # greater than the minimum confidence
+            if confidence > 0.7:
+                # extract the index of the class label from the
+                # `detections`
+                idx = int(detections[0, 0, i, 1])
+                # if the predicted class label is in the set of classes
+                # we want to ignore then skip the detection
+                if CLASSES[idx] in IGNORE:
+                    continue
+                # compute the (x, y)-coordinates of the bounding box for
+                # the object
+                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
+                bbox.append((startX, startY, endX, endY))
+                # draw the prediction on the frame
+                label = "{}: {:.2f}%".format(CLASSES[idx],
+                                             confidence * 100)
+                cv2.rectangle(framebgrsmall, (startX, startY), (endX, endY),
+                              (255, 0, 255), 2)
+                y = startY - 15 if startY - 15 > 15 else startY + 15
+                cv2.putText(framebgrsmall, label, (startX, y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+        cv2.imshow(sneak, framebgrsmall)
+        key = cv2.waitKey(1) & 0xFF
+        end = time.time() - start
+        print("Das CNN hat " + str(end) +"s benoetigt.")
+        return bbox
 
     ## Prueft, ob erkannte Objekte Menschen sind.
     # @param[in] detections Liste von allen erkannten Objekten als Rechteck mit 4 gegebenen Punkten
@@ -179,18 +234,25 @@ class PeopleRec:
     def callback_pointcloud(self, msg):
         self.pointcloudmsg = msg
 
-    def getdetections(self, framebgrsmall):
-        (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(8, 8), scale=1.05)
+    def getdetections(self, framebgrsmall, sneak):
+        start = time.time()
+        (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+        for detection in detections:
+            cv2.rectangle(framebgrsmall, (detection[0], detection[1]), (detection[2], detection[3]),
+                          (255, 0, 255), 2)
 
+        end = time.time() - start
+        cv2.imshow(sneak, framebgrsmall)
+        key = cv2.waitKey(1) & 0xFF
+        print("Das HOG hat " + str(end) + "s benoetigt.")
         return detections
 
     def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
         shrinkfactor = 7
         xcenter = xupleft + (xbellowright - xupleft) / 2
         ycenter = yupleft + (ybellowright - yupleft) / 2
-        # print(self.xcenter, self.ycenter)
         xsmallrectupleft = xupleft + (xcenter - xupleft) * (shrinkfactor - 1) / shrinkfactor
         ysmallrectupleft = yupleft + (ycenter - yupleft) * (shrinkfactor - 1) / shrinkfactor
         xsmallrectbellowright = xcenter + (xbellowright - xcenter) / shrinkfactor
@@ -225,14 +287,18 @@ class PeopleRec:
         """
         ROI der Person wird an das Gesicht angepasst, um Rechenzeit zu sparen.
         """
-        facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
-        faceyupleft = int((yupleft + ((ybellowright - yupleft) / 10)) * factor)
-        facexbottomright = int((xbellowright - ((xbellowright - xupleft) / 4)) * factor)
-        faceybottomright = int((yupleft + ((ybellowright - yupleft) / 4)) * factor)
+        #facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
+        facexupleft = int(xupleft * factor)
+        #faceyupleft = int((yupleft + ((ybellowright - yupleft) / 10)) * factor)
+        faceyupleft = int(yupleft * factor)
+        #facexbottomright = int((xbellowright - ((xbellowright - xupleft) / 4)) * factor)
+        facexbottomright = int(xbellowright * factor)
+        #faceybottomright = int((yupleft + ((ybellowright - yupleft) / 4)) * factor)
+        faceybottomright = int((yupleft + ((ybellowright - yupleft) / 2)) * factor)
         imagecut = image[faceyupleft:faceybottomright, facexupleft:facexbottomright]
         rgb = cv2.cvtColor(imagecut, cv2.COLOR_BGR2RGB)
         boxes = face_recognition.face_locations(rgb)
-        # print(boxes)
+        print(boxes)
         """
         Fuer jedes erkannte Gesicht wird geprueft, ob es bekannt ist. Wenn nicht wird ein neues hinzugefuegt
         und wenn die Liste aller bekannten Gesichter leer ist wird das erste Gesicht sofort hinzugefuegt.  
@@ -241,8 +307,10 @@ class PeopleRec:
         for (top, right, bottom, left) in boxes:
             face = face_recognition.face_encodings(rgb, boxes)[0]
             isknown = face_recognition.compare_faces(self.knownfaces, face, 0.5)
+            print(isknown)
             if not isknown:
                 self.knownfaces.append(face)
+                isknown.append(True)
                 print("Neues Gesicht mit der ID" + str(len(self.knownfaces) - 1) + " hinzugefuegt")
             for index, element in enumerate(isknown):
                 print(index)
@@ -255,7 +323,7 @@ class PeopleRec:
                     self.checkunknownfaces(face)
                     return None
 
-    def checkunknownfaces(self, face, toknownfacesthreshold=5):
+    def checkunknownfaces(self, face, toknownfacesthreshold=3):
         print("Unbekanntes Gesicht wird geprueft...")
 
         if not self.unknownfaces:
@@ -282,7 +350,7 @@ class PeopleRec:
             if index + 1 == toknownfacesthreshold:
                 self.unknownfaces.remove(self.unknownfaces[0])
 
-            print("Unb. Gesicht wurde " + str(count) + " Mal erkannt")
+            print("Unb. Gesicht wurde " + str(count + 1) + " Mal erkannt")
 
     ## Veroeffentlicht die Position der zuletzt gesehenen Person
     # @todo Veroeffentlichen der globalen Koordinaten
@@ -319,19 +387,34 @@ class PeopleRec:
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
-        if self.namespaceofbackcamera != "":
-            rospy.Subscriber("/" + self.namespaceofbackcamera + "/qhd/image_color", Image, self.processingqhdback)
-            rospy.Subscriber("/" + self.namespaceofbackcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
+
+        if self.namespaceofrearcamera != "":
+            rospy.Subscriber("/" + self.namespaceofrearcamera + "/qhd/image_color", Image, self.processingqhdback)
+            rospy.Subscriber("/" + self.namespaceofrearcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
 
         # self.publisher = rospy.Publisher('/tracked_people/pose', PoseStamped, queue_size=10)
 
         try:
+            rospy.sleep(4)
             # rospy.spin()
             while not rospy.is_shutdown():
                 """
                 Hier kann man seriell arbeiten
                 """
+                start = time.time()
+                if self.namespaceoffrontcamera != "":
+                    detectionsfront = self.getdetections(self.frontframebgrsmall, "front")
+                    print(detectionsfront)
+                    self.managepeople(detectionsfront, self.frontimagebgrqhd, self.frontframebgrsmall, "front")
+
+                if self.namespaceofrearcamera != "":
+                    detectionsrear = self.getdetections(self.rearframebgrsmall, "back")
+                    print(detectionsrear)
+                    self.managepeople(detectionsrear, self.rearimagebgrqhd, self.rearframebgrsmall, "back")
+
                 self.publishposition()
+                end = time.time() - start
+                print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")
 
         except KeyboardInterrupt:
