@@ -179,7 +179,7 @@ class PeopleRec:
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(framebgrsmall, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imshow(sneak, framebgrsmall)
+        cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
         key = cv2.waitKey(1) & 0xFF
         end = time.time() - start
         print("Das CNN hat " + str(end) +"s benoetigt.")
@@ -403,12 +403,12 @@ class PeopleRec:
                 """
                 start = time.time()
                 if self.namespaceoffrontcamera != "":
-                    detectionsfront = self.getdetections(self.frontframebgrsmall, "front")
+                    detectionsfront = self.trycnn(self.frontframebgrsmall, "front")
                     print(detectionsfront)
                     self.managepeople(detectionsfront, self.frontimagebgrqhd, self.frontframebgrsmall, "front")
 
                 if self.namespaceofrearcamera != "":
-                    detectionsrear = self.getdetections(self.rearframebgrsmall, "back")
+                    detectionsrear = self.trycnn(self.rearframebgrsmall, "back")
                     print(detectionsrear)
                     self.managepeople(detectionsrear, self.rearimagebgrqhd, self.rearframebgrsmall, "back")
 
