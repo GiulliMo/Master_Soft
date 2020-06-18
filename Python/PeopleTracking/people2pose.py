@@ -133,9 +133,6 @@ class PeopleRec:
             print(e)
 
     def trycnn(self, framebgrsmall, sneak):
-        """
-        CLASSES und COLORS auslagern
-        """
         start = time.time()
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -145,13 +142,13 @@ class PeopleRec:
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                    "dog", "horse", "motorbike", "pottedplant", "sheep",
                    "sofa", "train", "tvmonitor"])
-        COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
         (h, w) = framebgrsmall.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(framebgrsmall, (300, 300)),
                                      0.007843, (300, 300), 127.5)
         bbox = []
         self.net.setInput(blob)
         detections = self.net.forward()
+        end = time.time() - start
         for i in np.arange(0, detections.shape[2]):
             # extract the confidence (i.e., probability) associated with
             # the prediction
@@ -181,7 +178,6 @@ class PeopleRec:
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
         cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
         key = cv2.waitKey(1) & 0xFF
-        end = time.time() - start
         print("Das CNN hat " + str(end) +"s benoetigt.")
         return bbox
 
@@ -226,8 +222,8 @@ class PeopleRec:
     def processing_hd(self, msg):
         try:
             imagebgrhd = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-
             return imagebgrhd
+
         except CvBridgeError as e:
             print(e)
 
@@ -250,6 +246,9 @@ class PeopleRec:
         return detections
 
     def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
+        """
+        Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
+        """
         shrinkfactor = 7
         xcenter = xupleft + (xbellowright - xupleft) / 2
         ycenter = yupleft + (ybellowright - yupleft) / 2
@@ -260,23 +259,36 @@ class PeopleRec:
         listofroi = []
         pc_list = []
         depthsum = 0
+        """
+        Region of interest in Form einer Liste fuer eventuelle spaetere Umstrukturierung
+        """
         for row in range(int(ysmallrectupleft * 4.8), int(ysmallrectbellowright * 4.8)):
             for column in range(int(xsmallrectupleft * 4.8), int(xsmallrectbellowright * 4.8)):
                 listofroi.append([int(column), int(row)])
-
+        """
+        Alle relevanten (NaNs werden aussortiert) Points werden aus der anliegenden PointCloud gezogen
+        """
         pc = pc2.read_points(pointcloudmsg, skip_nans=True, field_names=("x", "y", "z"), uvs=listofroi)
         for p in pc:
             pc_list.append([p[0], p[1], p[2]])
-
+        """
+        Alle Tiefen werden aufsummiert
+        """
         for (x, y, z) in pc_list:
             depthsum += z
-
+        """
+        Mittelwert wird gebildet und zusammen mit den entsprechenden Pixelkoordinaten ausgegeben
+        """
         if len(pc_list) != 0:
             depthaverage = depthsum / len(pc_list)
             return xcenter, ycenter, depthaverage
             # print(depthaverage, len(self.pc_list))
 
+    ## Ordnet Gesichter zu
     def getface(self, xupleft, yupleft, xbellowright, ybellowright, image):
+
+        # Groesse des Bildes wird erkannt und der Faktor der Umrechnung entsprechend angepasst
+
         if len(image) == 540:
             factor = 2.4
         elif len(image) == 1080:
@@ -284,9 +296,8 @@ class PeopleRec:
         else:
             factor = 1
 
-        """
-        ROI der Person wird an das Gesicht angepasst, um Rechenzeit zu sparen.
-        """
+        # ROI der Person wird an das Gesicht angepasst, um Rechenzeit zu sparen.
+
         #facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
         facexupleft = int(xupleft * factor)
         #faceyupleft = int((yupleft + ((ybellowright - yupleft) / 10)) * factor)
@@ -299,22 +310,25 @@ class PeopleRec:
         rgb = cv2.cvtColor(imagecut, cv2.COLOR_BGR2RGB)
         boxes = face_recognition.face_locations(rgb)
         print(boxes)
-        """
-        Fuer jedes erkannte Gesicht wird geprueft, ob es bekannt ist. Wenn nicht wird ein neues hinzugefuegt
-        und wenn die Liste aller bekannten Gesichter leer ist wird das erste Gesicht sofort hinzugefuegt.  
-        """
+
+        # Fuer jedes erkannte Gesicht wird geprueft, ob es bekannt ist. Wenn nicht wird ein neues hinzugefuegt
+        # und wenn die Liste aller bekannten Gesichter leer ist wird das erste Gesicht sofort hinzugefuegt.
+
 
         for (top, right, bottom, left) in boxes:
+            # Speichere das Gesicht in der Bbox. Wenn kein Gesicht dann None.
             face = face_recognition.face_encodings(rgb, boxes)[0]
+            # Gehoert das eingehende Gesicht zu
             isknown = face_recognition.compare_faces(self.knownfaces, face, 0.5)
             print(isknown)
+            # Das erste Gesicht wird sofort abgespeichert
             if not isknown:
                 self.knownfaces.append(face)
                 isknown.append(True)
                 print("Neues Gesicht mit der ID" + str(len(self.knownfaces) - 1) + " hinzugefuegt")
+            # Checke alle Gesichter ob und welches erkennt wurde, wenn nicht, gehoert es zu den unbekannten?
             for index, element in enumerate(isknown):
                 print(index)
-                # isknown[index] = False #spaeter loeschen
                 if isknown[index]:
                     print("ID " + str(index) + " wurde erkannt")
                     return xupleft, yupleft, xbellowright, ybellowright, top, right, bottom, left, face, index;
@@ -325,7 +339,7 @@ class PeopleRec:
 
     def checkunknownfaces(self, face, toknownfacesthreshold=3):
         print("Unbekanntes Gesicht wird geprueft...")
-
+        # Wenn kein unbekanntes Gesicht vorhanden fuege es hinzu
         if not self.unknownfaces:
             self.unknownfaces.append(face)
 
@@ -333,12 +347,13 @@ class PeopleRec:
         isunknown = face_recognition.compare_faces(self.unknownfaces, face, 0.4)
         print(isunknown)
         for index, element in enumerate(isunknown):
+            # Wenn eingehendes Gesicht zu unbekannten Gesichtern passt zaehle hoch
             if isunknown[index]:
                 count += 1
-
+            # Wenn nicht zaehle runter
             else:
                 count = 0
-
+            # Wenn das Gesicht oft genug erkannt wurde fuege es zu bekannten Gesichtern hinzu
             if count == toknownfacesthreshold:
                 self.knownfaces.append(face)
                 print("Neues Gesicht mit der ID " + str(len(self.knownfaces) - 1) + " hinzugefuegt")
