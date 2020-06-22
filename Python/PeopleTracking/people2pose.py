@@ -1,19 +1,14 @@
-from scipy.misc import bytescale
+
 import math
 import tf
 import threading
 from geometry_msgs.msg import PoseStamped
-
-from centroidtracker import CentroidTracker
 from imutils.object_detection import non_max_suppression
 import face_recognition
 import numpy as np
-import argparse
 import imutils
 import cv2
-import cv2 as cv
 import rospy
-import sys
 import time
 from sensor_msgs.msg import Image, PointCloud2
 import sensor_msgs.point_cloud2 as pc2
@@ -57,7 +52,7 @@ class Person:
 
 
 class PeopleRec:
-    def __init__(self, namespaceoffrontcamera="", namespaceofbackcamera="", maxdetectionsbeforetrack=5):
+    def __init__(self, namespaceoffrontcamera="", namespaceofrearcamera="", maxdetectionsbeforetrack=5):
         ## @var lock
         # Fuer eventuelles sperren von Threads
         self.lock = threading.Lock()
@@ -71,7 +66,7 @@ class PeopleRec:
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
         self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
         self.namespaceoffrontcamera = namespaceoffrontcamera
-        self.namespaceofrearcamera = namespaceofbackcamera
+        self.namespaceofrearcamera = namespaceofrearcamera
         self.bridgefront = CvBridge()
         self.bridgeback = CvBridge()
         self.listofroi = []
@@ -102,12 +97,9 @@ class PeopleRec:
     def processingqhdfront(self, msg):
             try:
                 sneak = "front"
-                # print threading.current_thread()
                 self.frontimagebgrqhd = self.bridgefront.imgmsg_to_cv2(msg, "bgr8")
                 self.frontframebgrsmall = imutils.resize(self.frontimagebgrqhd, width=min(400, self.frontimagebgrqhd.shape[1]))
-                #detections = self.getdetections(framebgrsmall)
-                #detections = self.trycnn(framebgrsmall)
-                #self.managepeople(detections, frontimagebgrqhd, framebgrsmall, sneak)
+
             except CvBridgeError as e:
                 print(e)
 
@@ -120,19 +112,32 @@ class PeopleRec:
         try:
             # start = time.time()
             sneak = "back"
-            # print threading.current_thread()
             self.rearimagebgrqhd = self.bridgeback.imgmsg_to_cv2(msg, "bgr8")
             self.rearframebgrsmall = imutils.resize(self.rearimagebgrqhd, width=min(400, self.rearimagebgrqhd.shape[1]))
-            #detections = self.getdetections(framebgrsmall)
-            #detections = self.trycnn(framebgrsmall)
-            #self.managepeople(detections, rearimagebgrqhd, framebgrsmall, sneak)
-            # self.showpeople(sneak, framebgrsmall)
             # print time.time() - start
 
         except CvBridgeError as e:
             print(e)
 
-    def trycnn(self, framebgrsmall, sneak):
+    def getdetectionsbyhog(self, framebgrsmall, sneak):
+        start = time.time()
+        # Erstellung der Boundingbox
+        (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
+        rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
+        end = time.time() - start
+        # Fuer sich ueberschneidende Rechtecke unterdruecke diese
+        detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+        # Zur Visualisierung der erkannten Objekte
+        for detection in detections:
+            cv2.rectangle(framebgrsmall, (detection[0], detection[1]), (detection[2], detection[3]),
+                          (255, 0, 255), 2)
+
+        # cv2.imshow(sneak, framebgrsmall)
+        # key = cv2.waitKey(1) & 0xFF
+        print("Das HOG hat " + str(end) + "s benoetigt.")
+        return detections, framebgrsmall
+
+    def getdetectionsbycnn(self, framebgrsmall, sneak):
         start = time.time()
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -150,25 +155,19 @@ class PeopleRec:
         detections = self.net.forward()
         end = time.time() - start
         for i in np.arange(0, detections.shape[2]):
-            # extract the confidence (i.e., probability) associated with
-            # the prediction
+            # Konfidenz berechnen
             confidence = detections[0, 0, i, 2]
-            # filter out weak detections by ensuring the `confidence` is
-            # greater than the minimum confidence
+            # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             if confidence > 0.7:
-                # extract the index of the class label from the
-                # `detections`
+                # Index der Detection
                 idx = int(detections[0, 0, i, 1])
-                # if the predicted class label is in the set of classes
-                # we want to ignore then skip the detection
+                # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
                 if CLASSES[idx] in IGNORE:
                     continue
-                # compute the (x, y)-coordinates of the bounding box for
-                # the object
+                #Erstellung der Boundingbox
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-                (startX, startY, endX, endY) = box.astype("int")
+                (startX, startY, endX, endY) = abs(box.astype("int"))
                 bbox.append((startX, startY, endX, endY))
-                # draw the prediction on the frame
                 label = "{}: {:.2f}%".format(CLASSES[idx],
                                              confidence * 100)
                 cv2.rectangle(framebgrsmall, (startX, startY), (endX, endY),
@@ -176,10 +175,10 @@ class PeopleRec:
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(framebgrsmall, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
-        key = cv2.waitKey(1) & 0xFF
+        #cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
+        #key = cv2.waitKey(1) & 0xFF
         print("Das CNN hat " + str(end) +"s benoetigt.")
-        return bbox
+        return bbox, framebgrsmall
 
     ## Prueft, ob erkannte Objekte Menschen sind.
     # @param[in] detections Liste von allen erkannten Objekten als Rechteck mit 4 gegebenen Punkten
@@ -217,6 +216,8 @@ class PeopleRec:
                 else:
                     self.listofpersons[incomingface[9]] = knownperson
 
+        cv2.imshow(sneak, framebgrsmall)
+        key = cv2.waitKey(1) & 0xFF
         print "Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert"
 
     def processing_hd(self, msg):
@@ -230,25 +231,10 @@ class PeopleRec:
     def callback_pointcloud(self, msg):
         self.pointcloudmsg = msg
 
-    def getdetections(self, framebgrsmall, sneak):
-        start = time.time()
-        (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
-        rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
-        detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
-        for detection in detections:
-            cv2.rectangle(framebgrsmall, (detection[0], detection[1]), (detection[2], detection[3]),
-                          (255, 0, 255), 2)
-
-        end = time.time() - start
-        cv2.imshow(sneak, framebgrsmall)
-        key = cv2.waitKey(1) & 0xFF
-        print("Das HOG hat " + str(end) + "s benoetigt.")
-        return detections
-
     def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
-        """
-        Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
-        """
+
+        #Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
+
         shrinkfactor = 7
         xcenter = xupleft + (xbellowright - xupleft) / 2
         ycenter = yupleft + (ybellowright - yupleft) / 2
@@ -259,26 +245,26 @@ class PeopleRec:
         listofroi = []
         pc_list = []
         depthsum = 0
-        """
-        Region of interest in Form einer Liste fuer eventuelle spaetere Umstrukturierung
-        """
+
+        #Region of interest in Form einer Liste fuer eventuelle spaetere Umstrukturierung
+
         for row in range(int(ysmallrectupleft * 4.8), int(ysmallrectbellowright * 4.8)):
             for column in range(int(xsmallrectupleft * 4.8), int(xsmallrectbellowright * 4.8)):
                 listofroi.append([int(column), int(row)])
-        """
-        Alle relevanten (NaNs werden aussortiert) Points werden aus der anliegenden PointCloud gezogen
-        """
+
+        #Alle relevanten (NaNs werden aussortiert) Points werden aus der anliegenden PointCloud gezogen
+
         pc = pc2.read_points(pointcloudmsg, skip_nans=True, field_names=("x", "y", "z"), uvs=listofroi)
         for p in pc:
             pc_list.append([p[0], p[1], p[2]])
-        """
-        Alle Tiefen werden aufsummiert
-        """
+
+        #Alle Tiefen werden aufsummiert
+
         for (x, y, z) in pc_list:
             depthsum += z
-        """
-        Mittelwert wird gebildet und zusammen mit den entsprechenden Pixelkoordinaten ausgegeben
-        """
+
+        #Mittelwert wird gebildet und zusammen mit den entsprechenden Pixelkoordinaten ausgegeben
+
         if len(pc_list) != 0:
             depthaverage = depthsum / len(pc_list)
             return xcenter, ycenter, depthaverage
@@ -296,8 +282,7 @@ class PeopleRec:
         else:
             factor = 1
 
-        # ROI der Person wird an das Gesicht angepasst, um Rechenzeit zu sparen.
-
+        # ROI der Person wird zur Ersparnis der Rechenzeit an das Gesicht angepasst
         #facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
         facexupleft = int(xupleft * factor)
         #faceyupleft = int((yupleft + ((ybellowright - yupleft) / 10)) * factor)
@@ -309,11 +294,9 @@ class PeopleRec:
         imagecut = image[faceyupleft:faceybottomright, facexupleft:facexbottomright]
         rgb = cv2.cvtColor(imagecut, cv2.COLOR_BGR2RGB)
         boxes = face_recognition.face_locations(rgb)
-        print(boxes)
 
         # Fuer jedes erkannte Gesicht wird geprueft, ob es bekannt ist. Wenn nicht wird ein neues hinzugefuegt
         # und wenn die Liste aller bekannten Gesichter leer ist wird das erste Gesicht sofort hinzugefuegt.
-
 
         for (top, right, bottom, left) in boxes:
             # Speichere das Gesicht in der Bbox. Wenn kein Gesicht dann None.
@@ -353,15 +336,15 @@ class PeopleRec:
             # Wenn nicht zaehle runter
             else:
                 count = 0
-            # Wenn das Gesicht oft genug erkannt wurde fuege es zu bekannten Gesichtern hinzu
+            # Wenn das Gesicht oft genug erkannt wurde fuege es zu bekannten Gesichtern hinzugit status
             if count == toknownfacesthreshold:
                 self.knownfaces.append(face)
                 print("Neues Gesicht mit der ID " + str(len(self.knownfaces) - 1) + " hinzugefuegt")
                 break
-
+            # Wenn keins der unbekannten Gesichter dem eingehenden Gesicht aehnelt, erweitere die Liste
             if index + 1 == len(isunknown):
                 self.unknownfaces.append(face)
-
+            # Wenn das Gesicht oft genug erkannt worden ist, loesche es von den unbekannten Geischtern
             if index + 1 == toknownfacesthreshold:
                 self.unknownfaces.remove(self.unknownfaces[0])
 
@@ -369,21 +352,26 @@ class PeopleRec:
 
     ## Veroeffentlicht die Position der zuletzt gesehenen Person
     # @todo Veroeffentlichen der globalen Koordinaten
+    # @todo Veroeffentlichen der zuletzt gesehen Person nicht der zuletzt hinzugefuegten Person
     def publishposition(self):
         if self.listofpersons:
             lastperson = self.listofpersons[-1]
             try:
+                # Auslesen des aktuellen Standorts der Kameras im Bezug zum Kartenkoordinatensystem
                 (trans, rot) = self.listener.lookupTransform('/map', '/cam_' + lastperson.camera, rospy.Time(0))
+                # Erstellen der ausgehenden Nachricht
                 msg = PoseStamped()
                 msg.header.frame_id = "cam_" + lastperson.camera
                 msg.pose.position.y = -lastperson.localcoordinates[0]
                 msg.pose.position.x = lastperson.localcoordinates[1]
                 msg.header.stamp = rospy.Time.now()
                 self.publisher.publish(msg)
-
+            # Wenn Fehler auf der Seite der ROS Software bestehen, fange diese ab
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 print("No tf message received...")
 
+    ## Berechnung der lokalen X/Y-Koordinaten gemessen von der jeweiligen Kamera zum Objekt mithilfe der
+    ## intrinsischen Kamerainformationen
     def getxycoordinates(self, xcenter, framebgrsmall, depthaverage):
         fovhorizontal = 80
         fovhorizontaldegree = fovhorizontal * (math.pi / 180)
@@ -395,17 +383,19 @@ class PeopleRec:
         return [xpospersonlocal, ypospersonlocal]
         # print(self.xposperson, self.yposperson)
 
+    ## Zusammensetzung des Knotens. Alle rospy.-Befehle werden seriell bearbeitet. Die in der While-Schleife
+    ## befindlichen Befehle werden widerrum seriell barbeitet.
+
     def startnode(self):
         rospy.init_node('listener', anonymous=True)
         self.listener = tf.TransformListener()
         self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
+        rospy.Subscriber("/" + self.namespaceoffrontcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
-            rospy.Subscriber("/" + self.namespaceoffrontcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
 
         if self.namespaceofrearcamera != "":
             rospy.Subscriber("/" + self.namespaceofrearcamera + "/qhd/image_color", Image, self.processingqhdback)
-            rospy.Subscriber("/" + self.namespaceofrearcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
 
         # self.publisher = rospy.Publisher('/tracked_people/pose', PoseStamped, queue_size=10)
 
@@ -418,14 +408,14 @@ class PeopleRec:
                 """
                 start = time.time()
                 if self.namespaceoffrontcamera != "":
-                    detectionsfront = self.trycnn(self.frontframebgrsmall, "front")
+                    detectionsfront, imagefront = self.getdetectionsbycnn(self.frontframebgrsmall, "front")
                     print(detectionsfront)
-                    self.managepeople(detectionsfront, self.frontimagebgrqhd, self.frontframebgrsmall, "front")
+                    self.managepeople(detectionsfront, self.frontimagebgrqhd, imagefront, "front")
 
                 if self.namespaceofrearcamera != "":
-                    detectionsrear = self.trycnn(self.rearframebgrsmall, "back")
+                    detectionsrear, imagerear = self.getdetectionsbycnn(self.rearframebgrsmall, "back")
                     print(detectionsrear)
-                    self.managepeople(detectionsrear, self.rearimagebgrqhd, self.rearframebgrsmall, "back")
+                    self.managepeople(detectionsrear, self.rearimagebgrqhd, imagerear, "back")
 
                 self.publishposition()
                 end = time.time() - start
@@ -433,8 +423,8 @@ class PeopleRec:
             print("\nShutdown...")
 
         except KeyboardInterrupt:
-            print("Shutting down")
-        cv.destroyAllWindows()
+            print("\nShutting down")
+
         cv2.destroyAllWindows()
 
 
