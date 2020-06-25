@@ -1,4 +1,4 @@
-
+import pickle
 import math
 import tf
 import threading
@@ -158,7 +158,7 @@ class PeopleRec:
             # Konfidenz berechnen
             confidence = detections[0, 0, i, 2]
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
-            if confidence > 0.7:
+            if confidence > 0.6:
                 # Index der Detection
                 idx = int(detections[0, 0, i, 1])
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
@@ -385,8 +385,28 @@ class PeopleRec:
 
     ## Zusammensetzung des Knotens. Alle rospy.-Befehle werden seriell bearbeitet. Die in der While-Schleife
     ## befindlichen Befehle werden widerrum seriell barbeitet.
+    """
+    def savedata(self):
+        config_dictionary = {'remote_hostname': 'google.com', 'remote_port': 80}
 
+        # Step 2
+        with open('data.dictionary', 'wb') as config_dictionary_file:
+            # Step 3
+            pickle.dump(config_dictionary, config_dictionary_file)
+    
+    def getdata(self):
+        with open('data.dictionary', 'rb') as config_dictionary_file:
+            # Step 3
+            config_dictionary = pickle.load(config_dictionary_file)
+
+            # After config_dictionary is read from file
+            print(config_dictionary)
+        
+        except EOFError:
+            print("empty file")
+    """
     def startnode(self):
+       # self.getdata()
         rospy.init_node('listener', anonymous=True)
         self.listener = tf.TransformListener()
         self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
@@ -421,9 +441,11 @@ class PeopleRec:
                 end = time.time() - start
                 print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")
+         #   self.savedata()
 
         except KeyboardInterrupt:
             print("\nShutting down")
+            self.savedata()
 
         cv2.destroyAllWindows()
 
