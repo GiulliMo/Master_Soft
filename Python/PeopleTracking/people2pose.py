@@ -1,6 +1,7 @@
 import pickle
 import math
-import tf
+import tensorflow
+import tf as transform
 import threading
 from geometry_msgs.msg import PoseStamped
 from imutils.object_detection import non_max_suppression
@@ -61,7 +62,7 @@ class PeopleRec:
         self.listofpersons = []
         # self.net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel")
         self.trackers = cv2.MultiTracker_create()
-        self.tfbroadcaster = tf.TransformBroadcaster()
+        self.tfbroadcaster = transform.TransformBroadcaster()
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
         self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
@@ -108,7 +109,7 @@ class PeopleRec:
     # Zur Ersparnis von Rechenzeit werden die Bilder so klein wie moeglich gehalten. Sobald ein Objekt detetktiert
     # wird, dass einer Peron aehnelt, wird die Methode zur Erkennung losgetreten.
     # @param[in] msg Nachricht der Kamera
-    def processingqhdback(self, msg):
+    def processingqhdrear(self, msg):
         try:
             # start = time.time()
             sneak = "back"
@@ -180,6 +181,29 @@ class PeopleRec:
         print("Das CNN hat " + str(end) +"s benoetigt.")
         return bbox, framebgrsmall
 
+    """
+    def getdetectionsbytflite(self, framebgrsmall):
+        # Load the TFLite model and allocate tensors.
+        interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
+        interpreter.allocate_tensors()
+
+        # Get input and output tensors.
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
+
+        # Test the model on random input data.
+        input_shape = input_details[0]['shape']
+        input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
+        interpreter.set_tensor(input_details[0]['index'], input_data)
+
+        interpreter.invoke()
+
+        # The function `get_tensor()` returns a copy of the tensor data.
+        # Use `tensor()` in order to get a pointer to the tensor.
+        output_data = interpreter.get_tensor(output_details[0]['index'])
+        print(output_data)
+    """
+
     ## Prueft, ob erkannte Objekte Menschen sind.
     # @param[in] detections Liste von allen erkannten Objekten als Rechteck mit 4 gegebenen Punkten
     # @param[in] imagebgrqhd QHD Bild der Kamera
@@ -205,8 +229,7 @@ class PeopleRec:
                     incomingface[0], incomingface[1], incomingface[2], incomingface[3], self.pointcloudmsg)
                 knownperson.localcoordinates = self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall,
                                                                      knownperson.distance)
-                print self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall,
-                                            knownperson.distance)
+                print(self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall, knownperson.distance))
                 """
                 Wenn der Index des Gesichts gleich der Laenge der Liste der bekannten Personen ist wird eine 
                 Person hinzugefuegt. Anderenfalls aktualisiere eine bestehende Person. 
@@ -218,7 +241,7 @@ class PeopleRec:
 
         cv2.imshow(sneak, framebgrsmall)
         key = cv2.waitKey(1) & 0xFF
-        print "Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert"
+        print("Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert")
 
     def processing_hd(self, msg):
         try:
@@ -367,7 +390,7 @@ class PeopleRec:
                 msg.header.stamp = rospy.Time.now()
                 self.publisher.publish(msg)
             # Wenn Fehler auf der Seite der ROS Software bestehen, fange diese ab
-            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            except (transform.LookupException, transform.ConnectivityException, transform.ExtrapolationException):
                 print("No tf message received...")
 
     ## Berechnung der lokalen X/Y-Koordinaten gemessen von der jeweiligen Kamera zum Objekt mithilfe der
@@ -408,14 +431,14 @@ class PeopleRec:
     def startnode(self):
        # self.getdata()
         rospy.init_node('listener', anonymous=True)
-        self.listener = tf.TransformListener()
+        self.listener = transform.TransformListener()
         self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
         rospy.Subscriber("/" + self.namespaceoffrontcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
 
         if self.namespaceofrearcamera != "":
-            rospy.Subscriber("/" + self.namespaceofrearcamera + "/qhd/image_color", Image, self.processingqhdback)
+            rospy.Subscriber("/" + self.namespaceofrearcamera + "/qhd/image_color", Image, self.processingqhdrear)
 
         # self.publisher = rospy.Publisher('/tracked_people/pose', PoseStamped, queue_size=10)
 
