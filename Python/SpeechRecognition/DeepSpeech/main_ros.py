@@ -1,10 +1,20 @@
-
+##################################################
+## Author: Hannes Dittmann
+## Version: 1.0
+## Email: hannes.dittmann@stud.hshl.de
+## Status: In Entwicklung
+##################################################
+## Dieses Skript dient dazu, eine transkription auf dem Raspberry Pi in Kombination mit dem Robot Operating System durchzuführen,
+## Ein Deepspeech Modell muss mit passender Version vorliegen. Ein Datenstrom wird aus dem ROS-Netzwerk aufgenommen
+## Es wird eine WAV Datei transkribiert, diese kann vorhanden sein, oder neu aufgenommen werden.
+## Ein Tflite Modell zur bedienungsorientierten Handlungsklassifizierung muss mit entsprechender Wortliste vorliegen
 
 import os
 import deepspeech
 import wave
 import numpy as np
 import json
+import pyaudio
 import rospy
 from std_msgs.msg import String, Int16MultiArray
 import time
@@ -12,6 +22,11 @@ import threading
 import argparse
 import json
 import phonetics
+import nltk
+from nltk.stem.lancaster import LancasterStemmer
+stemmer = LancasterStemmer()
+import tflite_runtime.interpreter as tflite
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--RECSEC", help="Laenge der Aufnahme",
@@ -46,9 +61,11 @@ def initModel(VERSION):
 
     return model
 
-
+# Erzeugen der Klasse SpeechRecognition
 class SpeechRecognition:
     def __init__(self, recsec,  pyVersion, nodename, topicnamePub, topicnameSub):
+
+        # Definieren von Objekteigenschaften der Klasse Speech Recognition
         self.record = True
         self.nodename = nodename
         self.topicnamePub = topicnamePub
@@ -62,8 +79,11 @@ class SpeechRecognition:
         self.chunksize = 2048
         self.recsec = recsec
         self.devIndex = 0  # 0=Boltune, 1= boltune, 2 = builtin
-        self.model = initModel(self.Version)
+        self.modelDs = initModel(self.Version)
+        self.modelTaskClassifier = tflite.Interpreter("taskClassifier.tflite")
         self.buffer = np.zeros(self.chunksize)
+        self.audio = pyaudio.PyAudio()
+        self.Format = pyaudio.paInt16
         self.frames = []
         self.cnt = 0
         self.start = 0
@@ -72,28 +92,63 @@ class SpeechRecognition:
         self.buzzwordName = "buzzwords.json"
         self.buzzwords = []
         self.transcript = []
-        self.context = self.model.createStream()
         self.text_so_far = ''
+        self.words = [0]
+        self.task = ''
 
-    #Datenstrom zu Audiotranskript
+    # Methode um Sprache zu transkripieren
     def speechRecognitionDNN(self, stream):
         # Recognition from record
         try:
             print("Start recognition")
             self.start = time.time()
-            self.transcript = self.model.stt(stream)
+
+            #Transkription erzeugen
+            self.transcript = self.modelDs.stt(stream)
+
+            #Transkript in ROS veröffentlichen
             self.talker(len(self.transcript), self.transcript)
             print(self.transcript)
-            if self.transcript:
-                self.talker(len(self.transcript), self.getAlfTransition(self.getAlfBuzzWords()))
             print("Speech recognition finished")
+            # Zeit für Transkription berechnen
             print(time.time() - self.start)
+
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
 
-    def callback(self, msg):
-        self.buffer = np.int16(np.asarray(msg.data))
+        # Methode um Handlungen zu klassifizieren
+    def classifierNN(self, transcript):
+
+        self.modelTaskClassifier.allocate_tensors()
+
+        #  Ein- und Ausgabe Tensoren bestimmen
+        input_details = self.modelTaskClassifier.get_input_details()
+        output_details = self.modelTaskClassifier.get_output_details()
+        input_shape = input_details[0]['shape']
+
+        # Eingabe Tensor definieren
+        input = self.bow(transcript.lower(), self.words, show_details=False)
+        input = np.reshape(input, [input_shape[0], input_shape[1]])
+        input_data = np.array(input, dtype=np.float32)
+
+        # Eingabe Tensor setzen
+        self.modelTaskClassifier.set_tensor(input_details[0]['index'], input_data)
+        self.modelTaskClassifier.invoke()
+
+        # Ausgabe Tensor berechnen
+        output_data = self.modelTaskClassifier.get_tensor(output_details[0]['index'])
+        class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop']
+
+        # Ausgabe der Klassifizierung
+        print(output_data, class_names[np.argmax(output_data)])
+
+        # classes of training data
+        # drive to = 0
+        # slam = 1
+        # wait for = 2
+        # localization = 3
+        # stop = 4
 
     # Methode um Datenstrom abhängig der Aufnahmedauer zusammenzusetzen
     def processDataStream(self,data):
@@ -104,28 +159,36 @@ class SpeechRecognition:
                 print("start recording...")
                 self.frames=[]
                 self.cnt = self.cnt +1
+                # Aufnahme ueber dauer von recsec
             if self.cnt<=int(self.rate / self.chunksize * self.recsec):
                 self.frames.append(np.asarray(data))
                 self.cnt = self.cnt + 1
             else:
                 print("finished recording!")
                 data16 = np.frombuffer(np.asarray(self.frames), dtype=np.int16)
+
+                # Aufnahme als WAV Datei abspeichern
+                self.audio.terminate()
+                waveFile = wave.open("test.wav", 'wb')
+                waveFile.setnchannels(self.channels)
+                waveFile.setsampwidth(self.audio.get_sample_size(self.Format))
+                waveFile.setframerate(self.rate)
+                waveFile.writeframes(b''.join(self.frames))
+                waveFile.close()
+
+                # Aufruf Transkriptionsmethode
                 self.speechRecognitionDNN(data16)
+
+                # Aufruf Methode um bedienungsorientierte Handlung zu klassifizieren
+                self.classifierNN(self.transcript)
+
                 self.cnt=0
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
 
-
-    def process_audio(self, in_data):
-        data16=np.frombuffer(np.asarray(in_data), dtype=np.int16)
-        self.context.feedAudioContent(data16)
-        self.transcript = self.context.intermediateDecode()
-        print(self.transcript)
-        if self.transcript != self.text_so_far:
-            print('Interim text = {}'.format(self.transcript))
-            self.text_so_far = self.transcript
-            print(self.text_so_far)
+    def callback(self, msg):
+        self.buffer = np.int16(np.asarray(msg.data))
 
     #ROS Knoten initialisieren und Subscriber aufrufen
     def listener(self):
@@ -143,13 +206,13 @@ class SpeechRecognition:
                 print("Keyboard interrupt")
             pass
 
-    #ROS Publisher aufrufen
+    # ROS Publisher aufrufen
     def talker(self, size, text):
         pub = rospy.Publisher(self.topicnamePub, String, queue_size=size)
         rospy.loginfo(text)
         pub.publish(text)
 
-    # Pattern Matcher
+    # Pattern Matcher um Schlagwörter zu finden
     def Rabin_Karp_Matcher(self, text, pattern, d, q):
         n = len(text)
         m = len(pattern)
@@ -195,31 +258,36 @@ class SpeechRecognition:
         res = self.transcript.split()
         phoneResMetaphone = []
         phoneResSoundex = []
-        phoneResNysi = []
+        #phoneResNysi = []
 
         # phonetischen code der transkription
         for k in range(len(res)):
             phoneResMetaphone.append(phonetics.metaphone(res[k]))
             phoneResSoundex.append(phonetics.soundex(res[k]))
-            phoneResNysi.append(phonetics.nysiis(res[k]))
+            #phoneResNysi.append(phonetics.nysiis(res[k]))
 
         # Sind Schalgwoerter in dem Transcript?
         for i in range(len(self.buzzwords)):
             # Pruefe auf direktes match
             if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
-                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
+                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
+
             # Pruefe auf phonetisches match nach Metaphone codierung
             elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResMetaphone), phonetics.metaphone(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
-                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
+                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
                 print("1")
+
             # Pruefe auf phonetisches match nach Soundex codierung
             elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResSoundex), phonetics.soundex(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
-                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
+                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
                 print("2")
+
             # Pruefe auf phonetisches match nach Nysii codierung
             #elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResNysi), phonetics.nysiis(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
                 #recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
+
         return recognizedBuzzwords
+
 
     # Methode um Alf-Spezifische Transkription zu finden
     def getAlfTransition(self, recognizedBuzzwords):  # schlagwoerter suchen und transition finden
@@ -271,9 +339,40 @@ class SpeechRecognition:
         f.close()
         f2.close()
 
+    # Wortliste für Bedienungsorientierte Klassifizierung laden
+    def readWords(self):
+        file = open("words.txt", 'r')
+        words = [line.split(',') for line in file.readlines()]
+        words = words[0]
+        self.words = words[0:len(words) - 1]  # split fügt ein wort hinzu wo keins hinsoll
+
+    # Methonde um nur Wortstämme beachten
+    def clean_up_sentence(self, sentence):
+        # tokenize the pattern
+        sentence_words = nltk.word_tokenize(sentence)
+        # stem each word
+        sentence_words = [stemmer.stem(word.lower()) for word in sentence_words]
+        return sentence_words
+
+    # return bag of words array: 0 or 1 for each word in the bag that exists in the sentence
+    def bow(self, sentence, words, show_details=True):
+        # tokenize the pattern
+        sentence_words = self.clean_up_sentence(sentence)
+        # bag of words
+        bag = [0] * len(words)
+        for s in sentence_words:
+            for i, w in enumerate(words):
+                if w == s:
+                    bag[i] = 1
+                    if show_details:
+                        print("found in bag: %s" % w)
+        return (np.array(bag))
+
+# Main Methode
 if __name__ == '__main__':
     s = SpeechRecognition(args.RECSEC, args.LANGUAGE, args.nodename, args.topicnamePub, args.topicnameSub)
     s.loadJsons()
+    s.readWords()
     s.listener()
 
 

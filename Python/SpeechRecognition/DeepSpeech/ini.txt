@@ -17,9 +17,15 @@ pip3 install deepspeech=0.7.1 für Python3 scorer Model und pbmm werden benötig
 
 5. PortAudio. pyaudio etc. je nach Fehlermeldung
 
-main.py für Aufnahme und Erkennung auf gleichem Gerät
+main.py für Aufnahme und Erkennung auf gleichem Gerät/ Entwicklungsrechner
 
-main_ros.py für Aufnahme und Erkennung auf ALF/LAptop und Raspberry pi
+main_ros.py für Aufnahme und Erkennung auf ALF/LAptop und Raspberry pi mit dem ROS-Netzwerk
+
+classification.py um Netzwerk zu trainieren (bedienungsorientiertes Nachbearbeiten)
+
+classification_predict.py Netzwerk probieren nach export von tflite Modell
+
+
 
 
 
