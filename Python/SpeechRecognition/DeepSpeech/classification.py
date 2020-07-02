@@ -42,11 +42,11 @@ training_data.append({"class":0, "sentence":"ride to easy "})
 training_data.append({"class":0, "sentence":"use autonomeous driving"})
 training_data.append({"class":0, "sentence":"move autonomeously"})
 training_data.append({"class":0, "sentence":"plan trip to location"})
-training_data.append({"class":0, "sentence":"trajectorie to foxtrott"})
+training_data.append({"class":0, "sentence":"trajectorie to foxtrot"})
 training_data.append({"class":0, "sentence":"plan trip to move"})
 training_data.append({"class":0, "sentence":"moving to location"})
 training_data.append({"class":0, "sentence":"moving to location easy"})
-training_data.append({"class":0, "sentence":"moving to position foxtrott"})
+training_data.append({"class":0, "sentence":"moving to position foxtrot"})
 training_data.append({"class":0, "sentence":"move to station charlie"})
 training_data.append({"class":0, "sentence":"deliver your package"})
 training_data.append({"class":0, "sentence":"deliver to location delta"})
@@ -60,10 +60,9 @@ training_data.append({"class":1, "sentence":"change to slam mode"})
 training_data.append({"class":1, "sentence":"change to slam state"})
 training_data.append({"class":1, "sentence":"create a new map"})
 training_data.append({"class":1, "sentence":"start mapping"})
-training_data.append({"class":1, "sentence":"start mapping and localize"})
+training_data.append({"class":1, "sentence":"start mapping and localization"})
 training_data.append({"class":1, "sentence":"start to solve slam"})
 training_data.append({"class":1, "sentence":"explore your environment"})
-training_data.append({"class":1, "sentence":"localize in mapped environment"})
 training_data.append({"class":1, "sentence":"explore with slam"})
 training_data.append({"class":1, "sentence":"explore with simultaneous localization and mapping"})
 training_data.append({"class":1, "sentence":"change to explore mode"})
@@ -73,6 +72,11 @@ training_data.append({"class":1, "sentence":"solve slam problem"})
 training_data.append({"class":1, "sentence":"what is your position in the unknown environment?"})
 training_data.append({"class":1, "sentence":"estimate the map"})
 training_data.append({"class":1, "sentence":"localize in unknown environment"})
+training_data.append({"class":1, "sentence":"find yourself in unknown environment"})
+training_data.append({"class":1, "sentence":"estimate your pose in unknown environment"})
+training_data.append({"class":1, "sentence":"can you start with pose estimation and mapping?"})
+training_data.append({"class":1, "sentence":"can you start with slam?"})
+training_data.append({"class":1, "sentence":"localize yourself with slam"})
 
 training_data.append({"class":2, "sentence":"wait for a person"})
 training_data.append({"class":2, "sentence":"for which command do you wait for"})
@@ -117,6 +121,11 @@ training_data.append({"class":3,  "sentence":"find yourself in the known map"})
 training_data.append({"class":3,  "sentence":"localize in known map"})
 training_data.append({"class":3,  "sentence":"localize in known environment"})
 training_data.append({"class":3,  "sentence":"localize in environment"})
+training_data.append({"class":3, "sentence":"estimate your pose in known environment"})
+training_data.append({"class":3, "sentence":"localize in static map"})
+training_data.append({"class":3, "sentence":"localize in mapped environment"})
+training_data.append({"class":3, "sentence":"estimate pose in mapped environment"})
+training_data.append({"class":3, "sentence":"start localization"})
 
 
 training_data.append({"class":4,  "sentence":"stop your actual task"})
@@ -137,7 +146,6 @@ training_data.append({"class":4,  "sentence":"stop the slam mode"})
 training_data.append({"class":4,  "sentence":"stop localization"})
 training_data.append({"class":4,  "sentence":"stop waiting for a person"})
 training_data.append({"class":4,  "sentence":"stop people recognizing"})
-
 
 #Preprocessing
 print ("%s sentences in training data" % len(training_data))
@@ -210,6 +218,7 @@ y = np.array(output)
 print ("# words", len(words))
 print ("# classes", len(classes))
 
+print(documents)
 # Reduzieren auf Wortstamm
 def clean_up_sentence(sentence):
     # tokenize the pattern
@@ -254,7 +263,7 @@ model.compile(optimizer=optimizer,
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-# Trainiered des Modells
+# Trainieren des Modells
 model.fit(X, labels, epochs=5000)
 
 # Speichern als keras Modell

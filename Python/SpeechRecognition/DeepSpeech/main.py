@@ -7,6 +7,7 @@
 ## Dieses Skript dient dazu, eine transkription auf dem Entwicklungsrechner durchzuführen, ein Deepspeech Modell muss mit passender Version vorliegen.
 ## Es wird eine WAV Datei transkribiert, diese kann vorhanden sein, oder neu aufgenommen werden.
 ## Ein Tflite Modell zur bedienungsorientierten Handlungsklassifizierung muss mit entsprechender Wortliste vorliegen
+## Wortliste muss Exportiert werden nachdem trainiert wurde!!!!!
 
 
 import os
@@ -21,6 +22,7 @@ import phonetics
 import webbrowser
 import tensorflow as tf
 from tensorflow import lite
+import time
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
@@ -108,7 +110,7 @@ class SpeechRecognition:
 
         stream.stop_stream()
         stream.close()
-        self.audio.terminate()
+        #self.audio.terminate()
 
         waveFile = wave.open(filename, 'wb')
         waveFile.setnchannels(self.channels)
@@ -171,6 +173,7 @@ class SpeechRecognition:
 
         input = self.bow(transcript.lower(), self.words, show_details=False)
         input = np.reshape(input, [input_shape[0], input_shape[1]])
+        print(input)
         input_data = np.array(input, dtype=np.float32)
 
         self.modelTaskClassifier.set_tensor(input_details[0]['index'], input_data)
@@ -359,5 +362,11 @@ if __name__ == '__main__':
     s.readWords()
 
     # Transkription wav Datei und Nachbearbeitung
-    s.speechRecognitionDNN(s.record, s.filename)
-    print(s.getAlfBuzzWords())
+    start = time.time()
+    while True:
+        try:
+            s.speechRecognitionDNN(s.record, s.filename)
+            print(s.getAlfBuzzWords())
+            print(time.time()-start)
+        except KeyboardInterrupt:
+            print("Keyboard Interrupt")
