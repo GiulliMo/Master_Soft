@@ -61,7 +61,6 @@ class PeopleRec:
         # Liste aller bekannten Personen
         self.listofpersons = []
         # self.net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel")
-        self.trackers = cv2.MultiTracker_create()
         self.tfbroadcaster = transform.TransformBroadcaster()
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -181,7 +180,7 @@ class PeopleRec:
         print("Das CNN hat " + str(end) +"s benoetigt.")
         return bbox, framebgrsmall
 
-    """
+
     def getdetectionsbytflite(self, framebgrsmall):
         # Load the TFLite model and allocate tensors.
         interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
@@ -193,16 +192,17 @@ class PeopleRec:
 
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
-        input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
+        input_data = np.array(np.random.random_sample(input_shape), dtype=np.uint8)
+        start = time.time()
         interpreter.set_tensor(input_details[0]['index'], input_data)
 
         interpreter.invoke()
-
+        print("TFLite time: " + str(time.time() - start))
         # The function `get_tensor()` returns a copy of the tensor data.
         # Use `tensor()` in order to get a pointer to the tensor.
         output_data = interpreter.get_tensor(output_details[0]['index'])
-        print(output_data)
-    """
+
+    
 
     ## Prueft, ob erkannte Objekte Menschen sind.
     # @param[in] detections Liste von allen erkannten Objekten als Rechteck mit 4 gegebenen Punkten
@@ -454,6 +454,7 @@ class PeopleRec:
                     detectionsfront, imagefront = self.getdetectionsbycnn(self.frontframebgrsmall, "front")
                     print(detectionsfront)
                     self.managepeople(detectionsfront, self.frontimagebgrqhd, imagefront, "front")
+                    self.getdetectionsbytflite(self.frontimagebgrqhd)
 
                 if self.namespaceofrearcamera != "":
                     detectionsrear, imagerear = self.getdetectionsbycnn(self.rearframebgrsmall, "back")

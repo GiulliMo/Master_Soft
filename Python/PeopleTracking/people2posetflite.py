@@ -164,7 +164,7 @@ class PeopleRec:
         return bbox, framebgrsmall
 
     def getdetectionsbytflite(self, framebgrsmall):
-        """
+
         print("Input = " + str(framebgrsmall.shape))
         interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
         interpreter.allocate_tensors()
@@ -178,21 +178,17 @@ class PeopleRec:
         input_data = np.array(cv2.resize(framebgrsmall, (300, 300)), dtype=np.uint8)
         cv2.imshow("test", cv2.resize(framebgrsmall, (300, 300)))
         key = cv2.waitKey(1) & 0xFF
-        start = time.time()
-        print(input_data.shape)
+
         input = np.reshape(input_data, [input_shape[0], input_shape[1], input_shape[2], input_shape[3]])
-        print(input[0])
+        start = time.time()
         interpreter.set_tensor(input_details[0]['index'], input)
 
         interpreter.invoke()
-
+        print("Tflite time = " + str(time.time() - start))
         # The function `get_tensor()` returns a copy of the tensor data.
         # Use `tensor()` in order to get a pointer to the tensor.
         output_data = interpreter.get_tensor(output_details[2]['index'])
         ou = interpreter.get_tensor(output_details[1]['index'])
-        print("Tflite time = " + str(time.time() - start))
-        print(output_data)
-        print(ou)
         """
 
         #labels = self.load_labels("labelmap.txt")
@@ -207,12 +203,13 @@ class PeopleRec:
         img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
 
         # set input tensor
+        start = time.time()
         interpreter.set_tensor(input_details[0]['index'], img)
 
         # run
         interpreter.invoke()
-
-        # get outpu tensor
+        print("TFLite time: " + str(time.time()-start))
+        # get output tensor
         boxes = interpreter.get_tensor(output_details[0]['index'])
         labels = interpreter.get_tensor(output_details[1]['index'])
         scores = interpreter.get_tensor(output_details[2]['index'])
@@ -239,7 +236,7 @@ class PeopleRec:
         cv2.imwrite('output.jpg', img_org)
         cv2.imshow('image', img_org)
         key = cv2.waitKey(1)
-
+    """
     def load_labels(self, path):
         with open(path, 'r') as f:
             return {i: line.strip() for i, line in enumerate(f.readlines())}
