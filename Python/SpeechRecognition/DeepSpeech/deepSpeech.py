@@ -9,6 +9,8 @@ import numpy as np
 
 #--input_arrays=previous_state_c, input_samples,input_node, input_lengths --output_arrays='logits', 'mfccs',  'metadata_feature_win_len', 'metadata_version', 'metadata_sample_rate', 'new_state_h', 'new_state_c', 'metadata_alphabet', 'metadata_feature_win_step'
 #[[1, 2048],[512],[1, 2048],[1, 16, 19, 26],[1]]
+from tensorflow_core.lite.python.lite import Optimize
+
 
 def initModel():
 
@@ -54,13 +56,20 @@ converter = tf.lite.TFLiteConverter.from_frozen_graph(
        graph_def_file, input_arrays, output_arrays)
 converter.allow_custom_ops = True
 converter.post_training_quantize = True
-converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]
+converter.optimizations = [Optimize.DEFAULT]
+def representative_dataset_gen():
+  for _ in range(0):
+    # Get sample input data as a numpy array in a method of your choosing.
+    yield [input]
+converter.representative_dataset = representative_dataset_gen
+converter.target_spec.supported_types = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8  # or tf.uint8
+converter.inference_output_type = tf.int8  # or tf.uint8
 tflite_model = converter.convert()
 open("converted_model1.tflite", "wb").write(tflite_model)
 
 
 interpreter = tf.lite.Interpreter("models-DE/output_graph.tflite")
-print("1")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
@@ -78,5 +87,6 @@ interpreter.invoke()
 # The function `get_tensor()` returns a copy of the tensor data.
 # Use `tensor()` in order to get a pointer to the tensor.
 output_data = interpreter.get_tensor(output_details[5]['index'])
-print(output_data)
+
+
 

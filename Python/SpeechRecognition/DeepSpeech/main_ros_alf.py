@@ -4,10 +4,15 @@
 ## Email: hannes.dittmann@stud.hshl.de
 ## Status: In Entwicklung
 ##################################################
+## Kommentare:
 ## Dieses Skript dient dazu, eine transkription auf dem Raspberry Pi in Kombination mit dem Robot Operating System durchzuführen,
 ## Ein Deepspeech Modell muss mit passender Version vorliegen. Ein Datenstrom wird aus dem ROS-Netzwerk aufgenommen
 ## Es wird eine WAV Datei transkribiert, diese kann vorhanden sein, oder neu aufgenommen werden.
 ## Ein Tflite Modell zur bedienungsorientierten Handlungsklassifizierung muss mit entsprechender Wortliste vorliegen
+## Wortliste, Buzzword.json und taskClassifier.tflie mueesen vorhanden sein
+
+## python3 main_ros.pyr 5 -lm gb -tpp recognition -tps audio_stream -nn recognizer in Konsole auf dem ALF PC ausfuehren
+## rosrun startbuttondetection startbuttondetection_node Knoten um Start Button als "Record-Auslöser" aufzurufen
 
 import os
 import deepspeech
@@ -16,7 +21,7 @@ import numpy as np
 import json
 import pyaudio
 import rospy
-from std_msgs.msg import String, Int16MultiArray
+from std_msgs.msg import String, Int16MultiArray, Int16
 import time
 import threading
 import argparse
@@ -78,7 +83,7 @@ class SpeechRecognition:
         self.rate = 16000
         self.chunksize = 2048
         self.recsec = recsec
-        self.devIndex = 0  # 0=Boltune, 1= boltune, 2 = builtin
+        self.devIndex = 7 # 0=Boltune, 1= boltune, 2 = builtin
         self.modelDs = initModel(self.Version)
         self.modelTaskClassifier = tflite.Interpreter("taskClassifier.tflite")
         self.buffer = np.zeros(self.chunksize)
@@ -95,6 +100,8 @@ class SpeechRecognition:
         self.text_so_far = ''
         self.words = [0]
         self.task = ''
+        self.filename = 'test.wav'
+        self.button = False
 
     # Methode um Sprache zu transkripieren
     def speechRecognitionDNN(self, stream):
@@ -149,8 +156,59 @@ class SpeechRecognition:
         # wait for = 2
         # localization = 3
         # stop = 4
+        # Methode um WAV Datei zu erzeugen
 
-    # Methode um Datenstrom abhängig der Aufnahmedauer zusammenzusetzen
+    def createWav(self):
+
+        # loeschen wenn WAV existiert
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
+        # start Recording
+        stream = self.audio.open(format=self.Format, rate=self.rate, channels=self.channels, input_device_index=self.devIndex, input=True, frames_per_buffer=self.chunksize)
+
+        print("recording...")
+        self.frames = []
+
+        for i in range(0, int(self.rate / self.chunksize * self.recsec)):
+            self.frames.append(stream.read(self.chunksize))  # Frames werden angehangen je nachdem wie groß recsec ist
+
+        print("finished recording!")
+
+        stream.stop_stream()
+        stream.close()
+        #self.audio.close(stream)
+
+        waveFile = wave.open(self.filename, 'wb')
+        waveFile.setnchannels(self.channels)
+        waveFile.setsampwidth(self.audio.get_sample_size(self.Format))
+        waveFile.setframerate(self.rate)
+        waveFile.writeframes(b''.join(self.frames))
+        waveFile.close()
+
+        # read data from wav file
+    def getBuffer(self, w):
+        frames = w.getnframes()
+        buffer = w.readframes(frames)
+        type(buffer)
+        return (buffer)
+
+    # Methode um WAV zu transkribieren
+    def processWAV(self):
+        # record a wav file, bei ROS nur buffer
+        self.createWav()
+        # predict Audio with deepspeech
+        buffer = self.getBuffer(wave.open(self.filename, 'r'))
+        data16 = np.frombuffer(buffer, dtype=np.int16)
+        type(data16)
+        self.speechRecognitionDNN(data16)
+        print(self.transcript)
+
+        # bedienungsorientierte Nachbearbeitung/Klassifizierung
+        self.classifierNN(self.transcript)
+        print("Klassifizierung beendet!")
+        print(self.getAlfBuzzWords())
+
+    # Methode um Datenstrom abhängig der Aufnahmedauer zusammenzusetzen, anschließendes transkribieren
     def processDataStream(self,data):
 
         self.lstMsg=np.int16(np.asarray(data))
@@ -159,6 +217,7 @@ class SpeechRecognition:
                 print("start recording...")
                 self.frames=[]
                 self.cnt = self.cnt +1
+
                 # Aufnahme ueber dauer von recsec
             if self.cnt<=int(self.rate / self.chunksize * self.recsec):
                 self.frames.append(np.asarray(data))
@@ -187,20 +246,32 @@ class SpeechRecognition:
             print("Keyboard Interrupt")
         pass
 
-    def callback(self, msg):
+    def callback1(self, msg):
         self.buffer = np.int16(np.asarray(msg.data))
+
+    def callback(self, msg):
+        self.button = msg.data
+
 
     #ROS Knoten initialisieren und Subscriber aufrufen
     def listener(self):
-        rospy.init_node(self.nodename, anonymous=True)
-        rospy.Subscriber(self.topicnameSub, Int16MultiArray, self.callback)
-        # spin() simply keeps python from exiting until this node is stopped
+        rospy.init_node(self.nodename, anonymous=False)
+        rospy.Subscriber(self.topicnameSub, Int16MultiArray, self.callback1)
+        rospy.Subscriber('startbutton', Int16, self.callback)
+        #rospy.spin() #simply keeps python from exiting until this node is stopped
         while not rospy.is_shutdown():
             try:
-                checksum = sum(self.lstMsg-self.buffer) #letzte Message gleich neuer? wenn gleich verwerfen
-                if not checksum==0:
+                start = time.time()
+                if self.button:
+                    self.processWAV()
+                    print(time.time()-start)
+
+                checksum = sum(self.lstMsg - self.buffer)  # letzte Message gleich neuer? wenn gleich verwerfen
+                # if not checksum==0:
                    #hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
-                   self.processDataStream(self.buffer) #wird zyklisch
+                   #self.processDataStream(self.buffer) #wird zyklisch
+                   #print("Nicht ueber ros")
+                   #self.processWAV(filename="test.wav")
                    #self.process_audio(self.buffer)
             except KeyboardInterrupt:
                 print("Keyboard interrupt")
@@ -238,9 +309,6 @@ class SpeechRecognition:
                     t = (t * d + ord(text[s + m])) % q  # add letter s+m
                     t = (t + q) % q  # make sure that t >= 0
             return result  # begin of string position
-        else:
-            print("Exception")
-            return []
 
     # String-Array zu einem String
     def converttoStr(self, s):
@@ -255,38 +323,42 @@ class SpeechRecognition:
     # Methode um Schlagwoerter zu finden
     def getAlfBuzzWords(self):
         recognizedBuzzwords = []
+        self.transcript = self.transcript.replace("'", "")
         res = self.transcript.split()
         phoneResMetaphone = []
+        phoneResMetaphone = phonetics.metaphone(self.transcript.replace(" ", ""))
+        print(phoneResMetaphone)
         phoneResSoundex = []
         #phoneResNysi = []
 
         # phonetischen code der transkription
         for k in range(len(res)):
-            phoneResMetaphone.append(phonetics.metaphone(res[k]))
+            #phoneResMetaphone.append(phonetics.metaphone(res[k]))
             phoneResSoundex.append(phonetics.soundex(res[k]))
             #phoneResNysi.append(phonetics.nysiis(res[k]))
-
         # Sind Schalgwoerter in dem Transcript?
-        for i in range(len(self.buzzwords)):
-            # Pruefe auf direktes match
-            if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
-                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
+        if self.transcript:
 
-            # Pruefe auf phonetisches match nach Metaphone codierung
-            elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResMetaphone), phonetics.metaphone(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
-                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
-                print("1")
+            for i in range(len(self.buzzwords)):
+                # Pruefe auf direktes match
+                if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
+                    recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
 
-            # Pruefe auf phonetisches match nach Soundex codierung
-            elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResSoundex), phonetics.soundex(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
-                recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
-                print("2")
+                # Pruefe auf phonetisches match nach Metaphone codierung
+                elif self.Rabin_Karp_Matcher(phoneResMetaphone, phonetics.metaphone(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
+                    recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
 
-            # Pruefe auf phonetisches match nach Nysii codierung
-            #elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResNysi), phonetics.nysiis(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
-                #recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
 
-        return recognizedBuzzwords
+                # Pruefe auf phonetisches match nach Soundex codierung
+                elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResSoundex), phonetics.soundex(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
+                    recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
+
+
+                # Pruefe auf phonetisches match nach Nysii codierung
+                #elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResNysi), phonetics.nysiis(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
+                    #recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
+
+            return recognizedBuzzwords
 
 
     # Methode um Alf-Spezifische Transkription zu finden
