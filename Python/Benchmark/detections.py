@@ -132,11 +132,11 @@ class detections:
         framebgrsmall = imutils.resize(imagetflr, width=min(400, imagetflr.shape[1]))
         img_orgtflr = imagetflr
         interpretertflr = tflruntime("detect.tflite")
-        print("hallo")
+
         interpretertflr.allocate_tensors()
         input_details = interpretertflr.get_input_details()
         output_details = interpretertflr.get_output_details()
-        print("danach")
+
         img = cv2.cvtColor(framebgrsmall, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (300, 300))
         img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])

@@ -12,8 +12,8 @@ class benchmark:
             image = cv2.imread(filename)
             #self.detections.getdetectionsbycnn(image, "front")
             #self.detections.getdetectionsbyhog(image, "front")
-            #self.detections.getdetectionsbytflite(image)
-            self.detections.getdetectionsbytfliteruntime(image)
+            self.detections.getdetectionsbytflite(image)
+            #self.detections.getdetectionsbytfliteruntime(image)
             c += 1
 
 
