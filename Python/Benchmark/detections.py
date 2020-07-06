@@ -12,8 +12,9 @@ class detections:
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
-    def getdetectionsbyhog(self, imagehog, sneak):
-        framebgrsmall = imutils.resize(imagehog, width=min(400, imagehog.shape[1]))
+    def getdetectionsbyhog(self, image, sneak):
+        img_org = image
+        framebgrsmall = imutils.resize(img_org, width=min(400, img_org.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
         (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
@@ -23,14 +24,14 @@ class detections:
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
         # Zur Visualisierung der erkannten Objekte
         for detection in detections:
-            cv2.rectangle(framebgrsmall, (detection[0], detection[1]), (detection[2], detection[3]),
+            cv2.rectangle(img_org, (detection[0], detection[1]), (detection[2], detection[3]),
                           (255, 0, 255), 2)
 
         cv2.imwrite('HOG.jpg', framebgrsmall)
         # cv2.imshow(sneak, framebgrsmall)
         # key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
-        return detections, framebgrsmall
+        return detections, img_org
 
     def getdetectionsbycnn(self, imagecaffee, sneak):
         img_org = imagecaffee
