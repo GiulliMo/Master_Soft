@@ -8,9 +8,10 @@ class benchmark:
         self.detections = detections.detections()
 
     def run(self):
-        self.detections.getdetectionsbycnn(self.image)
-        self.detections.getdetectionsbyhog(self.image)
+        self.detections.getdetectionsbycnn(self.image, "front")
+        self.detections.getdetectionsbyhog(self.image, "front")
         self.detections.getdetectionsbytflite(self.image)
+        self.detections.getdetectionsbytfliteruntime(self.image)
 
 
 if __name__ == '__main__':

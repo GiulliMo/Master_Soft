@@ -2,6 +2,7 @@ import time
 import numpy as np
 import cv2
 import tensorflow
+import imutils
 from imutils.object_detection import non_max_suppression
 from tflite_runtime.interpreter import Interpreter
 
@@ -9,7 +10,8 @@ class detections:
     def __init__(self):
         self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
 
-    def getdetectionsbyhog(self, framebgrsmall, sneak):
+    def getdetectionsbyhog(self, image, sneak):
+        framebgrsmall = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
         (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
