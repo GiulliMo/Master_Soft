@@ -71,13 +71,13 @@ class detections:
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(image, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('caffe.jpg', image)
+        cv2.imwrite(sneak + 'caffe.jpg', image)
         #cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
         #key = cv2.waitKey(1000) & 0xFF
         print("Caffee= " + str(end))
         return bbox, image
 
-    def getdetectionsbytflite(self, image):
+    def getdetectionsbytflite(self, image, sneak):
         interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
         interpreter.allocate_tensors()
 
@@ -121,11 +121,11 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('tflite.jpg', image)
+        cv2.imwrite(sneak + 'tflite.jpg', image)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
 
-    def getdetectionsbytfliteruntime(self, image):
+    def getdetectionsbytfliteruntime(self, image, sneak):
         # labels = self.load_labels("labelmap.txt")
         image = imutils.resize(image, width=min(400, image.shape[1]))
         interpretertflr = tflruntime("detect.tflite")
@@ -169,6 +169,6 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('tfliteruntime.jpg', image)
+        cv2.imwrite(sneak + 'tfliteruntime.jpg', image)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
