@@ -61,6 +61,7 @@ class detections:
                     continue
                 # Erstellung der Boundingbox
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+
                 (startX, startY, endX, endY) = abs(box.astype("int"))
                 bbox.append((startX, startY, endX, endY))
                 label = "{}: {:.2f}%".format(CLASSES[idx],
@@ -98,6 +99,7 @@ class detections:
         print("TfLite= " + str(time.time() - start))
         # get output tensor
         boxes = interpreter.get_tensor(output_details[0]['index'])
+        boxes = non_max_suppression(boxes, probs=None, overlapThresh=0.65)
         labels = interpreter.get_tensor(output_details[1]['index'])
         scores = interpreter.get_tensor(output_details[2]['index'])
         num = interpreter.get_tensor(output_details[3]['index'])
