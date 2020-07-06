@@ -15,7 +15,7 @@ class benchmark:
             imagetflr = cv2.imread(filename)
             self.detections.getdetectionsbycnn(imagecaf, "front")
             self.detections.getdetectionsbyhog(imagehog, "front")
-            self.detections.getdetectionsbytflite(imagetfl)
+            #self.detections.getdetectionsbytflite(imagetfl)
             self.detections.getdetectionsbytfliteruntime(imagetflr)
             c += 1
 

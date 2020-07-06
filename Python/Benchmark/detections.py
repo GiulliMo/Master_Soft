@@ -127,7 +127,7 @@ class detections:
     def getdetectionsbytfliteruntime(self, image):
         # labels = self.load_labels("labelmap.txt")
         image = imutils.resize(image, width=min(400, image.shape[1]))
-        interpretertflr = tflruntime("detect_copy.tflite")
+        interpretertflr = tflruntime("detect.tflite")
 
         interpretertflr.allocate_tensors()
         input_details = interpretertflr.get_input_details()
