@@ -11,7 +11,7 @@ class detections:
         self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
-        
+
     def getdetectionsbyhog(self, image, sneak):
         framebgrsmall = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
@@ -89,8 +89,8 @@ class detections:
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
         input_data = np.array(cv2.resize(framebgrsmall, (300, 300)), dtype=np.uint8)
-        cv2.imshow("test", cv2.resize(framebgrsmall, (300, 300)))
-        key = cv2.waitKey(1) & 0xFF
+        #cv2.imshow("test", cv2.resize(framebgrsmall, (300, 300)))
+        #key = cv2.waitKey(1) & 0xFF
 
         input = np.reshape(input_data, [input_shape[0], input_shape[1], input_shape[2], input_shape[3]])
         start = time.time()
