@@ -4,7 +4,7 @@ import cv2
 import tensorflow
 import imutils
 from imutils.object_detection import non_max_suppression
-from tflite_runtime.interpreter import tflruntime
+from tflite_runtime.interpreter import Interpreter as tflruntime
 
 class detections:
     def __init__(self):
@@ -130,10 +130,10 @@ class detections:
         # labels = self.load_labels("labelmap.txt")
         framebgrsmall = imutils.resize(imagetflr, width=min(400, imagetflr.shape[1]))
         img_org = imagetflr
-        interpreter = tflruntime("detect.tflite")
-        interpreter.allocate_tensors()
-        input_details = interpreter.get_input_details()
-        output_details = interpreter.get_output_details()
+        interpretertflr = tflruntime("detect.tflite")
+        interpretertflr.allocate_tensors()
+        input_details = interpretertflr.get_input_details()
+        output_details = interpretertflr.get_output_details()
 
         img = cv2.cvtColor(framebgrsmall, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (300, 300))
@@ -141,16 +141,16 @@ class detections:
 
         # set input tensor
         start = time.time()
-        interpreter.set_tensor(input_details[0]['index'], img)
+        interpretertflr.set_tensor(input_details[0]['index'], img)
 
         # run
-        interpreter.invoke()
+        interpretertflr.invoke()
         print("TFLite Runtime: " + str(time.time() - start))
         # get output tensor
-        boxes = interpreter.get_tensor(output_details[0]['index'])
-        labels = interpreter.get_tensor(output_details[1]['index'])
-        scores = interpreter.get_tensor(output_details[2]['index'])
-        num = interpreter.get_tensor(output_details[3]['index'])
+        boxes = interpretertflr.get_tensor(output_details[0]['index'])
+        labels = interpretertflr.get_tensor(output_details[1]['index'])
+        scores = interpretertflr.get_tensor(output_details[2]['index'])
+        num = interpretertflr.get_tensor(output_details[3]['index'])
 
         for i in range(boxes.shape[1]):
             if scores[0, i] > 0.5:
