@@ -33,7 +33,7 @@ class detections:
         print("HOG= " + str(end))
         return detections, img_org
 
-    def getdetectionsbycnn(self, image, sneak):
+    def getdetectionsbycnn(self, iage, sneak):
         img_org = image
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
