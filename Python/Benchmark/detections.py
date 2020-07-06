@@ -14,10 +14,10 @@ class detections:
 
     def getdetectionsbyhog(self, image, sneak):
         img_org = image
-        framebgrsmall = imutils.resize(img_org, width=min(400, img_org.shape[1]))
+        img_org = imutils.resize(img_org, width=min(400, img_org.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
-        (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
+        (rects, weights) = self.hog.detectMultiScale(img_org, winStride=(4, 4), padding=(0, 0), scale=1.05)
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
@@ -27,7 +27,7 @@ class detections:
             cv2.rectangle(img_org, (detection[0], detection[1]), (detection[2], detection[3]),
                           (255, 0, 255), 2)
 
-        cv2.imwrite('HOG.jpg', framebgrsmall)
+        cv2.imwrite('HOG.jpg', img_org)
         # cv2.imshow(sneak, framebgrsmall)
         # key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
