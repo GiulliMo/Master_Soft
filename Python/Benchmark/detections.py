@@ -35,6 +35,8 @@ class detections:
 
     def getdetectionsbycnn(self, image, sneak):
         img_caf = image
+        cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
+        key = cv2.waitKey(100) & 0xFF
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                    "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
@@ -74,7 +76,7 @@ class detections:
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
         cv2.imwrite('caffe.jpg', img_caf)
         cv2.imshow(sneak, img_caf) #Bild eventuell extra abspeichern
-        key = cv2.waitKey(1) & 0xFF
+        key = cv2.waitKey(100) & 0xFF
         print("Caffee= " + str(end))
         return bbox, img_caf
 
