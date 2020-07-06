@@ -9,11 +9,12 @@ class benchmark:
     def run(self, filename):
         c = 0
         while c <= 10:
-            image = cv2.imread(filename)
-            self.detections.getdetectionsbycnn(image, "front")
-            self.detections.getdetectionsbyhog(image, "front")
-            self.detections.getdetectionsbytflite(image)
-            self.detections.getdetectionsbytfliteruntime(image)
+            imagecaf = cv2.imread(filename)
+            imagehog = cv2.imread(filename)
+            self.detections.getdetectionsbycnn(imagecaf, "front")
+            self.detections.getdetectionsbyhog(imagehog, "front")
+            #self.detections.getdetectionsbytflite(image)
+            #self.detections.getdetectionsbytfliteruntime(image)
             c += 1
 
 
