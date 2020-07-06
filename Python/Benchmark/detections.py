@@ -126,9 +126,10 @@ class detections:
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
 
-    def getdetectionsbytfliteruntime(self, framebgrsmall):
+    def getdetectionsbytfliteruntime(self, image):
         # labels = self.load_labels("labelmap.txt")
-        img_org = framebgrsmall
+        framebgrsmall = imutils.resize(image, width=min(400, image.shape[1]))
+        img_org = image
         interpreter = Interpreter("detect.tflite")
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
