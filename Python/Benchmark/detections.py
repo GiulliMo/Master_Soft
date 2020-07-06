@@ -13,30 +13,26 @@ class detections:
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
     def getdetectionsbyhog(self, image, sneak):
-        img_hog = image
-        img_hog = imutils.resize(img_hog, width=min(400, img_hog.shape[1]))
+        image = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
-        (rects, weights) = self.hog.detectMultiScale(img_hog, winStride=(4, 4), padding=(0, 0), scale=1.05)
+        (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(0, 0), scale=1.05)
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
         # Zur Visualisierung der erkannten Objekte
         for detection in detections:
-            cv2.rectangle(img_hog, (detection[0], detection[1]), (detection[2], detection[3]),
+            cv2.rectangle(image, (detection[0], detection[1]), (detection[2], detection[3]),
                           (255, 0, 255), 2)
 
-        cv2.imwrite('HOG.jpg', img_hog)
+        cv2.imwrite('HOG.jpg', image)
         # cv2.imshow(sneak, framebgrsmall)
         # key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
-        return detections, img_hog
+        return detections, image
 
     def getdetectionsbycnn(self, image, sneak):
-        img_caf = image
-        cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
-        key = cv2.waitKey(1000) & 0xFF
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                    "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
@@ -45,8 +41,8 @@ class detections:
                       "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                       "dog", "horse", "motorbike", "pottedplant", "sheep",
                       "sofa", "train", "tvmonitor"])
-        (h, w) = img_caf.shape[:2]
-        blob = cv2.dnn.blobFromImage(cv2.resize(img_caf, (300, 300)),
+        (h, w) = image.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)),
                                      0.007843, (300, 300), 127.5)
         bbox = []
         start = time.time()
@@ -69,19 +65,18 @@ class detections:
                 bbox.append((startX, startY, endX, endY))
                 label = "{}: {:.2f}%".format(CLASSES[idx],
                                              confidence * 100)
-                cv2.rectangle(img_caf, (startX, startY), (endX, endY),
+                cv2.rectangle(image, (startX, startY), (endX, endY),
                               (255, 0, 255), 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(img_caf, label, (startX, y),
+                cv2.putText(image, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('caffe.jpg', img_caf)
-        cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
-        key = cv2.waitKey(1000) & 0xFF
+        cv2.imwrite('caffe.jpg', image)
+        #cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
+        #key = cv2.waitKey(1000) & 0xFF
         print("Caffee= " + str(end))
-        return bbox, img_caf
+        return bbox, image
 
-    def getdetectionsbytflite(self, imagetfl):
-        img_tfl = imagetfl
+    def getdetectionsbytflite(self, image):
         interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
         interpreter.allocate_tensors()
 
@@ -91,7 +86,7 @@ class detections:
 
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
-        input_data = np.array(cv2.resize(imagetfl, (300, 300)), dtype=np.uint8)
+        input_data = np.array(cv2.resize(image, (300, 300)), dtype=np.uint8)
         #cv2.imshow("test", cv2.resize(framebgrsmall, (300, 300)))
         #key = cv2.waitKey(1) & 0xFF
 
@@ -110,14 +105,14 @@ class detections:
         for i in range(boxes.shape[1]):
             if scores[0, i] > 0.5:
                 box = boxes[0, i, :]
-                x0 = int(box[1] * img_tfl.shape[1])
-                y0 = int(box[0] * img_tfl.shape[0])
-                x1 = int(box[3] * img_tfl.shape[1])
-                y1 = int(box[2] * img_tfl.shape[0])
+                x0 = int(box[1] * image.shape[1])
+                y0 = int(box[0] * image.shape[0])
+                x1 = int(box[3] * image.shape[1])
+                y1 = int(box[2] * image.shape[0])
                 box = box.astype(np.int)
-                cv2.rectangle(img_tfl, (x0, y0), (x1, y1), (255, 0, 0), 2)
-                cv2.rectangle(img_tfl, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
-                cv2.putText(img_tfl,
+                cv2.rectangle(image, (x0, y0), (x1, y1), (255, 0, 0), 2)
+                cv2.rectangle(image, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
+                cv2.putText(image,
                             str(int(labels[0, i])),
                             (x0, y0),
                             cv2.FONT_HERSHEY_SIMPLEX,
@@ -125,21 +120,20 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('tflite.jpg', img_tfl)
+        cv2.imwrite('tflite.jpg', image)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
 
-    def getdetectionsbytfliteruntime(self, imagetflr):
+    def getdetectionsbytfliteruntime(self, image):
         # labels = self.load_labels("labelmap.txt")
-        framebgrsmall = imutils.resize(imagetflr, width=min(400, imagetflr.shape[1]))
-        img_tflr = imagetflr
+        image = imutils.resize(image, width=min(400, image.shape[1]))
         interpretertflr = tflruntime("detect.tflite")
 
         interpretertflr.allocate_tensors()
         input_details = interpretertflr.get_input_details()
         output_details = interpretertflr.get_output_details()
 
-        img = cv2.cvtColor(framebgrsmall, cv2.COLOR_BGR2RGB)
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (300, 300))
         img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
 
@@ -159,14 +153,14 @@ class detections:
         for i in range(boxes.shape[1]):
             if scores[0, i] > 0.5:
                 box = boxes[0, i, :]
-                x0 = int(box[1] * img_tflr.shape[1])
-                y0 = int(box[0] * img_tflr.shape[0])
-                x1 = int(box[3] * img_tflr.shape[1])
-                y1 = int(box[2] * img_tflr.shape[0])
+                x0 = int(box[1] * image.shape[1])
+                y0 = int(box[0] * image.shape[0])
+                x1 = int(box[3] * image.shape[1])
+                y1 = int(box[2] * image.shape[0])
                 box = box.astype(np.int)
-                cv2.rectangle(img_tflr, (x0, y0), (x1, y1), (255, 0, 0), 2)
-                cv2.rectangle(img_tflr, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
-                cv2.putText(img_tflr,
+                cv2.rectangle(image, (x0, y0), (x1, y1), (255, 0, 0), 2)
+                cv2.rectangle(image, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
+                cv2.putText(image,
                             str(int(labels[0, i])),
                             (x0, y0),
                             cv2.FONT_HERSHEY_SIMPLEX,
@@ -174,6 +168,6 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('tfliteruntime.jpg', img_tflr)
+        cv2.imwrite('tfliteruntime.jpg', image)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
