@@ -20,6 +20,7 @@ class detections:
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
+        print(rects)
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
         # Zur Visualisierung der erkannten Objekte
         for detection in detections:
@@ -101,7 +102,7 @@ class detections:
         boxes = interpreter.get_tensor(output_details[0]['index'])
         labels = interpreter.get_tensor(output_details[1]['index'])
         scores = interpreter.get_tensor(output_details[2]['index'])
-        boxes = non_max_suppression(boxes, scores)
+        print(boxes)
         num = interpreter.get_tensor(output_details[3]['index'])
 
         for i in range(boxes.shape[1]):
