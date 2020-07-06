@@ -33,8 +33,8 @@ class detections:
         print("HOG= " + str(end))
         return detections, img_org
 
-    def getdetectionsbycnn(self, imagecaffee, sneak):
-        img_org = imagecaffee
+    def getdetectionsbycnn(self, img_org, sneak):
+        img_org = img_org
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                    "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
@@ -43,8 +43,8 @@ class detections:
                       "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                       "dog", "horse", "motorbike", "pottedplant", "sheep",
                       "sofa", "train", "tvmonitor"])
-        (h, w) = imagecaffee.shape[:2]
-        blob = cv2.dnn.blobFromImage(cv2.resize(imagecaffee, (300, 300)),
+        (h, w) = img_org.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(img_org, (300, 300)),
                                      0.007843, (300, 300), 127.5)
         bbox = []
         start = time.time()
@@ -67,16 +67,16 @@ class detections:
                 bbox.append((startX, startY, endX, endY))
                 label = "{}: {:.2f}%".format(CLASSES[idx],
                                              confidence * 100)
-                cv2.rectangle(imagecaffee, (startX, startY), (endX, endY),
+                cv2.rectangle(img_org, (startX, startY), (endX, endY),
                               (255, 0, 255), 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(imagecaffee, label, (startX, y),
+                cv2.putText(img_org, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('caffe.jpg', imagecaffee)
+        cv2.imwrite('caffe.jpg', img_org)
         # cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
         # key = cv2.waitKey(1) & 0xFF
         print("Caffee= " + str(end))
-        return bbox, imagecaffee
+        return bbox, img_org
 
     def getdetectionsbytflite(self, imagetfl):
         img_org = imagetfl
