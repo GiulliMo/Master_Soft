@@ -4,7 +4,7 @@ import cv2
 import tensorflow
 import imutils
 from imutils.object_detection import non_max_suppression
-from tflite_runtime.interpreter import Interpreter
+from tflite_runtime.interpreter import tflruntime
 
 class detections:
     def __init__(self):
@@ -12,8 +12,8 @@ class detections:
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
-    def getdetectionsbyhog(self, image, sneak):
-        framebgrsmall = imutils.resize(image, width=min(400, image.shape[1]))
+    def getdetectionsbyhog(self, imagehog, sneak):
+        framebgrsmall = imutils.resize(imagehog, width=min(400, imagehog.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
         (rects, weights) = self.hog.detectMultiScale(framebgrsmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
@@ -32,8 +32,8 @@ class detections:
         print("HOG= " + str(end))
         return detections, framebgrsmall
 
-    def getdetectionsbycnn(self, framebgrsmall, sneak):
-        img_org = framebgrsmall
+    def getdetectionsbycnn(self, imagecaffee, sneak):
+        img_org = imagecaffee
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                    "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                    "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
@@ -42,8 +42,8 @@ class detections:
                       "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                       "dog", "horse", "motorbike", "pottedplant", "sheep",
                       "sofa", "train", "tvmonitor"])
-        (h, w) = framebgrsmall.shape[:2]
-        blob = cv2.dnn.blobFromImage(cv2.resize(framebgrsmall, (300, 300)),
+        (h, w) = imagecaffee.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(imagecaffee, (300, 300)),
                                      0.007843, (300, 300), 127.5)
         bbox = []
         start = time.time()
@@ -66,19 +66,19 @@ class detections:
                 bbox.append((startX, startY, endX, endY))
                 label = "{}: {:.2f}%".format(CLASSES[idx],
                                              confidence * 100)
-                cv2.rectangle(framebgrsmall, (startX, startY), (endX, endY),
+                cv2.rectangle(imagecaffee, (startX, startY), (endX, endY),
                               (255, 0, 255), 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(framebgrsmall, label, (startX, y),
+                cv2.putText(imagecaffee, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('caffe.jpg', framebgrsmall)
+        cv2.imwrite('caffe.jpg', imagecaffee)
         # cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
         # key = cv2.waitKey(1) & 0xFF
         print("Caffee= " + str(end))
-        return bbox, framebgrsmall
+        return bbox, imagecaffee
 
-    def getdetectionsbytflite(self, framebgrsmall):
-        img_org = framebgrsmall
+    def getdetectionsbytflite(self, imagetfl):
+        img_org = imagetfl
         interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
         interpreter.allocate_tensors()
 
@@ -88,7 +88,7 @@ class detections:
 
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
-        input_data = np.array(cv2.resize(framebgrsmall, (300, 300)), dtype=np.uint8)
+        input_data = np.array(cv2.resize(imagetfl, (300, 300)), dtype=np.uint8)
         #cv2.imshow("test", cv2.resize(framebgrsmall, (300, 300)))
         #key = cv2.waitKey(1) & 0xFF
 
@@ -126,11 +126,11 @@ class detections:
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
 
-    def getdetectionsbytfliteruntime(self, image):
+    def getdetectionsbytfliteruntime(self, imagetflr):
         # labels = self.load_labels("labelmap.txt")
-        framebgrsmall = imutils.resize(image, width=min(400, image.shape[1]))
-        img_org = image
-        interpreter = Interpreter("detect.tflite")
+        framebgrsmall = imutils.resize(imagetflr, width=min(400, imagetflr.shape[1]))
+        img_org = imagetflr
+        interpreter = tflruntime("detect.tflite")
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
