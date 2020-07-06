@@ -76,7 +76,7 @@ class detections:
         # cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
         # key = cv2.waitKey(1) & 0xFF
         print("Caffee= " + str(end))
-        return bbox, img_org
+        #return bbox, img_org
 
     def getdetectionsbytflite(self, imagetfl):
         img_org = imagetfl
