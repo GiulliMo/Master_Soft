@@ -20,7 +20,6 @@ class detections:
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
-        print(rects)
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
         # Zur Visualisierung der erkannten Objekte
         for detection in detections:
@@ -103,7 +102,7 @@ class detections:
         labels = interpreter.get_tensor(output_details[1]['index'])
         scores = interpreter.get_tensor(output_details[2]['index'])
         num = interpreter.get_tensor(output_details[3]['index'])
-
+        print(scores)
         for i in range(boxes.shape[1]):
             if scores[0, i] > 0.5:
                 box = boxes[0, i, :]
@@ -115,7 +114,7 @@ class detections:
                 cv2.rectangle(image, (x0, y0), (x1, y1), (255, 0, 0), 2)
                 cv2.rectangle(image, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
                 cv2.putText(image,
-                            str(int(scores[0, i])),
+                            str(int(labels[0, i])),
                             (x0, y0),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1,
