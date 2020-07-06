@@ -99,9 +99,9 @@ class detections:
         print("TfLite= " + str(time.time() - start))
         # get output tensor
         boxes = interpreter.get_tensor(output_details[0]['index'])
-        boxes = non_max_suppression(boxes, probs=None, overlapThresh=0.65)
         labels = interpreter.get_tensor(output_details[1]['index'])
         scores = interpreter.get_tensor(output_details[2]['index'])
+        boxes = non_max_suppression(boxes, scores)
         num = interpreter.get_tensor(output_details[3]['index'])
 
         for i in range(boxes.shape[1]):
