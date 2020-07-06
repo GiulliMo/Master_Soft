@@ -129,12 +129,13 @@ class detections:
     def getdetectionsbytfliteruntime(self, imagetflr):
         # labels = self.load_labels("labelmap.txt")
         framebgrsmall = imutils.resize(imagetflr, width=min(400, imagetflr.shape[1]))
-        img_org = imagetflr
+        img_orgtflr = imagetflr
         interpretertflr = tflruntime("detect.tflite")
+        print("hallo")
         interpretertflr.allocate_tensors()
         input_details = interpretertflr.get_input_details()
         output_details = interpretertflr.get_output_details()
-
+        print("danach")
         img = cv2.cvtColor(framebgrsmall, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (300, 300))
         img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
@@ -155,14 +156,14 @@ class detections:
         for i in range(boxes.shape[1]):
             if scores[0, i] > 0.5:
                 box = boxes[0, i, :]
-                x0 = int(box[1] * img_org.shape[1])
-                y0 = int(box[0] * img_org.shape[0])
-                x1 = int(box[3] * img_org.shape[1])
-                y1 = int(box[2] * img_org.shape[0])
+                x0 = int(box[1] * img_orgtflr.shape[1])
+                y0 = int(box[0] * img_orgtflr.shape[0])
+                x1 = int(box[3] * img_orgtflr.shape[1])
+                y1 = int(box[2] * img_orgtflr.shape[0])
                 box = box.astype(np.int)
-                cv2.rectangle(img_org, (x0, y0), (x1, y1), (255, 0, 0), 2)
-                cv2.rectangle(img_org, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
-                cv2.putText(img_org,
+                cv2.rectangle(img_orgtflr, (x0, y0), (x1, y1), (255, 0, 0), 2)
+                cv2.rectangle(img_orgtflr, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
+                cv2.putText(img_orgtflr,
                             str(int(labels[0, i])),
                             (x0, y0),
                             cv2.FONT_HERSHEY_SIMPLEX,
@@ -170,6 +171,6 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('tfliteruntime.jpg', img_org)
+        cv2.imwrite('tfliteruntime.jpg', img_orgtflr)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
