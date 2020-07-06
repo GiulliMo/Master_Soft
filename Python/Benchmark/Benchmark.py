@@ -9,7 +9,7 @@ class benchmark:
     def run(self, filename):
         c = 0
         while c <= 10:
-            imagehog, imagetfl, imagecf, imagetflr = cv2.imread(filename)
+            imagehog = imagetfl = imagecf = imagetflr = cv2.imread(filename)
             self.detections.getdetectionsbycnn(imagecf, "front")
             self.detections.getdetectionsbyhog(imagehog, "front")
             self.detections.getdetectionsbytflite(imagetfl)
