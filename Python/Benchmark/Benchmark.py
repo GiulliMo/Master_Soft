@@ -23,6 +23,6 @@ class benchmark:
 
 if __name__ == '__main__':
     benchmark = benchmark()
-    benchmark.run("/pool/standingpeople.jpg", "standing")
-    benchmark.run("/pool/sittingpeople.jpg", "sitting")
-    benchmark.run("/pool/miscpeople.jpeg", "misc")
+    benchmark.run("./pool/standingpeople.jpg", "standing")
+    benchmark.run("./pool/sittingpeople.jpg", "sitting")
+    benchmark.run("./pool/miscpeople.jpeg", "misc")

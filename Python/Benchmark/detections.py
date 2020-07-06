@@ -26,7 +26,7 @@ class detections:
             cv2.rectangle(image, (detection[0], detection[1]), (detection[2], detection[3]),
                           (255, 0, 255), 2)
 
-        cv2.imwrite('/results/' + sneak + 'HOG.jpg', image)
+        cv2.imwrite('./results/' + sneak + 'HOG.jpg', image)
         # cv2.imshow(sneak, framebgrsmall)
         # key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
@@ -71,7 +71,7 @@ class detections:
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(image, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('/results/' + sneak + 'caffe.jpg', image)
+        cv2.imwrite('./results/' + sneak + 'caffe.jpg', image)
         #cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
         #key = cv2.waitKey(1000) & 0xFF
         print("Caffee= " + str(end))
@@ -121,7 +121,7 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('/results/' + sneak + 'tflite.jpg', image)
+        cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
 
@@ -169,6 +169,6 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('/results/' + sneak + 'tfliteruntime.jpg', image)
+        cv2.imwrite('./results/' + sneak + 'tfliteruntime.jpg', image)
         #cv2.imshow('image', img_org)
         #key = cv2.waitKey(1)
