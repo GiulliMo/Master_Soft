@@ -9,7 +9,9 @@ from tflite_runtime.interpreter import Interpreter
 class detections:
     def __init__(self):
         self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
-
+        self.hog = cv2.HOGDescriptor()
+        self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+        
     def getdetectionsbyhog(self, image, sneak):
         framebgrsmall = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
