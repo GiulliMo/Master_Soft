@@ -8,15 +8,15 @@ class benchmark:
 
     def run(self, filename):
         c = 0
-        imagecaf = cv2.imread(filename)
-        imagehog = cv2.imread(filename)
-        imagetfl = cv2.imread(filename)
-        imagetflr = cv2.imread(filename)
         while c <= 10:
+            imagecaf = cv2.imread(filename)
+            imagehog = cv2.imread(filename)
+            imagetfl = cv2.imread(filename)
+            imagetflr = cv2.imread(filename)
             self.detections.getdetectionsbycnn(imagecaf, "front")
             self.detections.getdetectionsbyhog(imagehog, "front")
             self.detections.getdetectionsbytflite(imagetfl)
-            #self.detections.getdetectionsbytfliteruntime(imagetflr)
+            self.detections.getdetectionsbytfliteruntime(imagetflr)
             c += 1
 
 
