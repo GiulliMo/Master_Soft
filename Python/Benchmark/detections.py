@@ -73,8 +73,8 @@ class detections:
                 cv2.putText(img_caf, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
         cv2.imwrite('caffe.jpg', img_caf)
-        # cv2.imshow(sneak, framebgrsmall) #Bild eventuell extra abspeichern
-        # key = cv2.waitKey(1) & 0xFF
+        cv2.imshow(sneak, img_caf) #Bild eventuell extra abspeichern
+        key = cv2.waitKey(1) & 0xFF
         print("Caffee= " + str(end))
         return bbox, img_caf
 
