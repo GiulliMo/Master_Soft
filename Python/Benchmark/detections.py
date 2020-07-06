@@ -117,7 +117,7 @@ class detections:
                 cv2.rectangle(image, (x0, y0), (x1, y1), (255, 0, 0), 2)
                 cv2.rectangle(image, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
                 cv2.putText(image,
-                            str(int(labels[0, i])),
+                            str(int(scores[0, i])),
                             (x0, y0),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1,
