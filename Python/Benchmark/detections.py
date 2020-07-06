@@ -65,8 +65,6 @@ class detections:
 
                 (startX, startY, endX, endY) = abs(box.astype("int"))
                 bbox.append((startX, startY, endX, endY))
-                print(bbox)
-                bbox = non_max_suppression(bbox, probs=None, overlapThresh=0.65)
                 label = "{}: {:.2f}%".format(CLASSES[idx],
                                              confidence * 100)
                 cv2.rectangle(image, (startX, startY), (endX, endY),
