@@ -17,6 +17,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import detections
 import face
 import person
+import sys
 
 class PeopleRec:
     def __init__(self, namespaceoffrontcamera="", namespaceofrearcamera="", maxdetectionsbeforetrack=5):
@@ -56,7 +57,7 @@ class PeopleRec:
             try:
                 sneak = "front"
                 self.frontimagebgrqhd = self.bridgefront.imgmsg_to_cv2(msg, "bgr8")
-                self.frontframebgrsmall = imutils.resize(self.frontimagebgrqhd, width=min(400, self.frontimagebgrqhd.shape[1]))
+                #self.frontframebgrsmall = imutils.resize(self.frontimagebgrqhd, width=min(400, self.frontimagebgrqhd.shape[1]))
 
             except CvBridgeError as e:
                 print(e)
@@ -71,16 +72,8 @@ class PeopleRec:
             # start = time.time()
             sneak = "back"
             self.rearimagebgrqhd = self.bridgeback.imgmsg_to_cv2(msg, "bgr8")
-            self.rearframebgrsmall = imutils.resize(self.rearimagebgrqhd, width=min(400, self.rearimagebgrqhd.shape[1]))
+            #self.rearframebgrsmall = imutils.resize(self.rearimagebgrqhd, width=min(400, self.rearimagebgrqhd.shape[1]))
             # print time.time() - start
-
-        except CvBridgeError as e:
-            print(e)
-
-    def callback_hd(self, msg):
-        try:
-            imagebgrhd = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            return imagebgrhd
 
         except CvBridgeError as e:
             print(e)
@@ -93,11 +86,12 @@ class PeopleRec:
     # @param[in] imagebgrqhd QHD Bild der Kamera
     # @param[in] framebgrsmall 400x225 Bild der Kamera
     # @param[in] sneak Info ueber Datenherkunft
-    def managepeople(self, detections, imagebgrqhd, framebgrsmall, sneak):
-
+    def managepeople(self, detections, imagebgrqhd, sneak):
+        framebgrsmall = imutils.resize(imagebgrqhd, width=min(400, imagebgrqhd.shape[1]))
+        print(detections)
         for (xupleft, yupleft, xbellowright, ybellowright) in detections:
             """
-            Fuer jedes menschaehnliche Objekt versuche im Interessenbereich ein Gesicht zu erkennen
+            Fuer jedes menschenaehnliche Objekt versuche im Interessenbereich ein Gesicht zu erkennen
             """
             incomingface = self.face.getface(xupleft, yupleft, xbellowright, ybellowright, imagebgrqhd)
             if incomingface is not None:
@@ -123,12 +117,15 @@ class PeopleRec:
                 else:
                     self.listofpersons[incomingface[9]] = knownperson
 
-        cv2.imshow(sneak, framebgrsmall)
-        key = cv2.waitKey(1) & 0xFF
+        #cv2.imshow(sneak, framebgrsmall)
+        #key = cv2.waitKey(1) & 0xFF
         print("Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert")
 
     def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
-
+        print(xupleft)
+        print(yupleft)
+        print(xbellowright)
+        print(ybellowright)
         #Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
 
         shrinkfactor = 7
@@ -144,12 +141,11 @@ class PeopleRec:
 
         #Region of interest in Form einer Liste fuer eventuelle spaetere Umstrukturierung
 
-        for row in range(int(ysmallrectupleft * 4.8), int(ysmallrectbellowright * 4.8)):
-            for column in range(int(xsmallrectupleft * 4.8), int(xsmallrectbellowright * 4.8)):
-                listofroi.append([int(column), int(row)])
+        for column in range(int(ysmallrectupleft*0.7851), int(ysmallrectbellowright*0.7851)):
+            for row in range(int(xsmallrectupleft*0.5333), int(xsmallrectbellowright*0.5333)):
+                listofroi.append([int(row), int(column)])
 
         #Alle relevanten (NaNs werden aussortiert) Points werden aus der anliegenden PointCloud gezogen
-
         pc = pc2.read_points(pointcloudmsg, skip_nans=True, field_names=("x", "y", "z"), uvs=listofroi)
         for p in pc:
             pc_list.append([p[0], p[1], p[2]])
@@ -163,8 +159,9 @@ class PeopleRec:
 
         if len(pc_list) != 0:
             depthaverage = depthsum / len(pc_list)
+            print(depthaverage, len(pc_list))
             return xcenter, ycenter, depthaverage
-            # print(depthaverage, len(self.pc_list))
+
 
     ## Veroeffentlicht die Position der zuletzt gesehenen Person
     # @todo Veroeffentlichen der globalen Koordinaten
@@ -189,11 +186,14 @@ class PeopleRec:
     ## Berechnung der lokalen X/Y-Koordinaten gemessen von der jeweiligen Kamera zum Objekt mithilfe der
     ## intrinsischen Kamerainformationen
     def getxycoordinates(self, xcenter, framebgrsmall, depthaverage):
+        print(xcenter)
         fovhorizontal = 80
         fovhorizontaldegree = fovhorizontal * (math.pi / 180)
-        pixelhorizontal = len(framebgrsmall[1])
+        pixelhorizontal = 960
+        print(pixelhorizontal)
         focallength = pixelhorizontal / (2 * math.tan(fovhorizontaldegree / 2))
         xpospersonlocal = ((xcenter - (pixelhorizontal / 2)) / focallength) * depthaverage
+        print(xpospersonlocal)
         ypospersonlocal = math.sqrt(depthaverage ** 2 - xpospersonlocal ** 2)
 
         return [xpospersonlocal, ypospersonlocal]
@@ -206,7 +206,7 @@ class PeopleRec:
         rospy.init_node('listener', anonymous=True)
         self.listener = transform.TransformListener()
         self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
-        rospy.Subscriber("/" + self.namespaceoffrontcamera + "/hd/points", PointCloud2, self.callback_pointcloud)
+        rospy.Subscriber("/" + self.namespaceoffrontcamera + "/sd/points", PointCloud2, self.callback_pointcloud)
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
 
@@ -224,17 +224,18 @@ class PeopleRec:
                 """
                 start = time.time()
                 if self.namespaceoffrontcamera != "":
-                    #detectionsfront, imagefront = self.detections.getdetectionsbycnn(self.frontframebgrsmall, "front")
+                    detectionsfront, imagefront = self.detections.getdetectionsbytflite(self.frontimagebgrqhd, "front")
                     #print(detectionsfront)
-                    #self.managepeople(detectionsfront, self.frontimagebgrqhd, imagefront, "front")
-                    self.detections.getdetectionsbytflite(self.frontimagebgrqhd)
+                    self.managepeople(detectionsfront, self.frontimagebgrqhd, "front")
+                    #self.detections.getdetectionsbytflite(self.frontimagebgrqhd, "front")
 
                 if self.namespaceofrearcamera != "":
-                    detectionsrear, imagerear = self.detections.getdetectionsbycnn(self.rearframebgrsmall, "back")
+                    pass
+                    detectionsrear, imagerear = self.detections.getdetectionsbytflite(self.rearimagebgrqhd, "back")
                     #print(detectionsrear)
-                    #self.managepeople(detectionsrear, self.rearimagebgrqhd, imagerear, "back")
+                    self.managepeople(detectionsrear, self.rearimagebgrqhd, "back")
 
-                self.publishposition()
+                #self.publishposition()
                 end = time.time() - start
                 print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")

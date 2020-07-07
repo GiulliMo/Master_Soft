@@ -16,8 +16,8 @@ class benchmark:
 
             self.detections.getdetectionsbycnn(imagecaf, sneak)
             self.detections.getdetectionsbyhog(imagehog, sneak)
-            self.detections.getdetectionsbytflite(imagetfl, sneak)
-            #self.detections.getdetectionsbytfliteruntime(imagetflr, sneak)
+            #self.detections.getdetectionsbytflite(imagetfl, sneak)
+            self.detections.getdetectionsbytfliteruntime(imagetflr, sneak)
             c += 1
 
 

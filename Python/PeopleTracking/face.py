@@ -8,24 +8,15 @@ class face:
 
     ## Ordnet Gesichter zu
     def getface(self, xupleft, yupleft, xbellowright, ybellowright, image):
-        # Groesse des Bildes wird erkannt und der Faktor der Umrechnung entsprechend angepasst
-
-        if len(image) == 540:
-            factor = 2.4
-        elif len(image) == 1080:
-            factor = 4.8
-        else:
-            factor = 1
-
         # ROI der Person wird zur Ersparnis der Rechenzeit an das Gesicht angepasst
         # facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
-        facexupleft = int(xupleft * factor)
+        facexupleft = int(xupleft)
         # faceyupleft = int((yupleft + ((ybellowright - yupleft) / 10)) * factor)
-        faceyupleft = int(yupleft * factor)
+        faceyupleft = int(yupleft)
         # facexbottomright = int((xbellowright - ((xbellowright - xupleft) / 4)) * factor)
-        facexbottomright = int(xbellowright * factor)
+        facexbottomright = int(xbellowright)
         # faceybottomright = int((yupleft + ((ybellowright - yupleft) / 4)) * factor)
-        faceybottomright = int((yupleft + ((ybellowright - yupleft) / 2)) * factor)
+        faceybottomright = int((yupleft + ((ybellowright - yupleft) / 2)))
         imagecut = image[faceyupleft:faceybottomright, facexupleft:facexbottomright]
         rgb = cv2.cvtColor(imagecut, cv2.COLOR_BGR2RGB)
         boxes = face_recognition.face_locations(rgb)
@@ -46,7 +37,6 @@ class face:
                 print("Neues Gesicht mit der ID" + str(len(self.knownfaces) - 1) + " hinzugefuegt")
             # Checke alle Gesichter ob und welches erkennt wurde, wenn nicht, gehoert es zu den unbekannten?
             for index, element in enumerate(isknown):
-                print(index)
                 if isknown[index]:
                     print("ID " + str(index) + " wurde erkannt")
                     return xupleft, yupleft, xbellowright, ybellowright, top, right, bottom, left, face, index;
