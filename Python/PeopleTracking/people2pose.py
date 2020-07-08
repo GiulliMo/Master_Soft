@@ -43,7 +43,7 @@ class PeopleRec:
         self.rearframebgrsmall = np.array(0)
         self.frontimagebgrqhd = np.array(0)
         self.rearimagebgrqhd = np.array(0)
-        self.detections = detections.detections()
+        self.detections = detections.detections("tflite")
         self.face = face.face()
         self.person = person.person()
 
@@ -122,29 +122,32 @@ class PeopleRec:
         print("Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert")
 
     def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
-        print(xupleft)
-        print(yupleft)
-        print(xbellowright)
-        print(ybellowright)
         #Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
-
-        shrinkfactor = 7
+        factor = 2
         xcenter = xupleft + (xbellowright - xupleft) / 2
         ycenter = yupleft + (ybellowright - yupleft) / 2
-        xsmallrectupleft = xupleft + (xcenter - xupleft) * (shrinkfactor - 1) / shrinkfactor
-        ysmallrectupleft = yupleft + (ycenter - yupleft) * (shrinkfactor - 1) / shrinkfactor
-        xsmallrectbellowright = xcenter + (xbellowright - xcenter) / shrinkfactor
-        ysmallrectbellowright = ycenter + (ybellowright - ycenter) / shrinkfactor
+        xsmallrectupleft = int(xcenter - ((xcenter - xupleft) / factor))
+        ysmallrectupleft = int(ycenter - ((ycenter - yupleft) / factor))
+        xsmallrectbellowright = int(xcenter + ((xbellowright - xcenter) / factor))
+        ysmallrectbellowright = int(ycenter + ((ybellowright - ycenter) / factor))
+        print(xsmallrectupleft)
+        print(ysmallrectupleft)
+        print(xsmallrectbellowright)
+        print(ysmallrectbellowright)
         listofroi = []
         pc_list = []
         depthsum = 0
 
         #Region of interest in Form einer Liste fuer eventuelle spaetere Umstrukturierung
 
-        for column in range(int(ysmallrectupleft*0.7851), int(ysmallrectbellowright*0.7851)):
-            for row in range(int(xsmallrectupleft*0.5333), int(xsmallrectbellowright*0.5333)):
-                listofroi.append([int(row), int(column)])
+        for column in range(int(ysmallrectupleft*0.5333), int(ysmallrectbellowright*0.5333)):
+            for row in range(int(xsmallrectupleft*0.7851), int(xsmallrectbellowright*0.7851)):
+                listofroi.append([int(column), int(row)])
+        cv2.circle(self.frontimagebgrqhd, (ysmallrectupleft, xsmallrectupleft), 10, (255, 0, 0),2)
+        cv2.imshow("roi", self.frontimagebgrqhd)
+        key = cv2.waitKey(1000)
 
+        print(type(pointcloudmsg))
         #Alle relevanten (NaNs werden aussortiert) Points werden aus der anliegenden PointCloud gezogen
         pc = pc2.read_points(pointcloudmsg, skip_nans=True, field_names=("x", "y", "z"), uvs=listofroi)
         for p in pc:
@@ -206,13 +209,14 @@ class PeopleRec:
         rospy.init_node('listener', anonymous=True)
         self.listener = transform.TransformListener()
         self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
-        rospy.Subscriber("/" + self.namespaceoffrontcamera + "/sd/points", PointCloud2, self.callback_pointcloud)
+
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
+            rospy.Subscriber("/" + self.namespaceoffrontcamera + "/sd/points", PointCloud2, self.callback_pointcloud)
 
         if self.namespaceofrearcamera != "":
             rospy.Subscriber("/" + self.namespaceofrearcamera + "/qhd/image_color", Image, self.processingqhdrear)
-
+            rospy.Subscriber("/" + self.namespaceofrearcamera + "/sd/points", PointCloud2, self.callback_pointcloud)
         # self.publisher = rospy.Publisher('/tracked_people/pose', PoseStamped, queue_size=10)
 
         try:

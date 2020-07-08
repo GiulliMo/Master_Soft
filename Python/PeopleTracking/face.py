@@ -14,11 +14,17 @@ class face:
         # faceyupleft = int((yupleft + ((ybellowright - yupleft) / 10)) * factor)
         faceyupleft = int(yupleft)
         # facexbottomright = int((xbellowright - ((xbellowright - xupleft) / 4)) * factor)
-        facexbottomright = int(xbellowright)
+        facexbellowright = int((xbellowright - ((xbellowright - xupleft) * 0.66)))
         # faceybottomright = int((yupleft + ((ybellowright - yupleft) / 4)) * factor)
-        faceybottomright = int((yupleft + ((ybellowright - yupleft) / 2)))
-        imagecut = image[faceyupleft:faceybottomright, facexupleft:facexbottomright]
+        faceybellowright = int(ybellowright)
+        imagecut = image[facexupleft:facexbellowright, faceyupleft:faceybellowright]
+        cv2.imshow("cut", imagecut)  # Bild eventuell extra abspeichern
+        key = cv2.waitKey(1) & 0xFF
         rgb = cv2.cvtColor(imagecut, cv2.COLOR_BGR2RGB)
+        #print(facexupleft)
+        #print(faceyupleft)
+        #print(facexbottomright)
+        #print(faceybottomright)
         boxes = face_recognition.face_locations(rgb)
 
         # Fuer jedes erkannte Gesicht wird geprueft, ob es bekannt ist. Wenn nicht wird ein neues hinzugefuegt

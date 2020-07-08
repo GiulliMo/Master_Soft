@@ -1,4 +1,6 @@
 import time
+
+import numpy
 import numpy as np
 import cv2
 import tensorflow
@@ -7,10 +9,12 @@ from imutils.object_detection import non_max_suppression
 #from tflite_runtime.interpreter import Interpreter as tflruntime
 
 class detections:
-    def __init__(self):
+    def __init__(self, model):
         self.net = cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt.txt", "MobileNetSSD_deploy.caffemodel")
         self.hog = cv2.HOGDescriptor()
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+        self.labels = self.load_labels("./labels/" + model + "labels.txt")
+        self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
 
     def getdetectionsbyhog(self, image, sneak):
         image = imutils.resize(image, width=min(400, image.shape[1]))
@@ -21,26 +25,19 @@ class detections:
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+        #detections=rects
         # Zur Visualisierung der erkannten Objekte
         for detection in detections:
             cv2.rectangle(image, (detection[0], detection[1]), (detection[2], detection[3]),
                           (255, 0, 255), 2)
 
         #cv2.imwrite('./results/' + sneak + 'HOG.jpg', image)
-        cv2.imshow(sneak, framebgrsmall)
+        cv2.imshow(sneak, image)
         key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
         return detections, image
 
     def getdetectionsbycnn(self, image, sneak):
-        CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
-                   "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-                   "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-                   "sofa", "train", "tvmonitor"]
-        IGNORE = set(["background", "aeroplane", "bicycle", "bird", "boat",
-                      "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-                      "dog", "horse", "motorbike", "pottedplant", "sheep",
-                      "sofa", "train", "tvmonitor"])
         (h, w) = image.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)),
                                      0.007843, (300, 300), 127.5)
@@ -57,27 +54,28 @@ class detections:
                 # Index der Detection
                 idx = int(detections[0, 0, i, 1])
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
-                if CLASSES[idx] in IGNORE:
+                if self.labels[idx] in self.ignorelabels:
                     continue
                 # Erstellung der Boundingbox
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 
                 (startX, startY, endX, endY) = abs(box.astype("int"))
                 bbox.append((startX, startY, endX, endY))
-                label = "{}: {:.2f}%".format(CLASSES[idx],
+                label = "{}: {:.2f}%".format(self.labels[idx],
                                              confidence * 100)
                 cv2.rectangle(image, (startX, startY), (endX, endY),
                               (255, 0, 255), 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(image, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        #cv2.imwrite('./results/' + sneak + 'caffe.jpg', image)
+
         cv2.imshow(sneak, image) #Bild eventuell extra abspeichern
         key = cv2.waitKey(1) & 0xFF
         print("Caffee= " + str(end))
         return bbox, image
 
     def getdetectionsbytflite(self, image, sneak):
+        (h, w) = image.shape[:2]
         interpreter = tensorflow.lite.Interpreter(model_path="detect.tflite")
         interpreter.allocate_tensors()
 
@@ -99,36 +97,54 @@ class detections:
         print("TfLite= " + str(time.time() - start))
         # get output tensor
         boxes = interpreter.get_tensor(output_details[0]['index'])
-        labels = interpreter.get_tensor(output_details[1]['index'])
+        detectedlabels = interpreter.get_tensor(output_details[1]['index'])
         scores = interpreter.get_tensor(output_details[2]['index'])
         num = interpreter.get_tensor(output_details[3]['index'])
-        bbox = []
-        for i in range(boxes.shape[1]):
-            if scores[0, i] > 0.5:
-                box = boxes[0, i, :]
-                x0 = int(box[1] * image.shape[1])
-                y0 = int(box[0] * image.shape[0])
-                x1 = int(box[3] * image.shape[1])
-                y1 = int(box[2] * image.shape[0])
-                bbox.append((x0, y0, x1, y1))
-                box = box.astype(np.int)
-                cv2.rectangle(image, (x0, y0), (x1, y1), (255, 0, 0), 2)
-                cv2.rectangle(image, (x0, y0), (x0 + 100, y0 - 30), (255, 0, 0), -1)
-                cv2.putText(image,
-                            str(int(labels[0, i])),
-                            (x0, y0),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            1,
-                            (255, 255, 255),
-                            2)
+        bboxlist = []
+        bbox = numpy.array([])
+        scorelist = []
 
-        cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
+        for i in range(boxes.shape[1]):
+            # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
+            confidence = scores[0, i]
+            if confidence > 0.65:
+                scorelist.append(confidence)
+                # Index der Detection
+                idx = int(detectedlabels[0, i])
+                # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
+                if self.labels[idx] in self.ignorelabels:
+                    continue
+                # Erstellung der Boundingbox
+                box = numpy.asarray(boxes[0, i, :])
+                box[1] = int(box[1] * image.shape[1])
+                box[0] = int(box[0] * image.shape[0])
+                box[3] = int(box[3] * image.shape[1])
+                box[2] = int(box[2] * image.shape[0])
+                for i in range(0, 1):
+                    for b in range(0, 3):
+                        if box[b] < 0:
+                            box[b] = 0
+
+                        if box[b] > image.shape[i]:
+                            box[b] = image.shape[i]
+                box = box.astype(numpy.int)
+                bboxlist.append(box)
+                bbox = numpy.asarray(bboxlist)
+                bbox = self.non_max_suppression(bbox, 0.65)
+                label = "{}: {:.2f}%".format(self.labels[idx],
+                                             confidence * 100)
+                cv2.rectangle(image, (box[1], box[0]), (box[3], box[2]),
+                              (255, 0, 255), 2)
+                y = box[0] - 15 if box[0] - 15 > 15 else box[0] + 15
+                cv2.putText(image, label, (box[1], y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+
         cv2.imshow(sneak, image)
         key = cv2.waitKey(1)
         return bbox, image
 
     def getdetectionsbytfliteruntime(self, image, sneak):
-        # labels = self.load_labels("labelmap.txt")
+        # labels = self.load_labels("tflitelabels.txt")
         image = imutils.resize(image, width=min(400, image.shape[1]))
         interpretertflr = tflruntime("detect.tflite")
 
@@ -171,6 +187,63 @@ class detections:
                             (255, 255, 255),
                             2)
 
-        cv2.imwrite('./results/' + sneak + 'tfliteruntime.jpg', image)
-        #cv2.imshow('image', img_org)
-        #key = cv2.waitKey(1)
+    def load_labels(self, path):
+        """Loads the labels file. Supports files with or without index numbers."""
+        with open(path, 'r') as f:
+            labels = f.read().splitlines()
+
+        return labels
+
+    #  Felzenszwalb et al.
+    def non_max_suppression(self, boxes, overlapThresh):
+        # if there are no boxes, return an empty list
+        if len(boxes) == 0:
+            return []
+        # initialize the list of picked indexes
+        pick = []
+        # grab the coordinates of the bounding boxes
+        x1 = boxes[:, 0]
+        y1 = boxes[:, 1]
+        x2 = boxes[:, 2]
+        y2 = boxes[:, 3]
+        # compute the area of the bounding boxes and sort the bounding
+        # boxes by the bottom-right y-coordinate of the bounding box
+        area = (x2 - x1 + 1) * (y2 - y1 + 1)
+        idxs = numpy.argsort(y2)
+        # keep looping while some indexes still remain in the indexes
+        # list
+        while len(idxs) > 0:
+            # grab the last index in the indexes list, add the index
+            # value to the list of picked indexes, then initialize
+            # the suppression list (i.e. indexes that will be deleted)
+            # using the last index
+            last = len(idxs) - 1
+            i = idxs[last]
+            pick.append(i)
+            suppress = [last]
+            # loop over all indexes in the indexes list
+            for pos in xrange(0, last):
+                # grab the current index
+                j = idxs[pos]
+                # find the largest (x, y) coordinates for the start of
+                # the bounding box and the smallest (x, y) coordinates
+                # for the end of the bounding box
+                xx1 = max(x1[i], x1[j])
+                yy1 = max(y1[i], y1[j])
+                xx2 = min(x2[i], x2[j])
+                yy2 = min(y2[i], y2[j])
+                # compute the width and height of the bounding box
+                w = max(0, xx2 - xx1 + 1)
+                h = max(0, yy2 - yy1 + 1)
+                # compute the ratio of overlap between the computed
+                # bounding box and the bounding box in the area list
+                overlap = float(w * h) / area[j]
+                # if there is sufficient overlap, suppress the
+                # current bounding box
+                if overlap > overlapThresh:
+                    suppress.append(pos)
+            # delete all indexes from the index list that are in the
+            # suppression list
+            idxs = np.delete(idxs, suppress)
+        # return only the bounding boxes that were picked
+        return boxes[pick]
