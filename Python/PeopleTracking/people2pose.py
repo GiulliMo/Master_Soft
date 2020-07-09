@@ -126,7 +126,7 @@ class PeopleRec:
 
     def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
         #Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
-        factor = 2
+        factor = 3
         xcenter = xupleft + (xbellowright - xupleft) / 2
         ycenter = yupleft + (ybellowright - yupleft) / 2
         xsmallrectupleft = int(xcenter - ((xcenter - xupleft) / factor))
@@ -146,7 +146,8 @@ class PeopleRec:
         for column in range(int(ysmallrectupleft*0.5333), int(ysmallrectbellowright*0.5333)):
             for row in range(int(xsmallrectupleft*0.7851), int(xsmallrectbellowright*0.7851)):
                 listofroi.append([int(column), int(row)])
-        cv2.circle(self.frontimagebgrqhd, (ysmallrectupleft, xsmallrectupleft), 10, (255, 0, 0),2)
+        cv2.circle(self.frontimagebgrqhd, (ysmallrectupleft, xsmallrectupleft), 10, (255, 0, 0), 2)
+        cv2.circle(self.frontimagebgrqhd, (ysmallrectbellowright, xsmallrectbellowright), 10, (255, 0, 0), 2)
         cv2.imshow("roi", self.frontimagebgrqhd)
         key = cv2.waitKey(1000)
 

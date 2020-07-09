@@ -17,21 +17,42 @@ class detections:
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
 
     def getdetectionsbyhog(self, image, sneak):
-        image = imutils.resize(image, width=min(400, image.shape[1]))
+        imagesmall = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
-        (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(0, 0), scale=1.05)
-        rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
+        (rects, weights) = self.hog.detectMultiScale(imagesmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
+        rects = np.array([[y, x, y + h, x + w] for (x, y, w, h) in rects])
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
-        #detections=rects
-        # Zur Visualisierung der erkannten Objekte
-        for detection in detections:
-            cv2.rectangle(image, (detection[0], detection[1]), (detection[2], detection[3]),
-                          (255, 0, 255), 2)
+        bboxlist = []
+        for i in range(len(detections)):
 
-        #cv2.imwrite('./results/' + sneak + 'HOG.jpg', image)
+            # Erstellung der Boundingbox
+            box = numpy.asarray(detections[i])
+            print(box)
+            box[0] = int(box[0] * (float(image.shape[0]) / imagesmall.shape[0]))
+            box[1] = int(box[1] * (float(image.shape[1]) / imagesmall.shape[1]))
+            box[2] = int(box[2] * (float(image.shape[0]) / imagesmall.shape[0]))
+            box[3] = int(box[3] * (float(image.shape[1]) / imagesmall.shape[1]))
+
+            for i in range(0, 1):
+                for b in range(0, 3):
+                    if box[b] < 0:
+                        box[b] = 0
+
+                    if box[b] > image.shape[i]:
+                        box[b] = image.shape[i]
+            box = box.astype(numpy.int)
+            bboxlist.append(box)
+            bbox = numpy.asarray(bboxlist)
+            bbox = self.non_max_suppression(bbox, 0.65)
+            label = "Person"
+            cv2.rectangle(image, (box[1], box[0]), (box[3], box[2]),
+                          (255, 0, 255), 2)
+            y = box[0] - 15 if box[0] - 15 > 15 else box[0] + 15
+            cv2.putText(image, label, (box[1], y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
         cv2.imshow(sneak, image)
         key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
@@ -116,10 +137,11 @@ class detections:
                     continue
                 # Erstellung der Boundingbox
                 box = numpy.asarray(boxes[0, i, :])
-                box[1] = int(box[1] * image.shape[1])
-                box[0] = int(box[0] * image.shape[0])
-                box[3] = int(box[3] * image.shape[1])
-                box[2] = int(box[2] * image.shape[0])
+                factor = 0.1
+                box[1] = int(box[1] * image.shape[1] * (1 - factor))
+                box[0] = int(box[0] * image.shape[0] * (1 - factor))
+                box[3] = int(box[3] * image.shape[1] * (1 + factor))
+                box[2] = int(box[2] * image.shape[0] + (1 + factor))
                 for i in range(0, 1):
                     for b in range(0, 3):
                         if box[b] < 0:
