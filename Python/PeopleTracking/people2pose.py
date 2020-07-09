@@ -17,6 +17,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import detections
 import face
 import person
+import dataoperations
 import sys
 
 class PeopleRec:
@@ -46,6 +47,7 @@ class PeopleRec:
         self.detections = detections.detections("tflite")
         self.face = face.face()
         self.person = person.person()
+        self.dataoperations = dataoperations.dataoperations()
 
 
     ## Callback der vorderen Kamera.
@@ -99,6 +101,7 @@ class PeopleRec:
                 Alle Informationen der eingehenden, erkannten Person werden aktualisiert
                 """
                 knownperson = self.person
+                knownperson.name = "ID" + str(incomingface[9])
                 knownperson.rect = [incomingface[0], incomingface[1], incomingface[2], incomingface[3]]
                 knownperson.face = incomingface[8]
                 knownperson.camera = sneak
@@ -205,7 +208,9 @@ class PeopleRec:
     ## Zusammensetzung des Knotens. Alle rospy.-Befehle werden seriell bearbeitet. Die in der While-Schleife
     ## befindlichen Befehle werden widerrum seriell barbeitet.
     def startnode(self):
-       # self.getdata()
+        self.listofpersons = self.dataoperations.getdata()
+        for person in self.listofpersons:
+            self.face.knownfaces.append(person.face)
         rospy.init_node('listener', anonymous=True)
         self.listener = transform.TransformListener()
         self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
@@ -243,7 +248,7 @@ class PeopleRec:
                 end = time.time() - start
                 print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")
-         #   self.savedata()
+            self.dataoperations.savedata(self.listofpersons)
 
         except KeyboardInterrupt:
             print("\nShutting down")

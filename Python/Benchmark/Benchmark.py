@@ -16,13 +16,16 @@ class benchmark:
 
             self.detections.getdetectionsbycnn(imagecaf, sneak)
             self.detections.getdetectionsbyhog(imagehog, sneak)
-            #self.detections.getdetectionsbytflite(imagetfl, sneak)
-            self.detections.getdetectionsbytfliteruntime(imagetflr, sneak)
+            self.detections.getdetectionsbytflite(imagetfl, sneak)
+            #self.detections.getdetectionsbytfliteruntime(imagetflr, sneak)
             c += 1
 
 
 if __name__ == '__main__':
     benchmark = benchmark()
+    print("Standing")
     benchmark.run("./pool/standingpeople.jpg", "standing")
+    print("Sitting")
     benchmark.run("./pool/sittingpeople.jpg", "sitting")
+    print("Misc")
     benchmark.run("./pool/miscpeople.jpeg", "misc")

@@ -4,6 +4,9 @@
 class person:
 
     def __init__(self):
+        ## @var name
+        # Name
+        self.name = ""
         ## @var face
         # Gesichtsmerkmale
         self.face = []

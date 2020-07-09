@@ -1,6 +1,7 @@
 import face_recognition
 import cv2
 
+
 class face:
     def __init__(self):
         self.knownfaces = []
@@ -8,6 +9,7 @@ class face:
 
     ## Ordnet Gesichter zu
     def getface(self, xupleft, yupleft, xbellowright, ybellowright, image):
+
         # ROI der Person wird zur Ersparnis der Rechenzeit an das Gesicht angepasst
         # facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
         facexupleft = int(xupleft)
