@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# license removed for brevity
+
 ##################################################
 ## Author: Hannes Dittmann
 ## Version: 1.0
@@ -5,126 +8,113 @@
 ## Status: In Entwicklung
 ##################################################
 ## Kommentare:
-## Dieses Skript dient dazu, eine transkription auf dem Raspberry Pi in Kombination mit dem Robot Operating System durchzuführen,
+## Dieses Skript dient dazu, eine transkription auf dem Raspberry Pi in Kombination mit dem Robot Operating System durchzufuehren
 ## Ein Deepspeech Modell muss mit passender Version vorliegen. Ein Datenstrom wird aus dem ROS-Netzwerk aufgenommen
 ## Es wird eine WAV Datei transkribiert, diese kann vorhanden sein, oder neu aufgenommen werden.
 ## Ein Tflite Modell zur bedienungsorientierten Handlungsklassifizierung muss mit entsprechender Wortliste vorliegen
 ## Wortliste, Buzzword.json und taskClassifier.tflie mueesen vorhanden sein
 
 ## python3 main_ros.pyr 5 -lm gb -tpp recognition -tps audio_stream -nn recognizer in Konsole auf dem ALF PC ausfuehren
-## rosrun startbuttondetection startbuttondetection_node Knoten um Start Button als "Record-Auslöser" aufzurufen
+## python audioStream_ros.py -di 7 -nn audio -tp audio_stream
+## rosrun startbuttondetection startbuttondetection_node Knoten um Start Button als "Record-Ausloeser" aufzurufen
 
 import os
 import deepspeech
-import wave
-import numpy as np
-import json
-import pyaudio
 import rospy
-from std_msgs.msg import String, Int16MultiArray, Int16
+from std_msgs.msg import String, Int16MultiArray, Int16, Float32MultiArray
 import time
-import threading
-import argparse
 import json
 import phonetics
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf
 import numpy as np
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-r", "--RECSEC", help="Laenge der Aufnahme",
-                    type=int)
-parser.add_argument("-lm", "--LANGUAGE", help="Sprachmodell, 'de' oder 'gb' ")
-parser.add_argument("-tpp", "--topicnamePub", help="Name der veroeffentlichten Topic")
-parser.add_argument("-tps", "--topicnameSub", help="Name der abbonierten Topic")
-parser.add_argument("-nn", "--nodename", help="Name des Knotens")
-args = parser.parse_args()
 
 def initModel(VERSION):
+
     # load and initialzie model for deepspeechenglish, ds 0.7.1 hast to be installed
     if VERSION == 'gb':
-        model_file_path = 'deepspeech-0.7.1-models.tflite'
+        model_file_path = 'models/deepspeech-0.7.1-models.tflite'
         model = deepspeech.Model(model_file_path)
-        model.enableExternalScorer('deepspeech-0.7.1-models.scorer')
+        model.enableExternalScorer('models/deepspeech-0.7.1-models.scorer')
         model.setScorerAlphaBeta(alpha=1, beta=1.1)  # alpha=0.931289039105002, beta=1.1834137581510284)
-        print('load finished')
+        rospy.loginfo("Load finished!")
 
     elif VERSION == 'de':
+
         # load and initialize model for deepspeech-german, ds 0.6.1 hast to be installed
-        DEEPSPEECH_MODEL_DIR = 'models-de'
-        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.tflite')
+        DEEPSPEECH_MODEL_DIR = 'models'
+        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.pb')
         BEAM_WIDTH = 500
         LM_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'lm.binary')
         TRIE_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'trie')
-        LM_ALPHA = 0.4
+        LM_ALPHA = 1.0
         LM_BETA = 1.85
-        model = deepspeech.Model(model_file_path)
+        model = deepspeech.Model(model_file_path, 500)
         model.enableDecoderWithLM(LM_FILE_PATH, TRIE_FILE_PATH, LM_ALPHA, LM_BETA)
-        print('load finished')
+        rospy.loginfo("Load finished!")
 
     return model
 
 # Erzeugen der Klasse SpeechRecognition
 class SpeechRecognition:
-    def __init__(self, recsec,  pyVersion, nodename, topicnamePub, topicnameSub):
+
+    def __init__(self, recsec,  pyVersion, nodename, topicnameTranscript, topicnameTask,topicnameTaskConfidence, topicnameBuzz, topicnameSub):
 
         # Definieren von Objekteigenschaften der Klasse Speech Recognition
-        self.record = True
         self.nodename = nodename
-        self.topicnamePub = topicnamePub
-        self.topicnameSub = topicnameSub
-        self.lock = threading.Lock()
-        self.filename = ''
+        self.topicnameTranscript = topicnameTranscript # zum veroeffentlichen des deepspeech transkripts
+        self.topicnameSub = topicnameSub    # subscriben des audio streams
+        self.topicnameTask = topicnameTask
+        self.topicnameTaskConfidence = topicnameTaskConfidence
+        self.topicnameBuzz = topicnameBuzz
         self.Version = pyVersion
-        self.speech = ''
-        self.channels = 1
-        self.rate = 16000
         self.chunksize = 2048
+        self.rate = 16000
         self.recsec = recsec
-        self.devIndex = 7 # 0=Boltune, 1= boltune, 2 = builtin
         self.modelDs = initModel(self.Version)
-        self.modelTaskClassifier = tflite.Interpreter("taskClassifier.tflite")
-        self.buffer = np.zeros(self.chunksize)
-        self.audio = pyaudio.PyAudio()
-        self.Format = pyaudio.paInt16
+        self.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifier.tflite")
+        self.buffer = np.zeros(int(self.rate / self.chunksize) * self.recsec * self.chunksize)
         self.frames = []
-        self.cnt = 0
-        self.start = 0
-        self.lstMsg = np.zeros(self.chunksize)
-        self.transitions = "transition.json"
-        self.buzzwordName = "buzzwords.json"
+        self.lstMsg = np.zeros(int(self.rate / self.chunksize) * self.recsec * self.chunksize)
         self.buzzwords = []
         self.transcript = []
-        self.text_so_far = ''
         self.words = [0]
-        self.task = ''
-        self.filename = 'test.wav'
-        self.button = False
+        self.msg = Float32MultiArray()
+        self.msg.data = []
+
+
 
     # Methode um Sprache zu transkripieren
     def speechRecognitionDNN(self, stream):
+
         # Recognition from record
         try:
             print("Start recognition")
-            self.start = time.time()
+            start = time.time()
 
             #Transkription erzeugen
             self.transcript = self.modelDs.stt(stream)
 
-            #Transkript in ROS veröffentlichen
-            self.talker(len(self.transcript), self.transcript)
+            if not self.transcript:
+                self.transcript = "none"
+
+
+            #Transkript in ROS veroeffentlichen
+            self.talkerTranscript(len(self.transcript), self.transcript)
             print(self.transcript)
             print("Speech recognition finished")
-            # Zeit für Transkription berechnen
-            print(time.time() - self.start)
+
+            # Zeit fuer Transkription berechnen
+            print(time.time() - start)
 
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
 
-        # Methode um Handlungen zu klassifizieren
+    # Methode um Handlungen zu klassifizieren
     def classifierNN(self, transcript):
 
         self.modelTaskClassifier.allocate_tensors()
@@ -145,10 +135,12 @@ class SpeechRecognition:
 
         # Ausgabe Tensor berechnen
         output_data = self.modelTaskClassifier.get_tensor(output_details[0]['index'])
-        class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop']
+        class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
 
         # Ausgabe der Klassifizierung
-        print(output_data, class_names[np.argmax(output_data)])
+        #print(output_data, class_names[np.argmax(output_data)])
+        self.msg.data = output_data[0]
+        self.talkerTask(len(class_names[np.argmax(output_data)]), class_names[np.argmax(output_data)],len(class_names))
 
         # classes of training data
         # drive to = 0
@@ -158,132 +150,97 @@ class SpeechRecognition:
         # stop = 4
         # Methode um WAV Datei zu erzeugen
 
-    def createWav(self):
-
-        # loeschen wenn WAV existiert
-        if os.path.exists(self.filename):
-            os.remove(self.filename)
-        # start Recording
-        stream = self.audio.open(format=self.Format, rate=self.rate, channels=self.channels, input_device_index=self.devIndex, input=True, frames_per_buffer=self.chunksize)
-
-        print("recording...")
-        self.frames = []
-
-        for i in range(0, int(self.rate / self.chunksize * self.recsec)):
-            self.frames.append(stream.read(self.chunksize))  # Frames werden angehangen je nachdem wie groß recsec ist
-
-        print("finished recording!")
-
-        stream.stop_stream()
-        stream.close()
-        #self.audio.close(stream)
-
-        waveFile = wave.open(self.filename, 'wb')
-        waveFile.setnchannels(self.channels)
-        waveFile.setsampwidth(self.audio.get_sample_size(self.Format))
-        waveFile.setframerate(self.rate)
-        waveFile.writeframes(b''.join(self.frames))
-        waveFile.close()
-
-        # read data from wav file
+    # Methode um Rohdaten aus WAV Datei zu lesen
     def getBuffer(self, w):
         frames = w.getnframes()
         buffer = w.readframes(frames)
         type(buffer)
         return (buffer)
 
-    # Methode um WAV zu transkribieren
-    def processWAV(self):
-        # record a wav file, bei ROS nur buffer
-        self.createWav()
-        # predict Audio with deepspeech
-        buffer = self.getBuffer(wave.open(self.filename, 'r'))
-        data16 = np.frombuffer(buffer, dtype=np.int16)
-        type(data16)
-        self.speechRecognitionDNN(data16)
-        print(self.transcript)
+    # Methode um Datenstrom abhaengig der Aufnahmedauer zusammenzusetzen
+    def processDataStream(self, data):
 
-        # bedienungsorientierte Nachbearbeitung/Klassifizierung
-        self.classifierNN(self.transcript)
-        print("Klassifizierung beendet!")
-        print(self.getAlfBuzzWords())
+        self.lstMsg = np.int16(np.asarray(data))
 
-    # Methode um Datenstrom abhängig der Aufnahmedauer zusammenzusetzen, anschließendes transkribieren
-    def processDataStream(self,data):
-
-        self.lstMsg=np.int16(np.asarray(data))
         try:
-            if self.cnt==0:
-                print("start recording...")
-                self.frames=[]
-                self.cnt = self.cnt +1
 
-                # Aufnahme ueber dauer von recsec
-            if self.cnt<=int(self.rate / self.chunksize * self.recsec):
-                self.frames.append(np.asarray(data))
-                self.cnt = self.cnt + 1
-            else:
-                print("finished recording!")
-                data16 = np.frombuffer(np.asarray(self.frames), dtype=np.int16)
+            # msg.data als array abspeichern
+            self.frames = np.asarray(data)
 
-                # Aufnahme als WAV Datei abspeichern
-                self.audio.terminate()
-                waveFile = wave.open("test.wav", 'wb')
-                waveFile.setnchannels(self.channels)
-                waveFile.setsampwidth(self.audio.get_sample_size(self.Format))
-                waveFile.setframerate(self.rate)
-                waveFile.writeframes(b''.join(self.frames))
-                waveFile.close()
+            # int16 als Eingabe fuer Deepspeech Model
+            data16 = np.frombuffer(np.asarray(self.frames), dtype=np.int16)
 
-                # Aufruf Transkriptionsmethode
-                self.speechRecognitionDNN(data16)
+            # Aufruf Transkriptionsmethode
+            self.speechRecognitionDNN(data16)
 
-                # Aufruf Methode um bedienungsorientierte Handlung zu klassifizieren
-                self.classifierNN(self.transcript)
+            # Aufruf Methode um bedienungsorientierte Handlung zu klassifizieren
+            self.classifierNN(self.transcript)
 
-                self.cnt=0
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
 
-    def callback1(self, msg):
-        self.buffer = np.int16(np.asarray(msg.data))
+
+
+    ## ROS Initialiserung, Subscriber, und Publisher ##
+
+
 
     def callback(self, msg):
-        self.button = msg.data
+        self.buffer = np.int16(np.asarray(msg.data))
 
-
-    #ROS Knoten initialisieren und Subscriber aufrufen
+    # ROS Knoten initialisieren und Subscriber aufrufen
     def listener(self):
+
         rospy.init_node(self.nodename, anonymous=False)
-        rospy.Subscriber(self.topicnameSub, Int16MultiArray, self.callback1)
-        rospy.Subscriber('startbutton', Int16, self.callback)
-        #rospy.spin() #simply keeps python from exiting until this node is stopped
+        rospy.Subscriber(self.topicnameSub, Int16MultiArray, self.callback)
+        # talker initialisieren
+        self.talkerTranscript(size=1, text='init')
+        self.talkerBuzz(size=1, text='init')
+        self.talkerTask(size=1, text='init', size_confidence=0)
+        r = rospy.Rate(0.05)
         while not rospy.is_shutdown():
             try:
-                start = time.time()
-                if self.button:
-                    self.processWAV()
-                    print(time.time()-start)
-
                 checksum = sum(self.lstMsg - self.buffer)  # letzte Message gleich neuer? wenn gleich verwerfen
-                # if not checksum==0:
-                   #hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
-                   #self.processDataStream(self.buffer) #wird zyklisch
-                   #print("Nicht ueber ros")
-                   #self.processWAV(filename="test.wav")
-                   #self.process_audio(self.buffer)
+                if not checksum == 0:
+                    ## hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
+                    self.processDataStream(self.buffer)  # wird zyklisch
+                    self.getAlfBuzzWords()
             except KeyboardInterrupt:
-                print("Keyboard interrupt")
+                    print("Keyboard interrupt")
             pass
 
-    # ROS Publisher aufrufen
-    def talker(self, size, text):
-        pub = rospy.Publisher(self.topicnamePub, String, queue_size=size)
+    # ROS Publisher aufrufen fuer gesamtes Transkript
+    def talkerTranscript(self, size, text):
+
+        pub = rospy.Publisher(self.topicnameTranscript, String, queue_size=size)
         rospy.loginfo(text)
         pub.publish(text)
 
-    # Pattern Matcher um Schlagwörter zu finden
+
+    # ROS Publisher aufrufen fuer klassifizierte Handlung
+    def talkerTask(self, size, text, size_confidence):
+
+        pub = rospy.Publisher(self.topicnameTask, String, queue_size=size)
+        pub2 = rospy.Publisher(self.topicnameTaskConfidence, Float32MultiArray, queue_size=size_confidence)
+
+        rospy.loginfo(text)
+        pub.publish(text)
+
+        rospy.loginfo(self.msg.data)
+        pub2.publish(self.msg)
+
+    # ROS Publisher aufrufen fuer erkanntes Objekt/Person etc. aus Buzzword matcher
+    def talkerBuzz(self, size, text):
+
+        pub = rospy.Publisher(self.topicnameBuzz, String, queue_size=size)
+        rospy.loginfo(text)
+        pub.publish(text)
+
+
+    ## Methoden um Schlagwoerter in transcript zu finden
+
+    # Pattern Matcher um Schlagwoerter zu finden
     def Rabin_Karp_Matcher(self, text, pattern, d, q):
         n = len(text)
         m = len(pattern)
@@ -322,34 +279,39 @@ class SpeechRecognition:
 
     # Methode um Schlagwoerter zu finden
     def getAlfBuzzWords(self):
+
         recognizedBuzzwords = []
+        # Apostroph wird mit leerzeichen ersetzt
         self.transcript = self.transcript.replace("'", "")
         res = self.transcript.split()
-        phoneResMetaphone = []
-        phoneResMetaphone = phonetics.metaphone(self.transcript.replace(" ", ""))
-        print(phoneResMetaphone)
         phoneResSoundex = []
         #phoneResNysi = []
 
-        # phonetischen code der transkription
+        # phonetischen code der transkription nach Soundex
         for k in range(len(res)):
             #phoneResMetaphone.append(phonetics.metaphone(res[k]))
             phoneResSoundex.append(phonetics.soundex(res[k]))
             #phoneResNysi.append(phonetics.nysiis(res[k]))
-        # Sind Schalgwoerter in dem Transcript?
+
+        # phonetischen code der transkription nach metaphone
+        phoneResMetaphone = phonetics.metaphone(self.transcript.replace(" ", ""))
+        #print(phoneResMetaphone)
+
+        # Sind Schalgwoerter in dem Transcript, wenn eines vorhanden ist
         if self.transcript:
 
             for i in range(len(self.buzzwords)):
+
                 # Pruefe auf direktes match
                 if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
                     recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
 
-                # Pruefe auf phonetisches match nach Metaphone codierung
+                # Pruefe auf phonetische uebereinstimmung nach Metaphone Codierung
                 elif self.Rabin_Karp_Matcher(phoneResMetaphone, phonetics.metaphone(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
                     recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
 
 
-                # Pruefe auf phonetisches match nach Soundex codierung
+                # Pruefe auf phonetische uebereinstimmung nach Soundex Codierung
                 elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResSoundex), phonetics.soundex(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
                     recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['name'])  # Buzzword to list
 
@@ -358,76 +320,45 @@ class SpeechRecognition:
                 #elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResNysi), phonetics.nysiis(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
                     #recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
 
-            return recognizedBuzzwords
+            my_string = ','.join(recognizedBuzzwords)
 
+            if not my_string:
+                rospy.loginfo('No valid buzzwords found')
 
-    # Methode um Alf-Spezifische Transkription zu finden
-    def getAlfTransition(self, recognizedBuzzwords):  # schlagwoerter suchen und transition finden
-        transitionCandidates = []
-        firstrun = True
-        sum = 0
-        ## suchen nach tranistionen mit buzzwords
-        for j in range(len(self.transitions)):
-            score = 0
-            for k in range(len(recognizedBuzzwords)):
-                # Schlagwort in transition? ==> score+1
+            elif my_string:
+                #print(my_string)
+                self.talkerBuzz(len(my_string), my_string)
 
-                if self.Rabin_Karp_Matcher(self.transitions[j]['transition'][0]['signature'], recognizedBuzzwords[k],
-                                           257, 11):
-                    score = score + 1  # Score fuer jede Transition
-
-                    if firstrun:
-                        transitionCandidates.append(
-                            [{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])
-                        firstrun = False
-
-                    elif not firstrun:
-                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])  # Kandidaten anhängen
-
-                        if transitionCandidates[len(transitionCandidates) - 1][0]['name'] == \
-                                transitionCandidates[len(transitionCandidates) - 2][0]['name']:
-                            transitionCandidates.remove(transitionCandidates[len(
-                                transitionCandidates) - 2])  # gleichamigen Kandidaten loeschen mit niedrigeren Score
-
-        confidence = np.empty(len(transitionCandidates))
-        print(transitionCandidates)
-
-        # Bei erkannten Transitionen Konfindez und besten Kandidat auswaehlen
-        if transitionCandidates:
-            for n in range(len(transitionCandidates)):
-                sum = sum + transitionCandidates[n][0]['score']
-                confidence[n] = transitionCandidates[n][0]['score']
-            print(confidence * (1 / sum))
-            return transitionCandidates[np.argmax(confidence * (1 / sum))][0]['name'] #Kandidat mit groesster Konfidenz wird ausgegeben
-        else:
-            print("No Alf Buzzwords or Transcript Candidates")
 
     #Schlagwort- und Transitionsliste laden
     def loadJsons(self):
-        f = open(self.buzzwordName, "r")
-        f2 = open(self.transitions, "r")
-        self.buzzwords = json.loads(f.read())
-        self.transitions = json.loads(f2.read())
-        f.close()
-        f2.close()
 
-    # Wortliste für Bedienungsorientierte Klassifizierung laden
+        f = open("models/buzzwords.json", "r")
+        self.buzzwords = json.loads(f.read())
+        f.close()
+
+
+    # Wortliste fuer Bedienungsorientierte Klassifizierung laden
     def readWords(self):
-        file = open("words.txt", 'r')
+
+        file = open("models/words.txt", 'r')
         words = [line.split(',') for line in file.readlines()]
         words = words[0]
-        self.words = words[0:len(words) - 1]  # split fügt ein wort hinzu wo keins hinsoll
+        self.words = words[0:len(words) - 1]  # split fuegt ein wort hinzu wo keins hinsoll
 
-    # Methonde um nur Wortstämme beachten
+    # Methonde um nur Wortstaemme beachten
     def clean_up_sentence(self, sentence):
+
         # tokenize the pattern
         sentence_words = nltk.word_tokenize(sentence)
+
         # stem each word
         sentence_words = [stemmer.stem(word.lower()) for word in sentence_words]
         return sentence_words
 
     # return bag of words array: 0 or 1 for each word in the bag that exists in the sentence
     def bow(self, sentence, words, show_details=True):
+
         # tokenize the pattern
         sentence_words = self.clean_up_sentence(sentence)
         # bag of words
@@ -442,7 +373,14 @@ class SpeechRecognition:
 
 # Main Methode
 if __name__ == '__main__':
-    s = SpeechRecognition(args.RECSEC, args.LANGUAGE, args.nodename, args.topicnamePub, args.topicnameSub)
+
+    name = rospy.get_param("/audioStream/nodename/") + '/'
+
+    #recsec,  pyVersion, nodename, topicnameTranscript, topicnameTask, topicnameBuzz, topicnameSub
+    s = SpeechRecognition(topicnameSub=rospy.get_param(name + 'pub/stream/topic'), pyVersion=rospy.get_param(name + 'language'),
+                          nodename=rospy.get_param(name + 'nodename_speechrecognizer'), topicnameTranscript=rospy.get_param(name + 'topicname/transcript'),
+                          topicnameTask=rospy.get_param(name + 'topicname/task'), topicnameBuzz=rospy.get_param(name + 'topicname/buzz'),
+                          recsec=rospy.get_param(name + 'recsec'), topicnameTaskConfidence=rospy.get_param(name + 'topicname/task_confidence'))
     s.loadJsons()
     s.readWords()
     s.listener()

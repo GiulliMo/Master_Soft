@@ -4,7 +4,7 @@
 ## Email: hannes.dittmann@stud.hshl.de
 ## Status: In Entwicklung
 ##################################################
-## Dieses Skript dient dazu, eine transkription auf dem Entwicklungsrechner durchzuführen, ein Deepspeech Modell muss mit passender Version vorliegen.
+## Dieses Skript dient dazu, eine transkription auf dem Entwicklungsrechner durchzufuhren, ein Deepspeech Modell muss mit passender Version vorliegen.
 ## Es wird eine WAV Datei transkribiert, diese kann vorhanden sein, oder neu aufgenommen werden.
 ## Ein Tflite Modell zur bedienungsorientierten Handlungsklassifizierung muss mit entsprechender Wortliste vorliegen
 ## Wortliste muss Exportiert werden nachdem trainiert wurde!!!!!
@@ -49,8 +49,8 @@ def initModel(VERSION):
 
     elif VERSION == 'PYTHON2':
         # load and initialize model for python2# pbmm deepspeech 0.6.1
-        DEEPSPEECH_MODEL_DIR = 'models-De'
-        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.pb')
+        DEEPSPEECH_MODEL_DIR = 'models'
+        model_file_path = os.path.join(DEEPSPEECH_MODEL_DIR, 'output_graph.pbmm')
         BEAM_WIDTH = 500
         LM_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'lm.binary')
         TRIE_FILE_PATH = os.path.join(DEEPSPEECH_MODEL_DIR, 'trie')
@@ -60,6 +60,7 @@ def initModel(VERSION):
         model = deepspeech.Model(model_file_path, BEAM_WIDTH)
         model.enableDecoderWithLM(LM_FILE_PATH, TRIE_FILE_PATH, LM_ALPHA, LM_BETA)
         print('load finished')
+
     return model
 
 
@@ -104,7 +105,7 @@ class SpeechRecognition:
         frames = []
 
         for i in range(0, int(self.rate / self.chunksize * self.recsec)):
-            frames.append(stream.read(self.chunksize)) #Frames werden angehangen je nachdem wie groß recsec ist
+            frames.append(stream.read(self.chunksize)) # Frames werden angehangen je nachdem wie gross recsec ist
 
         print("finished recording!")
 
@@ -179,7 +180,7 @@ class SpeechRecognition:
         self.modelTaskClassifier.set_tensor(input_details[0]['index'], input_data)
         self.modelTaskClassifier.invoke()
         output_data = self.modelTaskClassifier.get_tensor(output_details[0]['index'])
-        class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop']
+        class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
         print(output_data, class_names[np.argmax(output_data)])
 
         # classes of training data
@@ -273,45 +274,7 @@ class SpeechRecognition:
                   #  recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
 
             return recognizedBuzzwords
-    '''
-    def getAlfTransition(self, recognizedBuzzwords): #schlagwoerter suchen und transition finden
-        transitionCandidates = []
-        firstrun = True
-        sum = 0
-        confidence = np.empty(len(self.transitions))
-        
-        ## suchen nach tranistionen mit buzzwords
-        for j in range(len(self.transitions)):
-            score = 0
 
-            for k in range(len(recognizedBuzzwords)):
-                # Schlagwort in transition? ==> score+1
-
-                if self.Rabin_Karp_Matcher(self.transitions[j]['transition'][0]['signature'], recognizedBuzzwords[k], 257, 11):
-                    score = score + 1  # anzahl matches
-
-                    if firstrun:
-                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}])
-                        firstrun = False
-
-                    elif not firstrun:
-                        transitionCandidates.append([{'score': score, 'name': self.transitions[j]['transition'][0]['name']}]) #Kandidaten anhängen
-
-                        if transitionCandidates[len(transitionCandidates)-1][0]['name']==transitionCandidates[len(transitionCandidates)-2][0]['name']:
-                            transitionCandidates.remove(transitionCandidates[len(transitionCandidates)-2]) # gleichamigen Kandidaten loeschen mit niedrigeren Score
-
-        confidence = np.empty(len(transitionCandidates))
-        print(transitionCandidates)
-        # Bei erkannten Transitionen Konfindez und besten Kandidat auswaehlen
-        if transitionCandidates:
-            for n in range(len(transitionCandidates)):
-                sum = sum + transitionCandidates[n][0]['score']
-                confidence[n] = transitionCandidates[n][0]['score']
-            print(confidence*(1/sum))
-            return transitionCandidates[np.argmax(confidence*(1/sum))][0]['name']
-        else:
-            print("No Alf Buzzwords or Transcript Candidates")
-    '''
     # Methode um Json Dateien zu laden
     def loadJsons(self):
         f = open(self.buzzwordName, "r")
@@ -326,7 +289,7 @@ class SpeechRecognition:
         file = open("words.txt", 'r')
         words = [line.split(',') for line in file.readlines()]
         words = words[0]
-        self.words = words[0:len(words) - 1]  # split fügt ein leeren String ans ende der Datei ''
+        self.words = words[0:len(words) - 1]  # split fuegt ein leeren String ans ende der Datei ''
 
     # Methode um Wortstamm zu bekommen (Lancasterstemmer
     def clean_up_sentence(self, sentence):
@@ -353,7 +316,7 @@ class SpeechRecognition:
 
 if __name__ == '__main__':
     # Version entspricht DS Modell, newRecord == False wav wird genutzt
-    s = SpeechRecognition(newRecord=True, filename='test.wav', pyVersion='PYTHON3')
+    s = SpeechRecognition(newRecord=False, filename='stream.wav', pyVersion='PYTHON3')
 
     # Json Dateien laden (Buzzwords und Transitions)
     s.loadJsons()
