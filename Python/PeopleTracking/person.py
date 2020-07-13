@@ -7,6 +7,9 @@ class person:
         ## @var name
         # Name
         self.name = ""
+        ## @var timestamp
+        # Timestamp
+        self.timestamp = 0.0
         ## @var face
         # Gesichtsmerkmale
         self.face = []

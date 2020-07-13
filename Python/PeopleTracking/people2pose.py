@@ -102,6 +102,7 @@ class PeopleRec:
                 """
                 knownperson = self.person
                 knownperson.name = "ID" + str(incomingface[9])
+                knownperson.timestamp = time.time()
                 knownperson.rect = [incomingface[0], incomingface[1], incomingface[2], incomingface[3]]
                 knownperson.face = incomingface[8]
                 knownperson.camera = sneak
@@ -175,7 +176,11 @@ class PeopleRec:
     # @todo Veroeffentlichen der zuletzt gesehen Person nicht der zuletzt hinzugefuegten Person
     def publishposition(self):
         if self.listofpersons:
-            lastperson = self.listofpersons[-1]
+            for index, person in enumerate(self.listofpersons):
+                if index == 0:
+                    lastperson = person
+                if person.timestamp > lastperson.timestamp:
+                    lastperson = person
             try:
                 # Auslesen des aktuellen Standorts der Kameras im Bezug zum Kartenkoordinatensystem
                 (trans, rot) = self.listener.lookupTransform('/map', '/cam_' + lastperson.camera, rospy.Time(0))
@@ -240,12 +245,11 @@ class PeopleRec:
                     #self.detections.getdetectionsbytflite(self.frontimagebgrqhd, "front")
 
                 if self.namespaceofrearcamera != "":
-                    pass
                     detectionsrear, imagerear = self.detections.getdetectionsbytflite(self.rearimagebgrqhd, "back")
                     #print(detectionsrear)
                     self.managepeople(detectionsrear, self.rearimagebgrqhd, "back")
 
-                #self.publishposition()
+                self.publishposition()
                 end = time.time() - start
                 print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")

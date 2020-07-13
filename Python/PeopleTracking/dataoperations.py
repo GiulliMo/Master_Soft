@@ -13,6 +13,8 @@ class dataoperations:
         try:
             with open('data.pkl', 'rb') as input:
                 list = pickle.load(input)
+                print(list[0].timestamp)
+                print(list[1].timestamp)
         except EOFError:
             print("Empty File")
 
