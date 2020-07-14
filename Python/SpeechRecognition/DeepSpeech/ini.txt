@@ -25,6 +25,10 @@ classification.py um Netzwerk zu trainieren (bedienungsorientiertes Nachbearbeit
 
 classification_predict.py Netzwerk probieren nach export von tflite Modell
 
+3 Netzwerke taskClassifier.tflite ==> ohne Phonetik "normales Netz"
+	    taskClassifierRNN ==> Netz mit RNN
+	    taskClassifierPhon ==> mit Phonetik transcript muss um phonetische teil 			"verlängert werden
+
 
 
 

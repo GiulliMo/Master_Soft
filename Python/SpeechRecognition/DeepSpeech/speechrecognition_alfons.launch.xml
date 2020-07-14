@@ -1,0 +1,26 @@
+
+<launch>
+
+    <!--Start Button Joystick-->
+
+    <node name="startbuttondetection" pkg="startbuttondetection" type="startbuttondetection_node" output="screen" clear_params="true">
+          </node>
+
+    <!--Audio Aufnahme und Parameter laden-->
+    
+    <node name="audioStream" pkg="speechrecognition_alfons" type="audioStream.py" output="screen">
+        <param name="pub/stream/topic" value="audio_stream" /> 
+        <param name="sub/button/topic" value="startbutton" />
+	    <param name="nodename" value="audioStream" />
+        <param name="deviceID" value="0" />
+	    <param name="recsec" value="5" />
+        <param name="language" value="gb" />
+        <param name="nodename_speechrecognizer" value="recognizer" />
+	    <param name="topicname/transcript" value="transcipt/full" />
+	    <param name="topicname/task" value="transcript/task" />
+	    <param name="topicname/task_confidence" value="transcript/task/confidence" />
+	    <param name="topicname/buzz" value="transcript/buzz" />
+   
+     </node>
+
+</launch>
