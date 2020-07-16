@@ -1,0 +1,8 @@
+prefix=/home/alf/catkin_ws2/install
+
+Name: speech_database
+Description: Description of speech_database
+Version: 0.9.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp std_msgs sound_play

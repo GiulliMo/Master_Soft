@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'RALFMain'.
 //
-// Model version                  : 1.180
+// Model version                  : 1.188
 // Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
-// C/C++ source code generated on : Thu Apr  9 09:34:26 2020
+// C/C++ source code generated on : Mon Apr 27 13:52:35 2020
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -31,6 +31,60 @@ RT_MODEL_RALFMain_T *const RALFMain_M = &RALFMain_M_;
 
 // Forward declaration for local functions
 static void matlabCodegenHandle_matlabCodeg(ros_slros_internal_block_Subs_T *obj);
+
+//
+// System initialize for atomic system:
+//    synthesized block
+//    synthesized block
+//
+void CoordinateTransformationCo_Init(DW_CoordinateTransformationCo_T *localDW)
+{
+  // Start for MATLABSystem: '<S6>/Coordinate Transformation Conversion1'
+  localDW->objisempty = true;
+  localDW->obj.isInitialized = 1;
+}
+
+//
+// Output and update for atomic system:
+//    synthesized block
+//    synthesized block
+//
+void CoordinateTransformationConvers(const real32_T rtu_0[3],
+  B_CoordinateTransformationCon_T *localB)
+{
+  real32_T c_idx_0;
+  real32_T c_idx_1;
+  real32_T c_idx_2;
+  real32_T s_idx_0;
+  real32_T s_idx_1;
+  real32_T s_idx_2;
+  real32_T soll_quat_tmp;
+  real32_T soll_quat_tmp_0;
+
+  // MATLABSystem: '<S6>/Coordinate Transformation Conversion1'
+  s_idx_2 = rtu_0[0] / 2.0F;
+  c_idx_0 = s_idx_2;
+  s_idx_0 = s_idx_2;
+  s_idx_2 = rtu_0[1] / 2.0F;
+  c_idx_1 = s_idx_2;
+  s_idx_1 = s_idx_2;
+  s_idx_2 = rtu_0[2] / 2.0F;
+  c_idx_0 = static_cast<real32_T>(cos(static_cast<real_T>(c_idx_0)));
+  c_idx_1 = static_cast<real32_T>(cos(static_cast<real_T>(c_idx_1)));
+  c_idx_2 = static_cast<real32_T>(cos(static_cast<real_T>(s_idx_2)));
+  s_idx_0 = static_cast<real32_T>(sin(static_cast<real_T>(s_idx_0)));
+  s_idx_1 = static_cast<real32_T>(sin(static_cast<real_T>(s_idx_1)));
+  s_idx_2 = static_cast<real32_T>(sin(static_cast<real_T>(s_idx_2)));
+  soll_quat_tmp = c_idx_0 * c_idx_1;
+  soll_quat_tmp_0 = s_idx_0 * s_idx_1;
+  localB->soll_quat[0] = soll_quat_tmp * c_idx_2 + soll_quat_tmp_0 * s_idx_2;
+  localB->soll_quat[1] = soll_quat_tmp * s_idx_2 - soll_quat_tmp_0 * c_idx_2;
+  soll_quat_tmp = s_idx_0 * c_idx_1;
+  soll_quat_tmp_0 = c_idx_0 * s_idx_1;
+  localB->soll_quat[2] = soll_quat_tmp_0 * c_idx_2 + soll_quat_tmp * s_idx_2;
+  localB->soll_quat[3] = soll_quat_tmp * c_idx_2 - soll_quat_tmp_0 * s_idx_2;
+}
+
 uint32_T MWDSP_EPH_R_S32(int32_T evt, uint32_T *sta)
 {
   uint32_T retVal;
@@ -332,15 +386,7 @@ static void matlabCodegenHandle_matlabCodeg(ros_slros_internal_block_Subs_T *obj
 // Model step function
 void RALFMain_step(void)
 {
-  real32_T rtb_Product1_k;
-  real32_T rtb_thetay;
-  int32_T rtb_DataTypeConversion_e;
   boolean_T rtb_LogicalOperator1_i;
-  real32_T rtb_Product2_p;
-  real32_T rtb_Switch_idx_0;
-  real32_T rtb_Switch_idx_2;
-  real32_T rtb_Switch_idx_3;
-  int32_T rtb_Switch_idx_4;
   real32_T rtb_BusAssignment_Axes_idx_2;
   real32_T rtb_BusAssignment_Axes_idx_3;
 
@@ -349,13 +395,13 @@ void RALFMain_step(void)
   //   Inport: '<S27>/In1'
 
   rtb_LogicalOperator1_i = Sub_RALFMain_869.getLatestMessage
-    (&RALFMain_B.b_varargout_2);
+    (&RALFMain_B.b_varargout_2_m);
 
   // Outputs for Enabled SubSystem: '<S15>/Enabled Subsystem' incorporates:
   //   EnablePort: '<S27>/Enable'
 
   if (rtb_LogicalOperator1_i) {
-    RALFMain_B.In1 = RALFMain_B.b_varargout_2;
+    RALFMain_B.In1_i = RALFMain_B.b_varargout_2_m;
   }
 
   // End of MATLABSystem: '<S15>/SourceBlock'
@@ -367,13 +413,13 @@ void RALFMain_step(void)
   //   Constant: '<S10>/Constant1'
   //   Sum: '<S10>/Add'
 
-  RALFMain_B.rtb_Divide_idx_0 = (RALFMain_B.In1.Axes[2] -
+  RALFMain_B.rtb_Divide_idx_0 = (RALFMain_B.In1_i.Axes[2] -
     RALFMain_P.Constant_Value_gx) / RALFMain_P.Constant1_Value;
-  RALFMain_B.rtb_Divide_idx_1 = (RALFMain_B.In1.Axes[5] -
+  RALFMain_B.rtb_Divide_idx_1 = (RALFMain_B.In1_i.Axes[5] -
     RALFMain_P.Constant_Value_gx) / RALFMain_P.Constant1_Value;
 
   // Gain: '<S10>/Gain'
-  rtb_thetay = RALFMain_P.Gain_Gain_c * RALFMain_B.In1.Axes[0];
+  RALFMain_B.Product2_i = RALFMain_P.Gain_Gain_c * RALFMain_B.In1_i.Axes[0];
 
   // BusAssignment: '<S2>/Bus Assignment' incorporates:
   //   Constant: '<S17>/Constant'
@@ -387,43 +433,10 @@ void RALFMain_step(void)
     (RALFMain_B.rtb_Divide_idx_1 >= RALFMain_P.CompareToConstant1_const) *
     RALFMain_B.rtb_Divide_idx_1);
 
-  // DataTypeConversion: '<Root>/Data Type Conversion' incorporates:
-  //   Constant: '<Root>/Constant'
-
-  RALFMain_B.rtb_Divide_idx_0 = floor(RALFMain_P.Constant_Value_d);
-  if (rtIsNaN(RALFMain_B.rtb_Divide_idx_0) || rtIsInf
-      (RALFMain_B.rtb_Divide_idx_0)) {
-    RALFMain_B.rtb_Divide_idx_0 = 0.0;
-  } else {
-    RALFMain_B.rtb_Divide_idx_0 = fmod(RALFMain_B.rtb_Divide_idx_0, 65536.0);
-  }
-
-  RALFMain_B.DataTypeConversion = static_cast<int16_T>
-    (RALFMain_B.rtb_Divide_idx_0 < 0.0 ? static_cast<int32_T>
-     (static_cast<int16_T>(-static_cast<int16_T>(static_cast<uint16_T>
-        (-RALFMain_B.rtb_Divide_idx_0)))) : static_cast<int32_T>
-     (static_cast<int16_T>(static_cast<uint16_T>(RALFMain_B.rtb_Divide_idx_0))));
-
-  // End of DataTypeConversion: '<Root>/Data Type Conversion'
-
-  // S-Function (any2byte): '<Root>/Byte Pack'
-
-  // Pack: <Root>/Byte Pack
-  (void) memcpy(&RALFMain_B.BytePack[0], &RALFMain_B.DataTypeConversion,
-                2);
-
-  // S-Function (CAN_send): '<Root>/CAN send SYNC'
-
-  // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
-  {
-    SimStruct *rts = RALFMain_M->childSfunctions[0];
-    sfcnOutputs(rts,0);
-  }
-
   // S-Function (sdspcount2): '<S2>/Counter' incorporates:
   //   BusAssignment: '<S2>/Bus Assignment'
 
-  if (MWDSP_EPH_R_S32(RALFMain_B.In1.Buttons[4],
+  if (MWDSP_EPH_R_S32(RALFMain_B.In1_i.Buttons[4],
                       &RALFMain_DW.Counter_ClkEphState) != 0U) {
     if (RALFMain_DW.Counter_Count < 255) {
       RALFMain_DW.Counter_Count = static_cast<uint8_T>(RALFMain_DW.Counter_Count
@@ -436,7 +449,7 @@ void RALFMain_step(void)
   // S-Function (sdspcount2): '<S2>/Counter1' incorporates:
   //   BusAssignment: '<S2>/Bus Assignment'
 
-  if (MWDSP_EPH_R_S32(RALFMain_B.In1.Buttons[5],
+  if (MWDSP_EPH_R_S32(RALFMain_B.In1_i.Buttons[5],
                       &RALFMain_DW.Counter1_ClkEphState) != 0U) {
     if (RALFMain_DW.Counter1_Count < 255) {
       RALFMain_DW.Counter1_Count = static_cast<uint8_T>
@@ -454,7 +467,7 @@ void RALFMain_step(void)
   //   Logic: '<S19>/Logical Operator'
   //   Logic: '<S19>/Logical Operator1'
 
-  if (MWDSP_EPH_R_B((RALFMain_B.In1.Buttons[1] != 0.0F) &&
+  if (MWDSP_EPH_R_B((RALFMain_B.In1_i.Buttons[1] != 0.0F) &&
                     (!RALFMain_DW.Delay_DSTATE),
                     &RALFMain_DW.Counter_ClkEphState_a) != 0U) {
     if (RALFMain_DW.Counter_Count_i < 255) {
@@ -465,45 +478,50 @@ void RALFMain_step(void)
     }
   }
 
-  // DataTypeConversion: '<S47>/Data Type Conversion' incorporates:
-  //   Constant: '<S51>/Constant'
-  //   RelationalOperator: '<S51>/Compare'
+  // DataTypeConversion: '<S48>/Data Type Conversion' incorporates:
+  //   Constant: '<S52>/Constant'
+  //   RelationalOperator: '<S52>/Compare'
 
-  rtb_DataTypeConversion_e = (rtb_BusAssignment_Axes_idx_2 >
+  RALFMain_B.DataTypeConversion_p = (rtb_BusAssignment_Axes_idx_2 >
     RALFMain_P.CompareToConstant_const);
 
-  // Outputs for Atomic SubSystem: '<S5>/Subscribe1'
-  // MATLABSystem: '<S39>/SourceBlock' incorporates:
-  //   Inport: '<S40>/In1'
+  // Outputs for Atomic SubSystem: '<Root>/Subscribe'
+  // MATLABSystem: '<S5>/SourceBlock' incorporates:
+  //   Inport: '<S38>/In1'
 
-  rtb_LogicalOperator1_i = Sub_RALFMain_876.getLatestMessage
-    (&RALFMain_B.b_varargout_2_m);
+  rtb_LogicalOperator1_i = Sub_RALFMain_1223.getLatestMessage
+    (&RALFMain_B.b_varargout_2);
 
-  // Outputs for Enabled SubSystem: '<S39>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S40>/Enable'
+  // Outputs for Enabled SubSystem: '<S5>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S38>/Enable'
 
   if (rtb_LogicalOperator1_i) {
-    RALFMain_B.In1_i = RALFMain_B.b_varargout_2_m;
+    RALFMain_B.In1 = RALFMain_B.b_varargout_2;
   }
 
-  // End of MATLABSystem: '<S39>/SourceBlock'
-  // End of Outputs for SubSystem: '<S39>/Enabled Subsystem'
-  // End of Outputs for SubSystem: '<S5>/Subscribe1'
+  // End of MATLABSystem: '<S5>/SourceBlock'
+  // End of Outputs for SubSystem: '<S5>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<Root>/Subscribe'
 
-  // MATLABSystem: '<S5>/Coordinate Transformation Conversion' incorporates:
-  //   SignalConversion generated from: '<S5>/Coordinate Transformation Conversion'
+  // MATLABSystem: '<Root>/Coordinate Transformation Conversion' incorporates:
+  //   SignalConversion generated from: '<Root>/Coordinate Transformation Conversion'
 
-  RALFMain_B.b = 1.0 / sqrt(((RALFMain_B.In1_i.Pose.Orientation.X *
-    RALFMain_B.In1_i.Pose.Orientation.X + RALFMain_B.In1_i.Pose.Orientation.Y *
-    RALFMain_B.In1_i.Pose.Orientation.Y) + RALFMain_B.In1_i.Pose.Orientation.Z *
-    RALFMain_B.In1_i.Pose.Orientation.Z) + RALFMain_B.In1_i.Pose.Orientation.W *
-    RALFMain_B.In1_i.Pose.Orientation.W);
-  RALFMain_B.rtb_Divide_idx_0 = RALFMain_B.In1_i.Pose.Orientation.X *
-    RALFMain_B.b;
-  RALFMain_B.rtb_Divide_idx_1 = RALFMain_B.In1_i.Pose.Orientation.Y *
-    RALFMain_B.b;
-  RALFMain_B.b_z1_idx_2 = RALFMain_B.In1_i.Pose.Orientation.Z * RALFMain_B.b;
-  RALFMain_B.b *= RALFMain_B.In1_i.Pose.Orientation.W;
+  RALFMain_B.rtb_istquat_idx_0 = 1.0 / sqrt
+    (((RALFMain_B.In1.Pose.Pose.Orientation.X *
+       RALFMain_B.In1.Pose.Pose.Orientation.X +
+       RALFMain_B.In1.Pose.Pose.Orientation.Y *
+       RALFMain_B.In1.Pose.Pose.Orientation.Y) +
+      RALFMain_B.In1.Pose.Pose.Orientation.Z *
+      RALFMain_B.In1.Pose.Pose.Orientation.Z) +
+     RALFMain_B.In1.Pose.Pose.Orientation.W *
+     RALFMain_B.In1.Pose.Pose.Orientation.W);
+  RALFMain_B.rtb_Divide_idx_0 = RALFMain_B.In1.Pose.Pose.Orientation.X *
+    RALFMain_B.rtb_istquat_idx_0;
+  RALFMain_B.rtb_Divide_idx_1 = RALFMain_B.In1.Pose.Pose.Orientation.Y *
+    RALFMain_B.rtb_istquat_idx_0;
+  RALFMain_B.rtb_istquat_idx_2 = RALFMain_B.In1.Pose.Pose.Orientation.Z *
+    RALFMain_B.rtb_istquat_idx_0;
+  RALFMain_B.rtb_istquat_idx_0 *= RALFMain_B.In1.Pose.Pose.Orientation.W;
 
   // Outputs for Atomic SubSystem: '<S4>/Subscribe'
   // MATLABSystem: '<S30>/SourceBlock' incorporates:
@@ -535,6 +553,7 @@ void RALFMain_step(void)
   //   Constant: '<S35>/Constant'
   //   Constant: '<S3>/Constant'
   //   Constant: '<S4>/Constant'
+  //   DataTypeConversion: '<Root>/Data Type Conversion1'
   //   DataTypeConversion: '<S13>/Data Type Conversion1'
   //   DataTypeConversion: '<S18>/Data Type Conversion1'
   //   DataTypeConversion: '<S29>/Data Type Conversion1'
@@ -544,15 +563,14 @@ void RALFMain_step(void)
   //   DataTypeConversion: '<S2>/Data Type Conversion7'
   //   DataTypeConversion: '<S4>/Data Type Conversion1'
   //   DataTypeConversion: '<S4>/Data Type Conversion2'
-  //   DataTypeConversion: '<S5>/Data Type Conversion'
   //   Fcn: '<S26>/x->theta'
   //   Fcn: '<S37>/x->theta'
+  //   Gain: '<Root>/Gain'
   //   Gain: '<S2>/Gain'
   //   Gain: '<S2>/Gain1'
-  //   Gain: '<S38>/Gain'
   //   Logic: '<S13>/Logical Operator1'
   //   Logic: '<S29>/Logical Operator1'
-  //   MATLABSystem: '<S5>/Coordinate Transformation Conversion'
+  //   MATLABSystem: '<Root>/Coordinate Transformation Conversion'
   //   Math: '<S18>/Math Function'
   //   RelationalOperator: '<S22>/Compare'
   //   RelationalOperator: '<S23>/Compare'
@@ -572,182 +590,331 @@ void RALFMain_step(void)
     // ComplexToMagnitudeAngle: '<S16>/Complex to Magnitude-Angle' incorporates:
     //   BusAssignment: '<S2>/Bus Assignment'
 
-    rtb_Product1_k = rt_atan2f_snf(RALFMain_B.In1.Axes[1], rtb_thetay);
+    RALFMain_B.Product1_d = rt_atan2f_snf(RALFMain_B.In1_i.Axes[1],
+      RALFMain_B.Product2_i);
 
     // RelationalOperator: '<S28>/Compare' incorporates:
     //   BusAssignment: '<S2>/Bus Assignment'
     //   ComplexToMagnitudeAngle: '<S16>/Complex to Magnitude-Angle'
     //   Constant: '<S28>/Constant'
 
-    rtb_LogicalOperator1_i = (rt_hypotf_snf(rtb_thetay, RALFMain_B.In1.Axes[1]) >=
-      RALFMain_P.CompareToConstant_const_m);
+    rtb_LogicalOperator1_i = (rt_hypotf_snf(RALFMain_B.Product2_i,
+      RALFMain_B.In1_i.Axes[1]) >= RALFMain_P.CompareToConstant_const_m);
 
     // Product: '<S16>/Product2' incorporates:
     //   MagnitudeAngleToComplex: '<S16>/Magnitude-Angle to Complex'
 
-    rtb_Product2_p = RALFMain_P.MagnitudeAngletoComplex_Constan *
-      static_cast<real32_T>(cos(static_cast<real_T>(rtb_Product1_k))) *
+    RALFMain_B.Product2_b = RALFMain_P.MagnitudeAngletoComplex_Constan *
+      static_cast<real32_T>(cos(static_cast<real_T>(RALFMain_B.Product1_d))) *
       static_cast<real32_T>(rtb_LogicalOperator1_i);
 
     // Product: '<S16>/Product1' incorporates:
     //   MagnitudeAngleToComplex: '<S16>/Magnitude-Angle to Complex'
 
-    rtb_Product1_k = RALFMain_P.MagnitudeAngletoComplex_Constan *
-      static_cast<real32_T>(sin(static_cast<real_T>(rtb_Product1_k))) *
+    RALFMain_B.Product1_d = RALFMain_P.MagnitudeAngletoComplex_Constan *
+      static_cast<real32_T>(sin(static_cast<real_T>(RALFMain_B.Product1_d))) *
       static_cast<real32_T>(rtb_LogicalOperator1_i);
-    rtb_Switch_idx_0 = static_cast<real32_T>(RALFMain_P.Gain_Gain * static_cast<
-      real_T>(RALFMain_DW.Counter_Count) + RALFMain_P.Gain1_Gain *
+    RALFMain_B.rtb_Switch_idx_0 = static_cast<real32_T>(RALFMain_P.Gain_Gain *
+      static_cast<real_T>(RALFMain_DW.Counter_Count) + RALFMain_P.Gain1_Gain *
       static_cast<real_T>(RALFMain_DW.Counter1_Count));
-    rtb_thetay = static_cast<real32_T>(rt_atan2d_snf(static_cast<real_T>
-      (rtb_Product2_p), static_cast<real_T>(rtb_Product1_k)));
-    rtb_Switch_idx_2 = RALFMain_P.Constant_Value_la;
-    rtb_Switch_idx_3 = static_cast<real32_T>(rt_atan2d_snf
-      ((RALFMain_B.b_z1_idx_2 * RALFMain_B.b + RALFMain_B.rtb_Divide_idx_0 *
-        RALFMain_B.rtb_Divide_idx_1) * 2.0, ((RALFMain_B.rtb_Divide_idx_0 *
-      RALFMain_B.rtb_Divide_idx_0 - RALFMain_B.rtb_Divide_idx_1 *
-      RALFMain_B.rtb_Divide_idx_1) - RALFMain_B.b_z1_idx_2 *
-      RALFMain_B.b_z1_idx_2) + RALFMain_B.b * RALFMain_B.b) *
-      RALFMain_P.Gain_Gain_f);
-    rtb_Switch_idx_4 = ((rtb_Product1_k >= RALFMain_P.CompareToConstant_const_o)
-                        || (rtb_Product1_k <=
-      RALFMain_P.CompareToConstant1_const_p) || (rtb_Product2_p >=
-      RALFMain_P.CompareToConstant3_const) || (rtb_Product2_p <=
+    RALFMain_B.Product2_i = static_cast<real32_T>(rt_atan2d_snf
+      (static_cast<real_T>(RALFMain_B.Product2_b), static_cast<real_T>
+       (RALFMain_B.Product1_d)));
+    RALFMain_B.rtb_Switch_idx_2 = RALFMain_P.Constant_Value_l;
+    RALFMain_B.rtb_Switch_idx_3 = static_cast<real32_T>(rt_atan2d_snf
+      ((RALFMain_B.rtb_istquat_idx_2 * RALFMain_B.rtb_istquat_idx_0 +
+        RALFMain_B.rtb_Divide_idx_0 * RALFMain_B.rtb_Divide_idx_1) * 2.0,
+       ((RALFMain_B.rtb_Divide_idx_0 * RALFMain_B.rtb_Divide_idx_0 -
+         RALFMain_B.rtb_Divide_idx_1 * RALFMain_B.rtb_Divide_idx_1) -
+        RALFMain_B.rtb_istquat_idx_2 * RALFMain_B.rtb_istquat_idx_2) +
+       RALFMain_B.rtb_istquat_idx_0 * RALFMain_B.rtb_istquat_idx_0) *
+      RALFMain_P.Gain_Gain_j);
+    RALFMain_B.rtb_Switch_idx_4 = ((RALFMain_B.Product1_d >=
+      RALFMain_P.CompareToConstant_const_o) || (RALFMain_B.Product1_d <=
+      RALFMain_P.CompareToConstant1_const_p) || (RALFMain_B.Product2_b >=
+      RALFMain_P.CompareToConstant3_const) || (RALFMain_B.Product2_b <=
       RALFMain_P.CompareToConstant2_const));
   } else {
-    rtb_Switch_idx_0 = RALFMain_P.Constant_Value_la;
-    rtb_thetay = rt_atan2f_snf(RALFMain_P.Constant_Value_gi,
+    RALFMain_B.rtb_Switch_idx_0 = RALFMain_P.Constant_Value_l;
+    RALFMain_B.Product2_i = rt_atan2f_snf(RALFMain_P.Constant_Value_gi,
       static_cast<real32_T>(RALFMain_B.In1_m.Linear.X));
-    rtb_Switch_idx_2 = static_cast<real32_T>(RALFMain_B.In1_m.Angular.Z);
-    rtb_Switch_idx_3 = RALFMain_P.Constant_Value_la;
-    rtb_Switch_idx_4 = ((static_cast<real32_T>(RALFMain_B.In1_m.Linear.X) >=
-                         RALFMain_P.CompareToConstant_const_j) ||
-                        (static_cast<real32_T>(RALFMain_B.In1_m.Linear.X) <=
-                         RALFMain_P.CompareToConstant1_const_l) ||
-                        (RALFMain_P.Constant_Value_gi >=
-                         RALFMain_P.CompareToConstant3_const_f) ||
-                        (RALFMain_P.Constant_Value_gi <=
-                         RALFMain_P.CompareToConstant2_const_i));
+    RALFMain_B.rtb_Switch_idx_2 = static_cast<real32_T>
+      (RALFMain_B.In1_m.Angular.Z);
+    RALFMain_B.rtb_Switch_idx_3 = RALFMain_P.Constant_Value_l;
+    RALFMain_B.rtb_Switch_idx_4 = ((static_cast<real32_T>
+      (RALFMain_B.In1_m.Linear.X) >= RALFMain_P.CompareToConstant_const_j) || (
+      static_cast<real32_T>(RALFMain_B.In1_m.Linear.X) <=
+      RALFMain_P.CompareToConstant1_const_l) || (RALFMain_P.Constant_Value_gi >=
+      RALFMain_P.CompareToConstant3_const_f) || (RALFMain_P.Constant_Value_gi <=
+      RALFMain_P.CompareToConstant2_const_i));
   }
 
   // End of Switch: '<S3>/Switch'
 
-  // Sum: '<S6>/Sum'
-  rtb_Switch_idx_0 = rtb_Switch_idx_3 - rtb_Switch_idx_0;
+  // Gain: '<S6>/Gain2' incorporates:
+  //   Constant: '<S6>/Constant'
+  //   DataTypeConversion: '<S6>/Data Type Conversion'
 
-  // DataTypeConversion: '<S41>/Data Type Conversion' incorporates:
-  //   Constant: '<S45>/Constant'
+  RALFMain_B.Gain2_f[0] = RALFMain_P.Gain2_Gain_l * RALFMain_B.rtb_Switch_idx_3;
+  RALFMain_B.Product1_d = RALFMain_P.Gain2_Gain_l * static_cast<real32_T>
+    (RALFMain_P.Constant_Value_jl);
+  RALFMain_B.Gain2_f[1] = RALFMain_B.Product1_d;
+  RALFMain_B.Gain2_f[2] = RALFMain_B.Product1_d;
+  CoordinateTransformationConvers(RALFMain_B.Gain2_f,
+    &RALFMain_B.CoordinateTransformationCo_pnae);
+
+  // Gain: '<S6>/Gain' incorporates:
+  //   Constant: '<S6>/Constant'
+  //   DataTypeConversion: '<S6>/Data Type Conversion'
+
+  RALFMain_B.Gain_f[0] = RALFMain_P.Gain_Gain_f * RALFMain_B.rtb_Switch_idx_0;
+  RALFMain_B.rtb_Switch_idx_0 = RALFMain_P.Gain_Gain_f * static_cast<real32_T>
+    (RALFMain_P.Constant_Value_jl);
+  RALFMain_B.Gain_f[1] = RALFMain_B.rtb_Switch_idx_0;
+  RALFMain_B.Gain_f[2] = RALFMain_B.rtb_Switch_idx_0;
+  CoordinateTransformationConvers(RALFMain_B.Gain_f,
+    &RALFMain_B.CoordinateTransformationCon_pna);
+
+  // DataTypeConversion: '<S6>/Data Type Conversion1' incorporates:
+  //   Product: '<S54>/Product'
+  //   Product: '<S54>/Product1'
+  //   Product: '<S54>/Product2'
+  //   Product: '<S54>/Product3'
+  //   Product: '<S55>/Product'
+  //   Product: '<S55>/Product1'
+  //   Product: '<S55>/Product2'
+  //   Product: '<S55>/Product3'
+  //   Product: '<S56>/Product'
+  //   Product: '<S56>/Product1'
+  //   Product: '<S56>/Product2'
+  //   Product: '<S56>/Product3'
+  //   Product: '<S57>/Product'
+  //   Product: '<S57>/Product1'
+  //   Product: '<S57>/Product2'
+  //   Product: '<S57>/Product3'
+  //   Sum: '<S54>/Sum'
+  //   Sum: '<S55>/Sum'
+  //   Sum: '<S56>/Sum'
+  //   Sum: '<S57>/Sum'
+  //   UnaryMinus: '<S41>/Unary Minus'
+  //   UnaryMinus: '<S41>/Unary Minus1'
+  //   UnaryMinus: '<S41>/Unary Minus2'
+
+  RALFMain_B.rtb_istquat_idx_0 =
+    ((RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[0] *
+      RALFMain_B.CoordinateTransformationCon_pna.soll_quat[0] -
+      RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[1] *
+      -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[1]) -
+     RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[2] *
+     -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[2]) -
+    RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[3] *
+    -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[3];
+  RALFMain_B.rtb_istquat_idx_1 =
+    ((RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[0] *
+      -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[1] +
+      RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[1] *
+      RALFMain_B.CoordinateTransformationCon_pna.soll_quat[0]) +
+     RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[2] *
+     -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[3]) -
+    RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[3] *
+    -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[2];
+  RALFMain_B.rtb_istquat_idx_2 =
+    ((RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[0] *
+      -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[2] -
+      RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[1] *
+      -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[3]) +
+     RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[2] *
+     RALFMain_B.CoordinateTransformationCon_pna.soll_quat[0]) +
+    RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[3] *
+    -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[1];
+  RALFMain_B.rtb_Divide_idx_0 =
+    ((RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[0] *
+      -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[3] +
+      RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[1] *
+      -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[2]) -
+     RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[2] *
+     -RALFMain_B.CoordinateTransformationCon_pna.soll_quat[1]) +
+    RALFMain_B.CoordinateTransformationCo_pnae.soll_quat[3] *
+    RALFMain_B.CoordinateTransformationCon_pna.soll_quat[0];
+
+  // Sqrt: '<S64>/sqrt' incorporates:
+  //   Product: '<S65>/Product'
+  //   Product: '<S65>/Product1'
+  //   Product: '<S65>/Product2'
+  //   Product: '<S65>/Product3'
+  //   Sum: '<S65>/Sum'
+
+  RALFMain_B.rtb_Divide_idx_1 = sqrt(((RALFMain_B.rtb_istquat_idx_0 *
+    RALFMain_B.rtb_istquat_idx_0 + RALFMain_B.rtb_istquat_idx_1 *
+    RALFMain_B.rtb_istquat_idx_1) + RALFMain_B.rtb_istquat_idx_2 *
+    RALFMain_B.rtb_istquat_idx_2) + RALFMain_B.rtb_Divide_idx_0 *
+    RALFMain_B.rtb_Divide_idx_0);
+
+  // Product: '<S59>/Product'
+  RALFMain_B.rtb_istquat_idx_0 /= RALFMain_B.rtb_Divide_idx_1;
+
+  // Product: '<S59>/Product1'
+  RALFMain_B.rtb_istquat_idx_1 /= RALFMain_B.rtb_Divide_idx_1;
+
+  // Product: '<S59>/Product2'
+  RALFMain_B.rtb_istquat_idx_2 /= RALFMain_B.rtb_Divide_idx_1;
+
+  // Product: '<S59>/Product3'
+  RALFMain_B.rtb_Divide_idx_1 = RALFMain_B.rtb_Divide_idx_0 /
+    RALFMain_B.rtb_Divide_idx_1;
+
+  // Gain: '<S6>/Gain3' incorporates:
+  //   Fcn: '<S43>/fcn1'
+  //   Fcn: '<S43>/fcn2'
+  //   Trigonometry: '<S58>/Trigonometric Function1'
+
+  RALFMain_B.rtb_Divide_idx_0 = rt_atan2d_snf((RALFMain_B.rtb_istquat_idx_1 *
+    RALFMain_B.rtb_istquat_idx_2 + RALFMain_B.rtb_istquat_idx_0 *
+    RALFMain_B.rtb_Divide_idx_1) * 2.0, ((RALFMain_B.rtb_istquat_idx_0 *
+    RALFMain_B.rtb_istquat_idx_0 + RALFMain_B.rtb_istquat_idx_1 *
+    RALFMain_B.rtb_istquat_idx_1) - RALFMain_B.rtb_istquat_idx_2 *
+    RALFMain_B.rtb_istquat_idx_2) - RALFMain_B.rtb_Divide_idx_1 *
+    RALFMain_B.rtb_Divide_idx_1) * RALFMain_P.Gain3_Gain;
+
+  // DataTypeConversion: '<S39>/Data Type Conversion' incorporates:
   //   Constant: '<S46>/Constant'
-  //   Product: '<S45>/Product1'
-  //   RelationalOperator: '<S46>/Compare'
-  //   Sum: '<S45>/Sum4'
+  //   Constant: '<S47>/Constant'
+  //   Product: '<S46>/Product1'
+  //   RelationalOperator: '<S47>/Compare'
+  //   Sum: '<S46>/Sum4'
 
-  rtb_Product1_k = static_cast<real32_T>((static_cast<real_T>
+  RALFMain_B.rtb_Switch_idx_0 = static_cast<real32_T>((static_cast<real_T>
     (rtb_BusAssignment_Axes_idx_2 > RALFMain_P.CompareToConstant_const_l) +
     RALFMain_P.Constant_Value_f) * RALFMain_P.Constant_Value_f);
 
-  // SwitchCase: '<S41>/Switch Case' incorporates:
-  //   Inport: '<S44>/In1'
+  // SwitchCase: '<S39>/Switch Case' incorporates:
+  //   DataTypeConversion: '<S6>/Data Type Conversion2'
+  //   Inport: '<S45>/In1'
 
-  if (rtb_Product1_k < 0.0F) {
-    rtb_Product1_k = static_cast<real32_T>(ceil(static_cast<real_T>
-      (rtb_Product1_k)));
+  if (RALFMain_B.rtb_Switch_idx_0 < 0.0F) {
+    RALFMain_B.Product1_d = static_cast<real32_T>(ceil(static_cast<real_T>
+      (RALFMain_B.rtb_Switch_idx_0)));
   } else {
-    rtb_Product1_k = static_cast<real32_T>(floor(static_cast<real_T>
-      (rtb_Product1_k)));
+    RALFMain_B.Product1_d = static_cast<real32_T>(floor(static_cast<real_T>
+      (RALFMain_B.rtb_Switch_idx_0)));
   }
 
-  if (rtIsNaNF(rtb_Product1_k) || rtIsInfF(rtb_Product1_k)) {
-    rtb_Product1_k = 0.0F;
+  if (rtIsNaNF(RALFMain_B.Product1_d) || rtIsInfF(RALFMain_B.Product1_d)) {
+    RALFMain_B.Product1_d = 0.0F;
   } else {
-    rtb_Product1_k = static_cast<real32_T>(fmod(static_cast<real_T>
-      (rtb_Product1_k), 4.294967296E+9));
+    RALFMain_B.Product1_d = static_cast<real32_T>(fmod(static_cast<real_T>
+      (RALFMain_B.Product1_d), 4.294967296E+9));
   }
 
-  if ((rtb_Product1_k < 0.0F ? -static_cast<int32_T>(static_cast<uint32_T>
-        (-rtb_Product1_k)) : static_cast<int32_T>(static_cast<uint32_T>
-        (rtb_Product1_k))) == 1) {
-    // Outputs for IfAction SubSystem: '<S41>/If Action Subsystem' incorporates:
-    //   ActionPort: '<S44>/Action Port'
+  if ((RALFMain_B.Product1_d < 0.0F ? -static_cast<int32_T>(static_cast<uint32_T>
+        (-RALFMain_B.Product1_d)) : static_cast<int32_T>(static_cast<uint32_T>
+        (RALFMain_B.Product1_d))) == 1) {
+    // Outputs for IfAction SubSystem: '<S39>/If Action Subsystem' incorporates:
+    //   ActionPort: '<S45>/Action Port'
 
-    RALFMain_B.In1_e = rtb_Switch_idx_0;
+    RALFMain_B.In1_e = static_cast<real32_T>(RALFMain_B.rtb_Divide_idx_0);
 
-    // End of Outputs for SubSystem: '<S41>/If Action Subsystem'
+    // End of Outputs for SubSystem: '<S39>/If Action Subsystem'
   }
 
-  // End of SwitchCase: '<S41>/Switch Case'
+  // End of SwitchCase: '<S39>/Switch Case'
 
-  // Gain: '<S49>/Gain4' incorporates:
-  //   Sum: '<S6>/Sum9'
+  // Sum: '<S6>/Sum9' incorporates:
+  //   DataTypeConversion: '<S6>/Data Type Conversion2'
 
-  rtb_Switch_idx_3 = (rtb_Switch_idx_0 - RALFMain_B.In1_e) * RALFMain_P.pwinkel;
+  RALFMain_B.rtb_Switch_idx_0 = static_cast<real32_T>
+    (RALFMain_B.rtb_Divide_idx_0) - RALFMain_B.In1_e;
 
-  // Product: '<S49>/Product2' incorporates:
-  //   Constant: '<S49>/Constant1'
+  // Saturate: '<S6>/Saturation'
+  if (RALFMain_B.rtb_Switch_idx_0 > RALFMain_P.Saturation_UpperSat) {
+    RALFMain_B.rtb_Switch_idx_0 = RALFMain_P.Saturation_UpperSat;
+  } else {
+    if (RALFMain_B.rtb_Switch_idx_0 < RALFMain_P.Saturation_LowerSat) {
+      RALFMain_B.rtb_Switch_idx_0 = RALFMain_P.Saturation_LowerSat;
+    }
+  }
 
-  RALFMain_B.Product2[0] = RALFMain_P.Constant1_Value_d[0] * rtb_Switch_idx_3;
-  RALFMain_B.Product2[1] = RALFMain_P.Constant1_Value_d[1] * rtb_Switch_idx_3;
-  RALFMain_B.Product2[2] = RALFMain_P.Constant1_Value_d[2] * rtb_Switch_idx_3;
-  RALFMain_B.Product2[3] = RALFMain_P.Constant1_Value_d[3] * rtb_Switch_idx_3;
+  // End of Saturate: '<S6>/Saturation'
 
   // Gain: '<S50>/Gain4'
-  rtb_Switch_idx_3 = RALFMain_P.pwinkel_vel * rtb_Switch_idx_2;
+  RALFMain_B.rtb_Switch_idx_3 = RALFMain_P.pwinkel * RALFMain_B.rtb_Switch_idx_0;
 
-  // SignalConversion generated from: '<S48>/Product1' incorporates:
-  //   Fcn: '<S52>/r->x'
-  //   Fcn: '<S52>/theta->y'
+  // Product: '<S50>/Product2' incorporates:
+  //   Constant: '<S50>/Constant1'
 
-  rtb_Switch_idx_0 = static_cast<real32_T>(rtb_Switch_idx_4) *
-    static_cast<real32_T>(cos(static_cast<real_T>(rtb_thetay)));
-  rtb_thetay = static_cast<real32_T>(rtb_Switch_idx_4) * static_cast<real32_T>
-    (sin(static_cast<real_T>(rtb_thetay)));
-  for (rtb_Switch_idx_4 = 0; rtb_Switch_idx_4 < 4; rtb_Switch_idx_4++) {
-    // Product: '<S48>/Product1' incorporates:
-    //   Constant: '<S48>/Constant'
+  RALFMain_B.Product2_m[0] = RALFMain_P.Constant1_Value_d[0] *
+    RALFMain_B.rtb_Switch_idx_3;
+  RALFMain_B.Product2_m[1] = RALFMain_P.Constant1_Value_d[1] *
+    RALFMain_B.rtb_Switch_idx_3;
+  RALFMain_B.Product2_m[2] = RALFMain_P.Constant1_Value_d[2] *
+    RALFMain_B.rtb_Switch_idx_3;
+  RALFMain_B.Product2_m[3] = RALFMain_P.Constant1_Value_d[3] *
+    RALFMain_B.rtb_Switch_idx_3;
 
-    rtb_Product1_k = RALFMain_P.Constant_Value_h[rtb_Switch_idx_4 + 4] *
-      rtb_thetay + RALFMain_P.Constant_Value_h[rtb_Switch_idx_4] *
-      rtb_Switch_idx_0;
+  // Gain: '<S51>/Gain4'
+  RALFMain_B.rtb_Switch_idx_3 = RALFMain_P.pwinkel_vel *
+    RALFMain_B.rtb_Switch_idx_2;
 
-    // Saturate: '<S48>/Saturation3'
-    if (rtb_Product1_k > RALFMain_P.Saturation3_UpperSat) {
-      rtb_Product1_k = RALFMain_P.Saturation3_UpperSat;
+  // SignalConversion generated from: '<S49>/Product1' incorporates:
+  //   Fcn: '<S53>/r->x'
+  //   Fcn: '<S53>/theta->y'
+
+  RALFMain_B.rtb_Switch_idx_0 = static_cast<real32_T>
+    (RALFMain_B.rtb_Switch_idx_4) * static_cast<real32_T>(cos(static_cast<real_T>
+    (RALFMain_B.Product2_i)));
+  RALFMain_B.Product2_i = static_cast<real32_T>(RALFMain_B.rtb_Switch_idx_4) *
+    static_cast<real32_T>(sin(static_cast<real_T>(RALFMain_B.Product2_i)));
+  for (RALFMain_B.rtb_Switch_idx_4 = 0; RALFMain_B.rtb_Switch_idx_4 < 4;
+       RALFMain_B.rtb_Switch_idx_4++) {
+    // Product: '<S49>/Product1' incorporates:
+    //   Constant: '<S49>/Constant'
+
+    RALFMain_B.Product1_d =
+      RALFMain_P.Constant_Value_h[RALFMain_B.rtb_Switch_idx_4 + 4] *
+      RALFMain_B.Product2_i +
+      RALFMain_P.Constant_Value_h[RALFMain_B.rtb_Switch_idx_4] *
+      RALFMain_B.rtb_Switch_idx_0;
+
+    // Saturate: '<S49>/Saturation3'
+    if (RALFMain_B.Product1_d > RALFMain_P.Saturation3_UpperSat) {
+      RALFMain_B.Product1_d = RALFMain_P.Saturation3_UpperSat;
     } else {
-      if (rtb_Product1_k < RALFMain_P.Saturation3_LowerSat) {
-        rtb_Product1_k = RALFMain_P.Saturation3_LowerSat;
+      if (RALFMain_B.Product1_d < RALFMain_P.Saturation3_LowerSat) {
+        RALFMain_B.Product1_d = RALFMain_P.Saturation3_LowerSat;
       }
     }
 
-    // Product: '<S42>/Product' incorporates:
-    //   Constant: '<S50>/Constant1'
-    //   Product: '<S50>/Product2'
-    //   Saturate: '<S48>/Saturation3'
-    //   Sum: '<S42>/Sum'
+    // Product: '<S40>/Product' incorporates:
+    //   Constant: '<S51>/Constant1'
+    //   Product: '<S51>/Product2'
+    //   Saturate: '<S49>/Saturation3'
+    //   Sum: '<S40>/Sum'
 
-    RALFMain_B.Product2[rtb_Switch_idx_4] = ((rtb_Product1_k +
-      RALFMain_B.Product2[rtb_Switch_idx_4]) +
-      RALFMain_P.Constant1_Value_i[rtb_Switch_idx_4] * rtb_Switch_idx_3) *
-      static_cast<real32_T>(rtb_DataTypeConversion_e) *
-      rtb_BusAssignment_Axes_idx_3;
+    RALFMain_B.Product2_m[RALFMain_B.rtb_Switch_idx_4] = ((RALFMain_B.Product1_d
+      + RALFMain_B.Product2_m[RALFMain_B.rtb_Switch_idx_4]) +
+      RALFMain_P.Constant1_Value_i[RALFMain_B.rtb_Switch_idx_4] *
+      RALFMain_B.rtb_Switch_idx_3) * static_cast<real32_T>
+      (RALFMain_B.DataTypeConversion_p) * rtb_BusAssignment_Axes_idx_3;
   }
 
   // DataTypeConversion: '<S7>/Data Type Conversion' incorporates:
   //   Constant: '<S8>/Constant'
   //   RelationalOperator: '<S8>/Compare'
 
-  rtb_DataTypeConversion_e = (rtb_BusAssignment_Axes_idx_2 >
+  RALFMain_B.rtb_Switch_idx_3 = (rtb_BusAssignment_Axes_idx_2 >
     RALFMain_P.CompareToConstant_const_g);
 
   // DataTypeConversion: '<S1>/Conversion ' incorporates:
   //   Constant: '<S1>/Constant'
-  //   Gain: '<S42>/Gain'
-  //   Gain: '<S42>/Gain1'
-  //   Gain: '<S42>/Gain2'
-  //   Gain: '<S42>/Gain3'
+  //   Gain: '<S40>/Gain'
+  //   Gain: '<S40>/Gain1'
+  //   Gain: '<S40>/Gain2'
+  //   Gain: '<S40>/Gain3'
   //   Product: '<S1>/Multiply'
   //   Product: '<S1>/Product'
 
   RALFMain_B.rtb_Divide_idx_0 = floor(static_cast<real_T>(RALFMain_P.nmax) *
-    RALFMain_B.Product2[0] * static_cast<real_T>(rtb_DataTypeConversion_e) *
+    RALFMain_B.Product2_m[0] * RALFMain_B.rtb_Switch_idx_3 *
     RALFMain_P.Constant_Value_b[0]);
   if (rtIsNaN(RALFMain_B.rtb_Divide_idx_0) || rtIsInf
       (RALFMain_B.rtb_Divide_idx_0)) {
@@ -761,7 +928,7 @@ void RALFMain_step(void)
     static_cast<uint16_T>(-RALFMain_B.rtb_Divide_idx_0)))) : static_cast<int32_T>
     (static_cast<int16_T>(static_cast<uint16_T>(RALFMain_B.rtb_Divide_idx_0))));
   RALFMain_B.rtb_Divide_idx_0 = floor(static_cast<real_T>(RALFMain_P.nmax) *
-    RALFMain_B.Product2[1] * static_cast<real_T>(rtb_DataTypeConversion_e) *
+    RALFMain_B.Product2_m[1] * RALFMain_B.rtb_Switch_idx_3 *
     RALFMain_P.Constant_Value_b[1]);
   if (rtIsNaN(RALFMain_B.rtb_Divide_idx_0) || rtIsInf
       (RALFMain_B.rtb_Divide_idx_0)) {
@@ -774,9 +941,9 @@ void RALFMain_step(void)
     0.0 ? static_cast<int32_T>(static_cast<int16_T>(-static_cast<int16_T>(
     static_cast<uint16_T>(-RALFMain_B.rtb_Divide_idx_0)))) : static_cast<int32_T>
     (static_cast<int16_T>(static_cast<uint16_T>(RALFMain_B.rtb_Divide_idx_0))));
-  RALFMain_B.rtb_Divide_idx_0 = floor(static_cast<real_T>(RALFMain_P.Gain3_Gain)
-    * RALFMain_B.Product2[3] * static_cast<real_T>(rtb_DataTypeConversion_e) *
-    RALFMain_P.Constant_Value_b[2]);
+  RALFMain_B.rtb_Divide_idx_0 = floor(static_cast<real_T>
+    (RALFMain_P.Gain3_Gain_i) * RALFMain_B.Product2_m[3] *
+    RALFMain_B.rtb_Switch_idx_3 * RALFMain_P.Constant_Value_b[2]);
   if (rtIsNaN(RALFMain_B.rtb_Divide_idx_0) || rtIsInf
       (RALFMain_B.rtb_Divide_idx_0)) {
     RALFMain_B.rtb_Divide_idx_0 = 0.0;
@@ -789,8 +956,8 @@ void RALFMain_step(void)
     static_cast<uint16_T>(-RALFMain_B.rtb_Divide_idx_0)))) : static_cast<int32_T>
     (static_cast<int16_T>(static_cast<uint16_T>(RALFMain_B.rtb_Divide_idx_0))));
   RALFMain_B.rtb_Divide_idx_0 = floor(static_cast<real_T>
-    (RALFMain_P.Gain2_Gain_d) * RALFMain_B.Product2[2] * static_cast<real_T>
-    (rtb_DataTypeConversion_e) * RALFMain_P.Constant_Value_b[3]);
+    (RALFMain_P.Gain2_Gain_d) * RALFMain_B.Product2_m[2] *
+    RALFMain_B.rtb_Switch_idx_3 * RALFMain_P.Constant_Value_b[3]);
   if (rtIsNaN(RALFMain_B.rtb_Divide_idx_0) || rtIsInf
       (RALFMain_B.rtb_Divide_idx_0)) {
     RALFMain_B.rtb_Divide_idx_0 = 0.0;
@@ -808,14 +975,14 @@ void RALFMain_step(void)
   // S-Function (any2byte): '<S1>/Byte Pack'
 
   // Pack: <S1>/Byte Pack
-  (void) memcpy(&RALFMain_B.BytePack_e[0], &RALFMain_B.Conversion[0],
+  (void) memcpy(&RALFMain_B.BytePack[0], &RALFMain_B.Conversion[0],
                 8);
 
   // S-Function (CAN_send): '<S1>/CAN send back left'
 
   // Level2 S-Function Block: '<S1>/CAN send back left' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[1];
+    SimStruct *rts = RALFMain_M->childSfunctions[0];
     sfcnOutputs(rts,0);
   }
 
@@ -823,7 +990,7 @@ void RALFMain_step(void)
 
   // Level2 S-Function Block: '<S1>/CAN send back right' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[2];
+    SimStruct *rts = RALFMain_M->childSfunctions[1];
     sfcnOutputs(rts,0);
   }
 
@@ -831,7 +998,7 @@ void RALFMain_step(void)
 
   // Level2 S-Function Block: '<S1>/CAN send front left' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[3];
+    SimStruct *rts = RALFMain_M->childSfunctions[2];
     sfcnOutputs(rts,0);
   }
 
@@ -839,30 +1006,60 @@ void RALFMain_step(void)
 
   // Level2 S-Function Block: '<S1>/CAN send front right' (CAN_send)
   {
+    SimStruct *rts = RALFMain_M->childSfunctions[3];
+    sfcnOutputs(rts,0);
+  }
+
+  // DataTypeConversion: '<Root>/Data Type Conversion' incorporates:
+  //   Constant: '<Root>/Constant'
+
+  RALFMain_B.rtb_Divide_idx_0 = floor(RALFMain_P.Constant_Value_d);
+  if (rtIsNaN(RALFMain_B.rtb_Divide_idx_0) || rtIsInf
+      (RALFMain_B.rtb_Divide_idx_0)) {
+    RALFMain_B.rtb_Divide_idx_0 = 0.0;
+  } else {
+    RALFMain_B.rtb_Divide_idx_0 = fmod(RALFMain_B.rtb_Divide_idx_0, 65536.0);
+  }
+
+  RALFMain_B.DataTypeConversion = static_cast<int16_T>
+    (RALFMain_B.rtb_Divide_idx_0 < 0.0 ? static_cast<int32_T>
+     (static_cast<int16_T>(-static_cast<int16_T>(static_cast<uint16_T>
+        (-RALFMain_B.rtb_Divide_idx_0)))) : static_cast<int32_T>
+     (static_cast<int16_T>(static_cast<uint16_T>(RALFMain_B.rtb_Divide_idx_0))));
+
+  // End of DataTypeConversion: '<Root>/Data Type Conversion'
+
+  // S-Function (any2byte): '<Root>/Byte Pack'
+
+  // Pack: <Root>/Byte Pack
+  (void) memcpy(&RALFMain_B.BytePack_k[0], &RALFMain_B.DataTypeConversion,
+                2);
+
+  // S-Function (CAN_send): '<Root>/CAN send SYNC'
+
+  // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
+  {
     SimStruct *rts = RALFMain_M->childSfunctions[4];
     sfcnOutputs(rts,0);
   }
 
-  // Update for S-Function (CAN_send): '<Root>/CAN send SYNC'
-  // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
-  {
-    SimStruct *rts = RALFMain_M->childSfunctions[0];
-    sfcnUpdate(rts,0);
-    if (ssGetErrorStatus(rts) != (NULL))
-      return;
-  }
+  // S-Function (saeroclockpacer): '<Root>/Simulation Pace'
+  //
+  //  The Clock Pacer generates no code, it is only active in
+  //  interpreted simulation.
+
 
   // Update for Delay: '<S19>/Delay' incorporates:
   //   BusAssignment: '<S2>/Bus Assignment'
   //   DataTypeConversion: '<S18>/Data Type Conversion'
   //   DataTypeConversion: '<S19>/Data Type Conversion'
 
-  RALFMain_DW.Delay_DSTATE = (RALFMain_B.In1.Buttons[1] != 0.0F);
+  RALFMain_DW.Delay_DSTATE = (RALFMain_B.In1_i.Buttons[1] != 0.0F);
 
   // Update for S-Function (CAN_send): '<S1>/CAN send back left'
   // Level2 S-Function Block: '<S1>/CAN send back left' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[1];
+    SimStruct *rts = RALFMain_M->childSfunctions[0];
     sfcnUpdate(rts,0);
     if (ssGetErrorStatus(rts) != (NULL))
       return;
@@ -871,7 +1068,7 @@ void RALFMain_step(void)
   // Update for S-Function (CAN_send): '<S1>/CAN send back right'
   // Level2 S-Function Block: '<S1>/CAN send back right' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[2];
+    SimStruct *rts = RALFMain_M->childSfunctions[1];
     sfcnUpdate(rts,0);
     if (ssGetErrorStatus(rts) != (NULL))
       return;
@@ -880,7 +1077,7 @@ void RALFMain_step(void)
   // Update for S-Function (CAN_send): '<S1>/CAN send front left'
   // Level2 S-Function Block: '<S1>/CAN send front left' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[3];
+    SimStruct *rts = RALFMain_M->childSfunctions[2];
     sfcnUpdate(rts,0);
     if (ssGetErrorStatus(rts) != (NULL))
       return;
@@ -888,6 +1085,15 @@ void RALFMain_step(void)
 
   // Update for S-Function (CAN_send): '<S1>/CAN send front right'
   // Level2 S-Function Block: '<S1>/CAN send front right' (CAN_send)
+  {
+    SimStruct *rts = RALFMain_M->childSfunctions[3];
+    sfcnUpdate(rts,0);
+    if (ssGetErrorStatus(rts) != (NULL))
+      return;
+  }
+
+  // Update for S-Function (CAN_send): '<Root>/CAN send SYNC'
+  // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
   {
     SimStruct *rts = RALFMain_M->childSfunctions[4];
     sfcnUpdate(rts,0);
@@ -924,7 +1130,7 @@ void RALFMain_initialize(void)
     RALFMain_M->Timing.offsetTimes = (&RALFMain_M->Timing.offsetTimesArray[0]);
 
     // task periods
-    RALFMain_M->Timing.sampleTimes[0] = (0.001);
+    RALFMain_M->Timing.sampleTimes[0] = (0.01);
 
     // task offsets
     RALFMain_M->Timing.offsetTimes[0] = (0.0);
@@ -939,10 +1145,10 @@ void RALFMain_initialize(void)
   }
 
   rtmSetTFinal(RALFMain_M, -1);
-  RALFMain_M->Timing.stepSize0 = 0.001;
+  RALFMain_M->Timing.stepSize0 = 0.01;
   RALFMain_M->solverInfoPtr = (&RALFMain_M->solverInfo);
-  RALFMain_M->Timing.stepSize = (0.001);
-  rtsiSetFixedStepSize(&RALFMain_M->solverInfo, 0.001);
+  RALFMain_M->Timing.stepSize = (0.01);
+  rtsiSetFixedStepSize(&RALFMain_M->solverInfo, 0.01);
   rtsiSetSolverMode(&RALFMain_M->solverInfo, SOLVER_MODE_SINGLETASKING);
 
   // block I/O
@@ -994,7 +1200,7 @@ void RALFMain_initialize(void)
       }
     }
 
-    // Level2 S-Function Block: RALFMain/<Root>/CAN send SYNC (CAN_send)
+    // Level2 S-Function Block: RALFMain/<S1>/CAN send back left (CAN_send)
     {
       SimStruct *rts = RALFMain_M->childSfunctions[0];
 
@@ -1057,18 +1263,19 @@ void RALFMain_initialize(void)
         // port 0
         {
           ssSetInputPortRequiredContiguous(rts, 0, 1);
-          ssSetInputPortSignal(rts, 0, RALFMain_B.BytePack);
+          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack[4]);
           _ssSetInputPortNumDimensions(rts, 0, 1);
           ssSetInputPortWidth(rts, 0, 2);
         }
       }
 
       // states
-      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendSYNC_DSTATE);
+      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendbackleft_DSTATE);
 
       // path info
-      ssSetModelName(rts, "CAN send SYNC");
-      ssSetPath(rts, "RALFMain/CAN send SYNC");
+      ssSetModelName(rts, "CAN send back left");
+      ssSetPath(rts,
+                "RALFMain/Drehzahl Conversion und CAN send/CAN send back left");
       ssSetRTModel(rts,RALFMain_M);
       ssSetParentSS(rts, (NULL));
       ssSetRootSS(rts, rts);
@@ -1080,8 +1287,8 @@ void RALFMain_initialize(void)
           &RALFMain_M->NonInlinedSFcns.Sfcn0.params;
         ssSetSFcnParamsCount(rts, 2);
         ssSetSFcnParamsPtr(rts, &sfcnParams[0]);
-        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendSYNC_P1_Size);
-        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendSYNC_P2_Size);
+        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendbackleft_P1_Size);
+        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendbackleft_P2_Size);
       }
 
       // work vectors
@@ -1099,7 +1306,7 @@ void RALFMain_initialize(void)
         ssSetDWorkDataType(rts, 0,SS_DOUBLE);
         ssSetDWorkComplexSignal(rts, 0, 0);
         ssSetDWorkUsedAsDState(rts, 0, 1);
-        ssSetDWork(rts, 0, &RALFMain_DW.CANsendSYNC_DSTATE);
+        ssSetDWork(rts, 0, &RALFMain_DW.CANsendbackleft_DSTATE);
       }
 
       // registration
@@ -1108,7 +1315,7 @@ void RALFMain_initialize(void)
       sfcnInitializeSampleTimes(rts);
 
       // adjust sample time
-      ssSetSampleTime(rts, 0, 0.001);
+      ssSetSampleTime(rts, 0, 0.01);
       ssSetOffsetTime(rts, 0, 0.0);
       sfcnTsMap[0] = 0;
 
@@ -1128,7 +1335,7 @@ void RALFMain_initialize(void)
       ssSetInputPortBufferDstPort(rts, 0, -1);
     }
 
-    // Level2 S-Function Block: RALFMain/<S1>/CAN send back left (CAN_send)
+    // Level2 S-Function Block: RALFMain/<S1>/CAN send back right (CAN_send)
     {
       SimStruct *rts = RALFMain_M->childSfunctions[1];
 
@@ -1191,19 +1398,19 @@ void RALFMain_initialize(void)
         // port 0
         {
           ssSetInputPortRequiredContiguous(rts, 0, 1);
-          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack_e[4]);
+          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack[6]);
           _ssSetInputPortNumDimensions(rts, 0, 1);
           ssSetInputPortWidth(rts, 0, 2);
         }
       }
 
       // states
-      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendbackleft_DSTATE);
+      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendbackright_DSTATE);
 
       // path info
-      ssSetModelName(rts, "CAN send back left");
+      ssSetModelName(rts, "CAN send back right");
       ssSetPath(rts,
-                "RALFMain/Drehzahl Conversion und CAN send/CAN send back left");
+                "RALFMain/Drehzahl Conversion und CAN send/CAN send back right");
       ssSetRTModel(rts,RALFMain_M);
       ssSetParentSS(rts, (NULL));
       ssSetRootSS(rts, rts);
@@ -1215,8 +1422,8 @@ void RALFMain_initialize(void)
           &RALFMain_M->NonInlinedSFcns.Sfcn1.params;
         ssSetSFcnParamsCount(rts, 2);
         ssSetSFcnParamsPtr(rts, &sfcnParams[0]);
-        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendbackleft_P1_Size);
-        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendbackleft_P2_Size);
+        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendbackright_P1_Size);
+        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendbackright_P2_Size);
       }
 
       // work vectors
@@ -1234,7 +1441,7 @@ void RALFMain_initialize(void)
         ssSetDWorkDataType(rts, 0,SS_DOUBLE);
         ssSetDWorkComplexSignal(rts, 0, 0);
         ssSetDWorkUsedAsDState(rts, 0, 1);
-        ssSetDWork(rts, 0, &RALFMain_DW.CANsendbackleft_DSTATE);
+        ssSetDWork(rts, 0, &RALFMain_DW.CANsendbackright_DSTATE);
       }
 
       // registration
@@ -1243,7 +1450,7 @@ void RALFMain_initialize(void)
       sfcnInitializeSampleTimes(rts);
 
       // adjust sample time
-      ssSetSampleTime(rts, 0, 0.001);
+      ssSetSampleTime(rts, 0, 0.01);
       ssSetOffsetTime(rts, 0, 0.0);
       sfcnTsMap[0] = 0;
 
@@ -1263,7 +1470,7 @@ void RALFMain_initialize(void)
       ssSetInputPortBufferDstPort(rts, 0, -1);
     }
 
-    // Level2 S-Function Block: RALFMain/<S1>/CAN send back right (CAN_send)
+    // Level2 S-Function Block: RALFMain/<S1>/CAN send front left (CAN_send)
     {
       SimStruct *rts = RALFMain_M->childSfunctions[2];
 
@@ -1326,19 +1533,19 @@ void RALFMain_initialize(void)
         // port 0
         {
           ssSetInputPortRequiredContiguous(rts, 0, 1);
-          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack_e[6]);
+          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack[2]);
           _ssSetInputPortNumDimensions(rts, 0, 1);
           ssSetInputPortWidth(rts, 0, 2);
         }
       }
 
       // states
-      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendbackright_DSTATE);
+      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendfrontleft_DSTATE);
 
       // path info
-      ssSetModelName(rts, "CAN send back right");
+      ssSetModelName(rts, "CAN send front left");
       ssSetPath(rts,
-                "RALFMain/Drehzahl Conversion und CAN send/CAN send back right");
+                "RALFMain/Drehzahl Conversion und CAN send/CAN send front left");
       ssSetRTModel(rts,RALFMain_M);
       ssSetParentSS(rts, (NULL));
       ssSetRootSS(rts, rts);
@@ -1350,8 +1557,8 @@ void RALFMain_initialize(void)
           &RALFMain_M->NonInlinedSFcns.Sfcn2.params;
         ssSetSFcnParamsCount(rts, 2);
         ssSetSFcnParamsPtr(rts, &sfcnParams[0]);
-        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendbackright_P1_Size);
-        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendbackright_P2_Size);
+        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendfrontleft_P1_Size);
+        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendfrontleft_P2_Size);
       }
 
       // work vectors
@@ -1369,7 +1576,7 @@ void RALFMain_initialize(void)
         ssSetDWorkDataType(rts, 0,SS_DOUBLE);
         ssSetDWorkComplexSignal(rts, 0, 0);
         ssSetDWorkUsedAsDState(rts, 0, 1);
-        ssSetDWork(rts, 0, &RALFMain_DW.CANsendbackright_DSTATE);
+        ssSetDWork(rts, 0, &RALFMain_DW.CANsendfrontleft_DSTATE);
       }
 
       // registration
@@ -1378,7 +1585,7 @@ void RALFMain_initialize(void)
       sfcnInitializeSampleTimes(rts);
 
       // adjust sample time
-      ssSetSampleTime(rts, 0, 0.001);
+      ssSetSampleTime(rts, 0, 0.01);
       ssSetOffsetTime(rts, 0, 0.0);
       sfcnTsMap[0] = 0;
 
@@ -1398,7 +1605,7 @@ void RALFMain_initialize(void)
       ssSetInputPortBufferDstPort(rts, 0, -1);
     }
 
-    // Level2 S-Function Block: RALFMain/<S1>/CAN send front left (CAN_send)
+    // Level2 S-Function Block: RALFMain/<S1>/CAN send front right (CAN_send)
     {
       SimStruct *rts = RALFMain_M->childSfunctions[3];
 
@@ -1461,19 +1668,19 @@ void RALFMain_initialize(void)
         // port 0
         {
           ssSetInputPortRequiredContiguous(rts, 0, 1);
-          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack_e[2]);
+          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack[0]);
           _ssSetInputPortNumDimensions(rts, 0, 1);
           ssSetInputPortWidth(rts, 0, 2);
         }
       }
 
       // states
-      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendfrontleft_DSTATE);
+      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendfrontright_DSTATE);
 
       // path info
-      ssSetModelName(rts, "CAN send front left");
+      ssSetModelName(rts, "CAN send front right");
       ssSetPath(rts,
-                "RALFMain/Drehzahl Conversion und CAN send/CAN send front left");
+                "RALFMain/Drehzahl Conversion und CAN send/CAN send front right");
       ssSetRTModel(rts,RALFMain_M);
       ssSetParentSS(rts, (NULL));
       ssSetRootSS(rts, rts);
@@ -1485,8 +1692,8 @@ void RALFMain_initialize(void)
           &RALFMain_M->NonInlinedSFcns.Sfcn3.params;
         ssSetSFcnParamsCount(rts, 2);
         ssSetSFcnParamsPtr(rts, &sfcnParams[0]);
-        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendfrontleft_P1_Size);
-        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendfrontleft_P2_Size);
+        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendfrontright_P1_Size);
+        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendfrontright_P2_Size);
       }
 
       // work vectors
@@ -1504,7 +1711,7 @@ void RALFMain_initialize(void)
         ssSetDWorkDataType(rts, 0,SS_DOUBLE);
         ssSetDWorkComplexSignal(rts, 0, 0);
         ssSetDWorkUsedAsDState(rts, 0, 1);
-        ssSetDWork(rts, 0, &RALFMain_DW.CANsendfrontleft_DSTATE);
+        ssSetDWork(rts, 0, &RALFMain_DW.CANsendfrontright_DSTATE);
       }
 
       // registration
@@ -1513,7 +1720,7 @@ void RALFMain_initialize(void)
       sfcnInitializeSampleTimes(rts);
 
       // adjust sample time
-      ssSetSampleTime(rts, 0, 0.001);
+      ssSetSampleTime(rts, 0, 0.01);
       ssSetOffsetTime(rts, 0, 0.0);
       sfcnTsMap[0] = 0;
 
@@ -1533,7 +1740,7 @@ void RALFMain_initialize(void)
       ssSetInputPortBufferDstPort(rts, 0, -1);
     }
 
-    // Level2 S-Function Block: RALFMain/<S1>/CAN send front right (CAN_send)
+    // Level2 S-Function Block: RALFMain/<Root>/CAN send SYNC (CAN_send)
     {
       SimStruct *rts = RALFMain_M->childSfunctions[4];
 
@@ -1596,19 +1803,18 @@ void RALFMain_initialize(void)
         // port 0
         {
           ssSetInputPortRequiredContiguous(rts, 0, 1);
-          ssSetInputPortSignal(rts, 0, &RALFMain_B.BytePack_e[0]);
+          ssSetInputPortSignal(rts, 0, RALFMain_B.BytePack_k);
           _ssSetInputPortNumDimensions(rts, 0, 1);
           ssSetInputPortWidth(rts, 0, 2);
         }
       }
 
       // states
-      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendfrontright_DSTATE);
+      ssSetDiscStates(rts, (real_T *) &RALFMain_DW.CANsendSYNC_DSTATE);
 
       // path info
-      ssSetModelName(rts, "CAN send front right");
-      ssSetPath(rts,
-                "RALFMain/Drehzahl Conversion und CAN send/CAN send front right");
+      ssSetModelName(rts, "CAN send SYNC");
+      ssSetPath(rts, "RALFMain/CAN send SYNC");
       ssSetRTModel(rts,RALFMain_M);
       ssSetParentSS(rts, (NULL));
       ssSetRootSS(rts, rts);
@@ -1620,8 +1826,8 @@ void RALFMain_initialize(void)
           &RALFMain_M->NonInlinedSFcns.Sfcn4.params;
         ssSetSFcnParamsCount(rts, 2);
         ssSetSFcnParamsPtr(rts, &sfcnParams[0]);
-        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendfrontright_P1_Size);
-        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendfrontright_P2_Size);
+        ssSetSFcnParam(rts, 0, (mxArray*)RALFMain_P.CANsendSYNC_P1_Size);
+        ssSetSFcnParam(rts, 1, (mxArray*)RALFMain_P.CANsendSYNC_P2_Size);
       }
 
       // work vectors
@@ -1639,7 +1845,7 @@ void RALFMain_initialize(void)
         ssSetDWorkDataType(rts, 0,SS_DOUBLE);
         ssSetDWorkComplexSignal(rts, 0, 0);
         ssSetDWorkUsedAsDState(rts, 0, 1);
-        ssSetDWork(rts, 0, &RALFMain_DW.CANsendfrontright_DSTATE);
+        ssSetDWork(rts, 0, &RALFMain_DW.CANsendSYNC_DSTATE);
       }
 
       // registration
@@ -1648,7 +1854,7 @@ void RALFMain_initialize(void)
       sfcnInitializeSampleTimes(rts);
 
       // adjust sample time
-      ssSetSampleTime(rts, 0, 0.001);
+      ssSetSampleTime(rts, 0, 0.01);
       ssSetOffsetTime(rts, 0, 0.0);
       sfcnTsMap[0] = 0;
 
@@ -1671,22 +1877,13 @@ void RALFMain_initialize(void)
 
   {
     char_T tmp[5];
-    char_T tmp_0[15];
+    char_T tmp_0[11];
     char_T tmp_1[9];
     int32_T i;
-    static const char_T tmp_2[14] = { '/', 's', 'l', 'a', 'm', '_', 'o', 'u',
-      't', '_', 'p', 'o', 's', 'e' };
+    static const char_T tmp_2[10] = { '/', 'a', 'm', 'c', 'l', '_', 'p', 'o',
+      's', 'e' };
 
     static const char_T tmp_3[8] = { '/', 'c', 'm', 'd', '_', 'v', 'e', 'l' };
-
-    // InitializeConditions for S-Function (CAN_send): '<Root>/CAN send SYNC'
-    // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
-    {
-      SimStruct *rts = RALFMain_M->childSfunctions[0];
-      sfcnInitializeConditions(rts);
-      if (ssGetErrorStatus(rts) != (NULL))
-        return;
-    }
 
     // InitializeConditions for S-Function (sdspcount2): '<S2>/Counter'
     RALFMain_DW.Counter_ClkEphState = 5U;
@@ -1706,7 +1903,7 @@ void RALFMain_initialize(void)
     // InitializeConditions for S-Function (CAN_send): '<S1>/CAN send back left' 
     // Level2 S-Function Block: '<S1>/CAN send back left' (CAN_send)
     {
-      SimStruct *rts = RALFMain_M->childSfunctions[1];
+      SimStruct *rts = RALFMain_M->childSfunctions[0];
       sfcnInitializeConditions(rts);
       if (ssGetErrorStatus(rts) != (NULL))
         return;
@@ -1715,7 +1912,7 @@ void RALFMain_initialize(void)
     // InitializeConditions for S-Function (CAN_send): '<S1>/CAN send back right' 
     // Level2 S-Function Block: '<S1>/CAN send back right' (CAN_send)
     {
-      SimStruct *rts = RALFMain_M->childSfunctions[2];
+      SimStruct *rts = RALFMain_M->childSfunctions[1];
       sfcnInitializeConditions(rts);
       if (ssGetErrorStatus(rts) != (NULL))
         return;
@@ -1724,7 +1921,7 @@ void RALFMain_initialize(void)
     // InitializeConditions for S-Function (CAN_send): '<S1>/CAN send front left' 
     // Level2 S-Function Block: '<S1>/CAN send front left' (CAN_send)
     {
-      SimStruct *rts = RALFMain_M->childSfunctions[3];
+      SimStruct *rts = RALFMain_M->childSfunctions[2];
       sfcnInitializeConditions(rts);
       if (ssGetErrorStatus(rts) != (NULL))
         return;
@@ -1732,6 +1929,15 @@ void RALFMain_initialize(void)
 
     // InitializeConditions for S-Function (CAN_send): '<S1>/CAN send front right' 
     // Level2 S-Function Block: '<S1>/CAN send front right' (CAN_send)
+    {
+      SimStruct *rts = RALFMain_M->childSfunctions[3];
+      sfcnInitializeConditions(rts);
+      if (ssGetErrorStatus(rts) != (NULL))
+        return;
+    }
+
+    // InitializeConditions for S-Function (CAN_send): '<Root>/CAN send SYNC'
+    // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
     {
       SimStruct *rts = RALFMain_M->childSfunctions[4];
       sfcnInitializeConditions(rts);
@@ -1742,7 +1948,7 @@ void RALFMain_initialize(void)
     // SystemInitialize for Atomic SubSystem: '<S2>/Subscribe'
     // SystemInitialize for Enabled SubSystem: '<S15>/Enabled Subsystem'
     // SystemInitialize for Outport: '<S27>/Out1'
-    RALFMain_B.In1 = RALFMain_P.Out1_Y0;
+    RALFMain_B.In1_i = RALFMain_P.Out1_Y0_b;
 
     // End of SystemInitialize for SubSystem: '<S15>/Enabled Subsystem'
 
@@ -1759,26 +1965,26 @@ void RALFMain_initialize(void)
 
     // End of SystemInitialize for SubSystem: '<S2>/Subscribe'
 
-    // SystemInitialize for Atomic SubSystem: '<S5>/Subscribe1'
-    // SystemInitialize for Enabled SubSystem: '<S39>/Enabled Subsystem'
-    // SystemInitialize for Outport: '<S40>/Out1'
-    RALFMain_B.In1_i = RALFMain_P.Out1_Y0_i;
+    // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe'
+    // SystemInitialize for Enabled SubSystem: '<S5>/Enabled Subsystem'
+    // SystemInitialize for Outport: '<S38>/Out1'
+    RALFMain_B.In1 = RALFMain_P.Out1_Y0;
 
-    // End of SystemInitialize for SubSystem: '<S39>/Enabled Subsystem'
+    // End of SystemInitialize for SubSystem: '<S5>/Enabled Subsystem'
 
-    // Start for MATLABSystem: '<S39>/SourceBlock'
+    // Start for MATLABSystem: '<S5>/SourceBlock'
     RALFMain_DW.obj.matlabCodegenIsDeleted = false;
     RALFMain_DW.obj.isInitialized = 1;
-    for (i = 0; i < 14; i++) {
+    for (i = 0; i < 10; i++) {
       tmp_0[i] = tmp_2[i];
     }
 
-    tmp_0[14] = '\x00';
-    Sub_RALFMain_876.createSubscriber(tmp_0, 1);
+    tmp_0[10] = '\x00';
+    Sub_RALFMain_1223.createSubscriber(tmp_0, 1);
     RALFMain_DW.obj.isSetupComplete = true;
 
-    // End of Start for MATLABSystem: '<S39>/SourceBlock'
-    // End of SystemInitialize for SubSystem: '<S5>/Subscribe1'
+    // End of Start for MATLABSystem: '<S5>/SourceBlock'
+    // End of SystemInitialize for SubSystem: '<Root>/Subscribe'
 
     // SystemInitialize for Atomic SubSystem: '<S4>/Subscribe'
     // SystemInitialize for Enabled SubSystem: '<S30>/Enabled Subsystem'
@@ -1801,11 +2007,13 @@ void RALFMain_initialize(void)
     // End of Start for MATLABSystem: '<S30>/SourceBlock'
     // End of SystemInitialize for SubSystem: '<S4>/Subscribe'
 
-    // SystemInitialize for IfAction SubSystem: '<S41>/If Action Subsystem'
-    // SystemInitialize for Outport: '<S44>/Out1'
+    // SystemInitialize for IfAction SubSystem: '<S39>/If Action Subsystem'
+    // SystemInitialize for Outport: '<S45>/Out1'
     RALFMain_B.In1_e = RALFMain_P.Out1_Y0_p;
 
-    // End of SystemInitialize for SubSystem: '<S41>/If Action Subsystem'
+    // End of SystemInitialize for SubSystem: '<S39>/If Action Subsystem'
+    CoordinateTransformationCo_Init(&RALFMain_DW.CoordinateTransformationCo_pnae);
+    CoordinateTransformationCo_Init(&RALFMain_DW.CoordinateTransformationCon_pna);
   }
 }
 
@@ -1818,18 +2026,11 @@ void RALFMain_terminate(void)
 
   // End of Terminate for SubSystem: '<S2>/Subscribe'
 
-  // Terminate for S-Function (CAN_send): '<Root>/CAN send SYNC'
-  // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
-  {
-    SimStruct *rts = RALFMain_M->childSfunctions[0];
-    sfcnTerminate(rts);
-  }
-
-  // Terminate for Atomic SubSystem: '<S5>/Subscribe1'
-  // Terminate for MATLABSystem: '<S39>/SourceBlock'
+  // Terminate for Atomic SubSystem: '<Root>/Subscribe'
+  // Terminate for MATLABSystem: '<S5>/SourceBlock'
   matlabCodegenHandle_matlabCodeg(&RALFMain_DW.obj);
 
-  // End of Terminate for SubSystem: '<S5>/Subscribe1'
+  // End of Terminate for SubSystem: '<Root>/Subscribe'
 
   // Terminate for Atomic SubSystem: '<S4>/Subscribe'
   // Terminate for MATLABSystem: '<S30>/SourceBlock'
@@ -1840,26 +2041,33 @@ void RALFMain_terminate(void)
   // Terminate for S-Function (CAN_send): '<S1>/CAN send back left'
   // Level2 S-Function Block: '<S1>/CAN send back left' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[1];
+    SimStruct *rts = RALFMain_M->childSfunctions[0];
     sfcnTerminate(rts);
   }
 
   // Terminate for S-Function (CAN_send): '<S1>/CAN send back right'
   // Level2 S-Function Block: '<S1>/CAN send back right' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[2];
+    SimStruct *rts = RALFMain_M->childSfunctions[1];
     sfcnTerminate(rts);
   }
 
   // Terminate for S-Function (CAN_send): '<S1>/CAN send front left'
   // Level2 S-Function Block: '<S1>/CAN send front left' (CAN_send)
   {
-    SimStruct *rts = RALFMain_M->childSfunctions[3];
+    SimStruct *rts = RALFMain_M->childSfunctions[2];
     sfcnTerminate(rts);
   }
 
   // Terminate for S-Function (CAN_send): '<S1>/CAN send front right'
   // Level2 S-Function Block: '<S1>/CAN send front right' (CAN_send)
+  {
+    SimStruct *rts = RALFMain_M->childSfunctions[3];
+    sfcnTerminate(rts);
+  }
+
+  // Terminate for S-Function (CAN_send): '<Root>/CAN send SYNC'
+  // Level2 S-Function Block: '<Root>/CAN send SYNC' (CAN_send)
   {
     SimStruct *rts = RALFMain_M->childSfunctions[4];
     sfcnTerminate(rts);

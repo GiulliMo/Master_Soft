@@ -1,0 +1,8 @@
+prefix=/home/alf/catkin_ws2/devel
+
+Name: assistant_robin
+Description: Description of assistant_robin
+Version: 0.0.1
+Cflags: -I/home/alf/catkin_ws2/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

@@ -56,16 +56,6 @@ CMAKE_BINARY_DIR = /home/alf/catkin_ws/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -78,6 +68,16 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -88,17 +88,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # Special rule for the target test
 test:
@@ -111,16 +100,16 @@ test/fast: test
 
 .PHONY : test/fast
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target install/local
-install/local/fast: install/local
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-.PHONY : install/local/fast
+.PHONY : edit_cache/fast
 
 # Special rule for the target install/strip
 install/strip: preinstall
@@ -132,6 +121,17 @@ install/strip: preinstall
 install/strip/fast: install/strip
 
 .PHONY : install/strip/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: install/local
+
+.PHONY : install/local/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -166,21 +166,6 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule
-.PHONY : iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule
-
-# Convenience name for target.
-compressed_image_transport_gencfg: iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule
-
-.PHONY : compressed_image_transport_gencfg
-
-# fast build rule for target.
-compressed_image_transport_gencfg/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/build.make iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/build
-.PHONY : compressed_image_transport_gencfg/fast
-
-# Convenience name for target.
 iai_kinect2/kinect2_calibration/CMakeFiles/additional_files_kinect2_calibration.dir/rule:
 	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 iai_kinect2/kinect2_calibration/CMakeFiles/additional_files_kinect2_calibration.dir/rule
 .PHONY : iai_kinect2/kinect2_calibration/CMakeFiles/additional_files_kinect2_calibration.dir/rule
@@ -194,6 +179,21 @@ additional_files_kinect2_calibration: iai_kinect2/kinect2_calibration/CMakeFiles
 additional_files_kinect2_calibration/fast:
 	cd /home/alf/catkin_ws/build && $(MAKE) -f iai_kinect2/kinect2_calibration/CMakeFiles/additional_files_kinect2_calibration.dir/build.make iai_kinect2/kinect2_calibration/CMakeFiles/additional_files_kinect2_calibration.dir/build
 .PHONY : additional_files_kinect2_calibration/fast
+
+# Convenience name for target.
+iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule
+.PHONY : iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule
+
+# Convenience name for target.
+compressed_image_transport_gencfg: iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/rule
+
+.PHONY : compressed_image_transport_gencfg
+
+# fast build rule for target.
+compressed_image_transport_gencfg/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/build.make iai_kinect2/kinect2_calibration/CMakeFiles/compressed_image_transport_gencfg.dir/build
+.PHONY : compressed_image_transport_gencfg/fast
 
 # Convenience name for target.
 iai_kinect2/kinect2_calibration/CMakeFiles/kinect2_calibration.dir/rule:
@@ -243,16 +243,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... list_install_components"
 	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
 	@echo "... test"
-	@echo "... compressed_image_transport_gencfg"
+	@echo "... edit_cache"
 	@echo "... additional_files_kinect2_calibration"
-	@echo "... install/local"
+	@echo "... compressed_image_transport_gencfg"
 	@echo "... kinect2_calibration"
 	@echo "... install/strip"
+	@echo "... install/local"
 	@echo "... src/kinect2_calibration.o"
 	@echo "... src/kinect2_calibration.i"
 	@echo "... src/kinect2_calibration.s"

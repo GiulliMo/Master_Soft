@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'RALFMain'.
 //
-// Model version                  : 1.180
+// Model version                  : 1.188
 // Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
-// C/C++ source code generated on : Thu Apr  9 09:34:26 2020
+// C/C++ source code generated on : Mon Apr 27 13:52:35 2020
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -112,36 +112,63 @@
 # define rtmGetTimeOfLastOutput(rtm)   ((rtm)->Timing.timeOfLastOutput)
 #endif
 
+// Block signals for system '<S6>/Coordinate Transformation Conversion1'
+typedef struct {
+  real32_T soll_quat[4];        // '<S6>/Coordinate Transformation Conversion1'
+} B_CoordinateTransformationCon_T;
+
+// Block states (default storage) for system '<S6>/Coordinate Transformation Conversion1' 
+typedef struct {
+  robotics_slcore_internal_bloc_T obj;
+                                // '<S6>/Coordinate Transformation Conversion1'
+  boolean_T objisempty;         // '<S6>/Coordinate Transformation Conversion1'
+} DW_CoordinateTransformationCo_T;
+
 // Block signals (default storage)
 typedef struct {
-  SL_Bus_RALFMain_sensor_msgs_Joy In1; // '<S27>/In1'
-  SL_Bus_RALFMain_sensor_msgs_Joy b_varargout_2;
-  SL_Bus_RALFMain_geometry_msgs_PoseStamped In1_i;// '<S40>/In1'
-  SL_Bus_RALFMain_geometry_msgs_PoseStamped b_varargout_2_m;
+  SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped In1;// '<S38>/In1'
+  SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped b_varargout_2;
+  SL_Bus_RALFMain_sensor_msgs_Joy In1_i;// '<S27>/In1'
+  SL_Bus_RALFMain_sensor_msgs_Joy b_varargout_2_m;
   SL_Bus_RALFMain_geometry_msgs_Twist In1_m;// '<S36>/In1'
   SL_Bus_RALFMain_geometry_msgs_Twist b_varargout_2_c;
-  real32_T Product2[4];                // '<S49>/Product2'
-  real_T b;
+  real32_T Product2_m[4];              // '<S50>/Product2'
+  real32_T Gain_f[3];                  // '<S6>/Gain'
+  real32_T Gain2_f[3];                 // '<S6>/Gain2'
+  real_T rtb_istquat_idx_0;
+  real_T rtb_istquat_idx_1;
+  real_T rtb_istquat_idx_2;
   real_T rtb_Divide_idx_0;
   real_T rtb_Divide_idx_1;
-  real_T b_z1_idx_2;
-  real32_T In1_e;                      // '<S44>/In1'
-  int16_T DataTypeConversion;          // '<Root>/Data Type Conversion'
+  real32_T In1_e;                      // '<S45>/In1'
   int16_T Conversion[4];               // '<S1>/Conversion '
-  uint8_T BytePack[2];                 // '<Root>/Byte Pack'
-  uint8_T BytePack_e[8];               // '<S1>/Byte Pack'
+  real32_T Product1_d;                 // '<S16>/Product1'
+  real32_T Product2_i;                 // '<S57>/Product2'
+  real32_T Product2_b;                 // '<S16>/Product2'
+  real32_T rtb_Switch_idx_0;
+  real32_T rtb_Switch_idx_2;
+  real32_T rtb_Switch_idx_3;
+  int32_T DataTypeConversion_p;        // '<S48>/Data Type Conversion'
+  int32_T rtb_Switch_idx_4;
+  int16_T DataTypeConversion;          // '<Root>/Data Type Conversion'
+  uint8_T BytePack[8];                 // '<S1>/Byte Pack'
+  uint8_T BytePack_k[2];               // '<Root>/Byte Pack'
+  B_CoordinateTransformationCon_T CoordinateTransformationCo_pnae;
+                                // '<S6>/Coordinate Transformation Conversion1'
+  B_CoordinateTransformationCon_T CoordinateTransformationCon_pna;
+                                // '<S6>/Coordinate Transformation Conversion1'
 } B_RALFMain_T;
 
 // Block states (default storage) for system '<Root>'
 typedef struct {
-  ros_slros_internal_block_Subs_T obj; // '<S39>/SourceBlock'
+  ros_slros_internal_block_Subs_T obj; // '<S5>/SourceBlock'
   ros_slros_internal_block_Subs_T obj_d;// '<S30>/SourceBlock'
   ros_slros_internal_block_Subs_T obj_p;// '<S15>/SourceBlock'
-  real_T CANsendSYNC_DSTATE;           // '<Root>/CAN send SYNC'
   real_T CANsendbackleft_DSTATE;       // '<S1>/CAN send back left'
   real_T CANsendbackright_DSTATE;      // '<S1>/CAN send back right'
   real_T CANsendfrontleft_DSTATE;      // '<S1>/CAN send front left'
   real_T CANsendfrontright_DSTATE;     // '<S1>/CAN send front right'
+  real_T CANsendSYNC_DSTATE;           // '<Root>/CAN send SYNC'
   uint32_T Counter_ClkEphState;        // '<S2>/Counter'
   uint32_T Counter1_ClkEphState;       // '<S2>/Counter1'
   uint32_T Counter_ClkEphState_a;      // '<S18>/Counter'
@@ -149,26 +176,30 @@ typedef struct {
   uint8_T Counter_Count;               // '<S2>/Counter'
   uint8_T Counter1_Count;              // '<S2>/Counter1'
   uint8_T Counter_Count_i;             // '<S18>/Counter'
+  DW_CoordinateTransformationCo_T CoordinateTransformationCo_pnae;
+                                // '<S6>/Coordinate Transformation Conversion1'
+  DW_CoordinateTransformationCo_T CoordinateTransformationCon_pna;
+                                // '<S6>/Coordinate Transformation Conversion1'
 } DW_RALFMain_T;
 
 // Parameters (default storage)
 struct P_RALFMain_T_ {
   real32_T nmax;                       // Variable: nmax
                                           //  Referenced by:
-                                          //    '<S42>/Gain'
-                                          //    '<S42>/Gain1'
+                                          //    '<S40>/Gain'
+                                          //    '<S40>/Gain1'
 
   real32_T pwinkel;                    // Variable: pwinkel
-                                          //  Referenced by: '<S49>/Gain4'
+                                          //  Referenced by: '<S50>/Gain4'
 
   real32_T pwinkel_vel;                // Variable: pwinkel_vel
-                                          //  Referenced by: '<S50>/Gain4'
+                                          //  Referenced by: '<S51>/Gain4'
 
   real_T CompareToConstant1_const;   // Mask Parameter: CompareToConstant1_const
                                         //  Referenced by: '<S17>/Constant'
 
   real32_T CompareToConstant_const;   // Mask Parameter: CompareToConstant_const
-                                         //  Referenced by: '<S51>/Constant'
+                                         //  Referenced by: '<S52>/Constant'
 
   real32_T CompareToConstant_const_m;
                                     // Mask Parameter: CompareToConstant_const_m
@@ -206,7 +237,7 @@ struct P_RALFMain_T_ {
 
   real32_T CompareToConstant_const_l;
                                     // Mask Parameter: CompareToConstant_const_l
-                                       //  Referenced by: '<S46>/Constant'
+                                       //  Referenced by: '<S47>/Constant'
 
   real32_T CompareToConstant_const_g;
                                     // Mask Parameter: CompareToConstant_const_g
@@ -230,20 +261,20 @@ struct P_RALFMain_T_ {
   uint8_T Counter_InitialCount_n;      // Mask Parameter: Counter_InitialCount_n
                                           //  Referenced by: '<S18>/Counter'
 
-  SL_Bus_RALFMain_sensor_msgs_Joy Out1_Y0;// Computed Parameter: Out1_Y0
-                                             //  Referenced by: '<S27>/Out1'
+  SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped Out1_Y0;// Computed Parameter: Out1_Y0
+                                                                     //  Referenced by: '<S38>/Out1'
 
-  SL_Bus_RALFMain_sensor_msgs_Joy Constant_Value;// Computed Parameter: Constant_Value
-                                                    //  Referenced by: '<S15>/Constant'
+  SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped Constant_Value;// Computed Parameter: Constant_Value
+                                                                      //  Referenced by: '<S5>/Constant'
+
+  SL_Bus_RALFMain_sensor_msgs_Joy Out1_Y0_b;// Computed Parameter: Out1_Y0_b
+                                               //  Referenced by: '<S27>/Out1'
+
+  SL_Bus_RALFMain_sensor_msgs_Joy Constant_Value_j;// Computed Parameter: Constant_Value_j
+                                                      //  Referenced by: '<S15>/Constant'
 
   SL_Bus_RALFMain_sensor_msgs_Joy Constant_Value_a;// Computed Parameter: Constant_Value_a
                                                       //  Referenced by: '<S11>/Constant'
-
-  SL_Bus_RALFMain_geometry_msgs_PoseStamped Out1_Y0_i;// Computed Parameter: Out1_Y0_i
-                                                         //  Referenced by: '<S40>/Out1'
-
-  SL_Bus_RALFMain_geometry_msgs_PoseStamped Constant_Value_l;// Computed Parameter: Constant_Value_l
-                                                                //  Referenced by: '<S39>/Constant'
 
   SL_Bus_RALFMain_geometry_msgs_Twist Out1_Y0_j;// Computed Parameter: Out1_Y0_j
                                                    //  Referenced by: '<S36>/Out1'
@@ -257,8 +288,14 @@ struct P_RALFMain_T_ {
   real_T Gain_Gain;                    // Expression: 5
                                           //  Referenced by: '<S2>/Gain'
 
-  real_T Gain_Gain_f;                  // Expression: 180/pi
-                                          //  Referenced by: '<S38>/Gain'
+  real_T Gain_Gain_j;                  // Expression: 180/pi
+                                          //  Referenced by: '<Root>/Gain'
+
+  real_T Constant_Value_e;             // Expression: 1
+                                          //  Referenced by: '<S61>/Constant'
+
+  real_T Constant_Value_o;             // Expression: 1
+                                          //  Referenced by: '<S62>/Constant'
 
   real_T Constant1_Value;              // Expression: -2
                                           //  Referenced by: '<S10>/Constant1'
@@ -272,23 +309,14 @@ struct P_RALFMain_T_ {
   real_T Constant3_Value;              // Expression: 11
                                           //  Referenced by: '<S2>/Constant3'
 
-  real_T Constant_Value_d;             // Expression: 0
-                                          //  Referenced by: '<Root>/Constant'
+  real_T Constant_Value_jl;            // Expression: 0
+                                          //  Referenced by: '<S6>/Constant'
 
-  real_T CANsendSYNC_P1_Size[2];      // Computed Parameter: CANsendSYNC_P1_Size
-                                         //  Referenced by: '<Root>/CAN send SYNC'
-
-  real_T CANsendSYNC_P1;               // Expression: Port
-                                          //  Referenced by: '<Root>/CAN send SYNC'
-
-  real_T CANsendSYNC_P2_Size[2];      // Computed Parameter: CANsendSYNC_P2_Size
-                                         //  Referenced by: '<Root>/CAN send SYNC'
-
-  real_T CANsendSYNC_P2;               // Expression: Identifier
-                                          //  Referenced by: '<Root>/CAN send SYNC'
+  real_T Gain3_Gain;                   // Expression: 180/pi
+                                          //  Referenced by: '<S6>/Gain3'
 
   real_T Constant_Value_f;             // Expression: -1
-                                          //  Referenced by: '<S45>/Constant'
+                                          //  Referenced by: '<S46>/Constant'
 
   real_T Constant_Value_b[4];          // Expression: [-1;1;-1;1]
                                           //  Referenced by: '<S1>/Constant'
@@ -349,6 +377,33 @@ struct P_RALFMain_T_ {
   real_T CANsendfrontright_P2;         // Expression: Identifier
                                           //  Referenced by: '<S1>/CAN send front right'
 
+  real_T Constant_Value_d;             // Expression: 0
+                                          //  Referenced by: '<Root>/Constant'
+
+  real_T CANsendSYNC_P1_Size[2];      // Computed Parameter: CANsendSYNC_P1_Size
+                                         //  Referenced by: '<Root>/CAN send SYNC'
+
+  real_T CANsendSYNC_P1;               // Expression: Port
+                                          //  Referenced by: '<Root>/CAN send SYNC'
+
+  real_T CANsendSYNC_P2_Size[2];      // Computed Parameter: CANsendSYNC_P2_Size
+                                         //  Referenced by: '<Root>/CAN send SYNC'
+
+  real_T CANsendSYNC_P2;               // Expression: Identifier
+                                          //  Referenced by: '<Root>/CAN send SYNC'
+
+  real_T SimulationPace_P1;            // Expression: SimulationPace
+                                          //  Referenced by: '<Root>/Simulation Pace'
+
+  real_T SimulationPace_P2;            // Expression: 1
+                                          //  Referenced by: '<Root>/Simulation Pace'
+
+  real_T SimulationPace_P3;            // Expression: OutputPaceError
+                                          //  Referenced by: '<Root>/Simulation Pace'
+
+  real_T SimulationPace_P4;            // Expression: SampleTime
+                                          //  Referenced by: '<Root>/Simulation Pace'
+
   real32_T Constant_Value_gi;          // Computed Parameter: Constant_Value_gi
                                           //  Referenced by: '<S4>/Constant'
 
@@ -357,10 +412,10 @@ struct P_RALFMain_T_ {
                              //  Referenced by: '<S16>/Magnitude-Angle to Complex'
 
   real32_T Out1_Y0_p;                  // Computed Parameter: Out1_Y0_p
-                                          //  Referenced by: '<S44>/Out1'
+                                          //  Referenced by: '<S45>/Out1'
 
   real32_T Constant_Value_h[8];        // Computed Parameter: Constant_Value_h
-                                          //  Referenced by: '<S48>/Constant'
+                                          //  Referenced by: '<S49>/Constant'
 
   real32_T Gain_Gain_c;                // Computed Parameter: Gain_Gain_c
                                           //  Referenced by: '<S10>/Gain'
@@ -371,7 +426,7 @@ struct P_RALFMain_T_ {
   real32_T Gain2_Gain;                 // Computed Parameter: Gain2_Gain
                                           //  Referenced by: '<S10>/Gain2'
 
-  real32_T Constant_Value_la;          // Computed Parameter: Constant_Value_la
+  real32_T Constant_Value_l;           // Computed Parameter: Constant_Value_l
                                           //  Referenced by: '<S3>/Constant'
 
   real32_T Constant_Value_p;           // Computed Parameter: Constant_Value_p
@@ -381,22 +436,34 @@ struct P_RALFMain_T_ {
                                           //  Referenced by: '<S3>/Switch'
 
   real32_T Saturation3_UpperSat;     // Computed Parameter: Saturation3_UpperSat
-                                        //  Referenced by: '<S48>/Saturation3'
+                                        //  Referenced by: '<S49>/Saturation3'
 
   real32_T Saturation3_LowerSat;     // Computed Parameter: Saturation3_LowerSat
-                                        //  Referenced by: '<S48>/Saturation3'
+                                        //  Referenced by: '<S49>/Saturation3'
+
+  real32_T Gain2_Gain_l;               // Computed Parameter: Gain2_Gain_l
+                                          //  Referenced by: '<S6>/Gain2'
+
+  real32_T Gain_Gain_f;                // Computed Parameter: Gain_Gain_f
+                                          //  Referenced by: '<S6>/Gain'
+
+  real32_T Saturation_UpperSat;       // Computed Parameter: Saturation_UpperSat
+                                         //  Referenced by: '<S6>/Saturation'
+
+  real32_T Saturation_LowerSat;       // Computed Parameter: Saturation_LowerSat
+                                         //  Referenced by: '<S6>/Saturation'
 
   real32_T Constant1_Value_d[4];       // Computed Parameter: Constant1_Value_d
-                                          //  Referenced by: '<S49>/Constant1'
-
-  real32_T Constant1_Value_i[4];       // Computed Parameter: Constant1_Value_i
                                           //  Referenced by: '<S50>/Constant1'
 
-  real32_T Gain3_Gain;                 // Computed Parameter: Gain3_Gain
-                                          //  Referenced by: '<S42>/Gain3'
+  real32_T Constant1_Value_i[4];       // Computed Parameter: Constant1_Value_i
+                                          //  Referenced by: '<S51>/Constant1'
+
+  real32_T Gain3_Gain_i;               // Computed Parameter: Gain3_Gain_i
+                                          //  Referenced by: '<S40>/Gain3'
 
   real32_T Gain2_Gain_d;               // Computed Parameter: Gain2_Gain_d
-                                          //  Referenced by: '<S42>/Gain2'
+                                          //  Referenced by: '<S40>/Gain2'
 
   boolean_T Delay_InitialCondition;// Computed Parameter: Delay_InitialCondition
                                       //  Referenced by: '<S19>/Delay'
@@ -616,11 +683,15 @@ extern "C" {
 //-
 //  These blocks were eliminated from the model due to optimizations:
 //
+//  Block '<Root>/Display' : Unused code path elimination
 //  Block '<S20>/Check Signal Attributes' : Unused code path elimination
 //  Block '<S21>/Check Signal Attributes' : Unused code path elimination
 //  Block '<S26>/x->r' : Unused code path elimination
 //  Block '<S4>/Data Type Conversion3' : Unused code path elimination
 //  Block '<S37>/x->r' : Unused code path elimination
+//  Block '<S6>/Display' : Unused code path elimination
+//  Block '<S6>/Display1' : Unused code path elimination
+//  Block '<S6>/Gain1' : Unused code path elimination
 //  Block '<S2>/Cast To Double1' : Eliminate redundant data type conversion
 //  Block '<S2>/Cast To Double2' : Eliminate redundant data type conversion
 
@@ -644,7 +715,7 @@ extern "C" {
 //  '<S2>'   : 'RALFMain/Joystickdaten'
 //  '<S3>'   : 'RALFMain/Modusumschaltung'
 //  '<S4>'   : 'RALFMain/RALFNavi'
-//  '<S5>'   : 'RALFMain/RALFWinkel'
+//  '<S5>'   : 'RALFMain/Subscribe'
 //  '<S6>'   : 'RALFMain/Winkelregelung'
 //  '<S7>'   : 'RALFMain/Drehzahl Conversion und CAN send/Abfrage DMS-Betaetigung'
 //  '<S8>'   : 'RALFMain/Drehzahl Conversion und CAN send/Abfrage DMS-Betaetigung/Compare To Constant'
@@ -677,21 +748,34 @@ extern "C" {
 //  '<S35>'  : 'RALFMain/RALFNavi/Geschwindigkeitsabfrage/Compare To Constant3'
 //  '<S36>'  : 'RALFMain/RALFNavi/Subscribe/Enabled Subsystem'
 //  '<S37>'  : 'RALFMain/RALFNavi/XY_in_Winkel/Cartesian to Polar'
-//  '<S38>'  : 'RALFMain/RALFWinkel/Radians to Degrees'
-//  '<S39>'  : 'RALFMain/RALFWinkel/Subscribe1'
-//  '<S40>'  : 'RALFMain/RALFWinkel/Subscribe1/Enabled Subsystem'
-//  '<S41>'  : 'RALFMain/Winkelregelung/DMS Safety'
-//  '<S42>'  : 'RALFMain/Winkelregelung/Mecanum_control'
-//  '<S43>'  : 'RALFMain/Winkelregelung/DMS Safety/Abfrage DMS-Betaetigung'
-//  '<S44>'  : 'RALFMain/Winkelregelung/DMS Safety/If Action Subsystem'
-//  '<S45>'  : 'RALFMain/Winkelregelung/DMS Safety/Negation DMS'
-//  '<S46>'  : 'RALFMain/Winkelregelung/DMS Safety/Abfrage DMS-Betaetigung/Compare To Constant'
-//  '<S47>'  : 'RALFMain/Winkelregelung/Mecanum_control/Abfrage DMS-Betaetigung'
-//  '<S48>'  : 'RALFMain/Winkelregelung/Mecanum_control/Fahrtwinkelbewegungsvektor'
-//  '<S49>'  : 'RALFMain/Winkelregelung/Mecanum_control/Posenwinkelbewegungsvektor'
-//  '<S50>'  : 'RALFMain/Winkelregelung/Mecanum_control/WInkelgeschwindigkeitsbewegungsvektor'
-//  '<S51>'  : 'RALFMain/Winkelregelung/Mecanum_control/Abfrage DMS-Betaetigung/Compare To Constant'
-//  '<S52>'  : 'RALFMain/Winkelregelung/Mecanum_control/Fahrtwinkelbewegungsvektor/Polar to Cartesian'
+//  '<S38>'  : 'RALFMain/Subscribe/Enabled Subsystem'
+//  '<S39>'  : 'RALFMain/Winkelregelung/DMS Safety'
+//  '<S40>'  : 'RALFMain/Winkelregelung/Mecanum_control'
+//  '<S41>'  : 'RALFMain/Winkelregelung/Quaternion Conjugate2'
+//  '<S42>'  : 'RALFMain/Winkelregelung/Quaternion Multiplication'
+//  '<S43>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles'
+//  '<S44>'  : 'RALFMain/Winkelregelung/DMS Safety/Abfrage DMS-Betaetigung'
+//  '<S45>'  : 'RALFMain/Winkelregelung/DMS Safety/If Action Subsystem'
+//  '<S46>'  : 'RALFMain/Winkelregelung/DMS Safety/Negation DMS'
+//  '<S47>'  : 'RALFMain/Winkelregelung/DMS Safety/Abfrage DMS-Betaetigung/Compare To Constant'
+//  '<S48>'  : 'RALFMain/Winkelregelung/Mecanum_control/Abfrage DMS-Betaetigung'
+//  '<S49>'  : 'RALFMain/Winkelregelung/Mecanum_control/Fahrtwinkelbewegungsvektor'
+//  '<S50>'  : 'RALFMain/Winkelregelung/Mecanum_control/Posenwinkelbewegungsvektor'
+//  '<S51>'  : 'RALFMain/Winkelregelung/Mecanum_control/WInkelgeschwindigkeitsbewegungsvektor'
+//  '<S52>'  : 'RALFMain/Winkelregelung/Mecanum_control/Abfrage DMS-Betaetigung/Compare To Constant'
+//  '<S53>'  : 'RALFMain/Winkelregelung/Mecanum_control/Fahrtwinkelbewegungsvektor/Polar to Cartesian'
+//  '<S54>'  : 'RALFMain/Winkelregelung/Quaternion Multiplication/q0'
+//  '<S55>'  : 'RALFMain/Winkelregelung/Quaternion Multiplication/q1'
+//  '<S56>'  : 'RALFMain/Winkelregelung/Quaternion Multiplication/q2'
+//  '<S57>'  : 'RALFMain/Winkelregelung/Quaternion Multiplication/q3'
+//  '<S58>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Angle Calculation'
+//  '<S59>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Quaternion Normalize'
+//  '<S60>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Angle Calculation/Protect asincos input'
+//  '<S61>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Angle Calculation/Protect asincos input/If Action Subsystem'
+//  '<S62>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Angle Calculation/Protect asincos input/If Action Subsystem1'
+//  '<S63>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Angle Calculation/Protect asincos input/If Action Subsystem2'
+//  '<S64>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Quaternion Normalize/Quaternion Modulus'
+//  '<S65>'  : 'RALFMain/Winkelregelung/Quaternions to Rotation Angles/Quaternion Normalize/Quaternion Modulus/Quaternion Norm'
 
 #endif                                 // RTW_HEADER_RALFMain_h_
 

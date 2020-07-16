@@ -1,0 +1,239 @@
+Catkin project directory: /home/alf/catkin_ws/src/audio_stream
+WARNING: Package name "3dslam_alfons" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+-- Using CATKIN_DEVEL_PREFIX: /home/alf/catkin_ws/devel
+-- Using CMAKE_PREFIX_PATH: /home/alf/catkin_ws/devel;/opt/ros/kinetic
+-- This workspace overlays: /home/alf/catkin_ws/devel;/opt/ros/kinetic
+-- Found PythonInterp: /usr/bin/python2 (found suitable version "2.7.12", minimum required is "2") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python2
+-- Using Debian Python package layout
+-- Using empy: /usr/bin/empy
+-- Using CATKIN_ENABLE_TESTING: ON
+-- Call enable_testing()
+-- Using CATKIN_TEST_RESULTS_DIR: /home/alf/catkin_ws/build/test_results
+-- Found gtest sources under '/usr/src/gmock': gtests will be built
+-- Found gmock sources under '/usr/src/gmock': gmock will be built
+-- Found PythonInterp: /usr/bin/python2 (found version "2.7.12") 
+-- Using Python nosetests: /usr/bin/nosetests-2.7
+-- catkin 0.7.20
+-- BUILD_SHARED_LIBS is on
+-- BUILD_SHARED_LIBS is on
+WARNING: Package name "3dslam_alfons" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "3dslam_alfons" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- ~~  traversing 15 packages in topological order:
+-- ~~  - iai_kinect2 (metapackage)
+-- ~~  - 3dslam_alfons
+-- ~~  - audio_stream
+-- ~~  - loc_alfons
+-- ~~  - slam_alfons
+-- ~~  - slamgm_alfons
+-- ~~  - kinect2_registration
+-- ~~  - medianfilter_cam_front
+-- ~~  - ralfmain
+-- ~~  - ralfmain_slam
+-- ~~  - kinect2_bridge
+-- ~~  - kinect2_calibration
+-- ~~  - kinect2_viewer
+-- ~~  - ira_laser_tools
+-- ~~  - tracking_alfons
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- +++ processing catkin metapackage: 'iai_kinect2'
+-- ==> add_subdirectory(iai_kinect2/iai_kinect2)
+-- +++ processing catkin package: '3dslam_alfons'
+-- ==> add_subdirectory(3dslam_alfons)
+WARNING: Package name "3dslam_alfons" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+-- +++ processing catkin package: 'audio_stream'
+-- ==> add_subdirectory(audio_stream)
+-- +++ processing catkin package: 'loc_alfons'
+-- ==> add_subdirectory(loc_alfons)
+-- +++ processing catkin package: 'slam_alfons'
+-- ==> add_subdirectory(slam_alfons)
+-- +++ processing catkin package: 'slamgm_alfons'
+-- ==> add_subdirectory(slamgm_alfons)
+-- +++ processing catkin package: 'kinect2_registration'
+-- ==> add_subdirectory(iai_kinect2/kinect2_registration)
+-- Could NOT find OpenCL (missing:  OpenCL_LIBRARY OpenCL_INCLUDE_DIR) 
+-- CPU based depth registration enabled
+-- OpenCL based depth registration disabled
+-- +++ processing catkin package: 'medianfilter_cam_front'
+-- ==> add_subdirectory(medianfilter_cam_front)
+-- +++ processing catkin package: 'ralfmain'
+-- ==> add_subdirectory(ralfmain)
+-- +++ processing catkin package: 'ralfmain_slam'
+-- ==> add_subdirectory(ralfmain_slam)
+-- +++ processing catkin package: 'kinect2_bridge'
+-- ==> add_subdirectory(iai_kinect2/kinect2_bridge)
+-- Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
+-- +++ processing catkin package: 'kinect2_calibration'
+-- ==> add_subdirectory(iai_kinect2/kinect2_calibration)
+-- +++ processing catkin package: 'kinect2_viewer'
+-- ==> add_subdirectory(iai_kinect2/kinect2_viewer)
+-- Boost version: 1.58.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+--   thread
+--   date_time
+--   iostreams
+--   serialization
+--   chrono
+--   atomic
+--   regex
+** WARNING ** io features related to pcap will be disabled
+** WARNING ** io features related to png will be disabled
+-- The imported target "vtkRenderingPythonTkWidgets" references the file
+   "/usr/lib/x86_64-linux-gnu/libvtkRenderingPythonTkWidgets.so"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.2/VTKTargets.cmake"
+but not all the files it references.
+
+-- The imported target "vtk" references the file
+   "/usr/bin/vtk"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.2/VTKTargets.cmake"
+but not all the files it references.
+
+-- looking for PCL_COMMON
+-- looking for PCL_KDTREE
+-- looking for PCL_OCTREE
+-- looking for PCL_SEARCH
+-- looking for PCL_IO
+-- looking for PCL_SAMPLE_CONSENSUS
+-- looking for PCL_FILTERS
+-- looking for PCL_GEOMETRY
+-- looking for PCL_FEATURES
+-- looking for PCL_SEGMENTATION
+-- looking for PCL_SURFACE
+-- looking for PCL_REGISTRATION
+-- looking for PCL_RECOGNITION
+-- looking for PCL_KEYPOINTS
+-- looking for PCL_VISUALIZATION
+-- looking for PCL_PEOPLE
+-- looking for PCL_OUTOFCORE
+-- looking for PCL_TRACKING
+-- looking for PCL_APPS
+-- Could NOT find PCL_APPS (missing:  PCL_APPS_LIBRARY) 
+-- looking for PCL_MODELER
+-- looking for PCL_IN_HAND_SCANNER
+-- looking for PCL_POINT_CLOUD_EDITOR
+-- +++ processing catkin package: 'ira_laser_tools'
+-- ==> add_subdirectory(ira_laser_tools)
+-- Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
+-- Boost version: 1.58.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+--   thread
+--   date_time
+--   iostreams
+--   serialization
+--   chrono
+--   atomic
+--   regex
+** WARNING ** io features related to pcap will be disabled
+** WARNING ** io features related to png will be disabled
+-- The imported target "vtkRenderingPythonTkWidgets" references the file
+   "/usr/lib/x86_64-linux-gnu/libvtkRenderingPythonTkWidgets.so"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.2/VTKTargets.cmake"
+but not all the files it references.
+
+-- The imported target "vtk" references the file
+   "/usr/bin/vtk"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.2/VTKTargets.cmake"
+but not all the files it references.
+
+-- looking for PCL_COMMON
+-- looking for PCL_KDTREE
+-- looking for PCL_OCTREE
+-- looking for PCL_SEARCH
+-- looking for PCL_IO
+-- looking for PCL_SAMPLE_CONSENSUS
+-- looking for PCL_FILTERS
+-- looking for PCL_GEOMETRY
+-- looking for PCL_FEATURES
+-- looking for PCL_SEGMENTATION
+-- looking for PCL_SURFACE
+-- looking for PCL_REGISTRATION
+-- looking for PCL_RECOGNITION
+-- looking for PCL_KEYPOINTS
+-- looking for PCL_VISUALIZATION
+-- looking for PCL_PEOPLE
+-- looking for PCL_OUTOFCORE
+-- looking for PCL_TRACKING
+-- looking for PCL_APPS
+-- Could NOT find PCL_APPS (missing:  PCL_APPS_LIBRARY) 
+-- looking for PCL_MODELER
+-- looking for PCL_IN_HAND_SCANNER
+-- looking for PCL_POINT_CLOUD_EDITOR
+-- +++ processing catkin package: 'tracking_alfons'
+-- ==> add_subdirectory(tracking_alfons)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/alf/catkin_ws/build
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target roscpp_generate_messages_py
+[  0%] Built target roscpp_generate_messages_lisp
+[  0%] Built target rosgraph_msgs_generate_messages_nodejs
+[  0%] Built target rosgraph_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target roscpp_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target rosgraph_msgs_generate_messages_lisp
+[  0%] Built target roscpp_generate_messages_nodejs
+[  0%] Built target rosgraph_msgs_generate_messages_cpp
+[  0%] Built target rosgraph_msgs_generate_messages_py
+[  0%] Built target roscpp_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_eus
+Scanning dependencies of target audio_stream_node
+[ 10%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/audio_stream_data.cpp.o
+[ 30%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/ert_main.cpp.o
+[ 30%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/audio_stream.cpp.o
+[ 40%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/slros_initialize.cpp.o
+[ 50%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/slros_busmsg_conversion.cpp.o
+[ 60%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/linuxinitialize.cpp.o
+[ 70%] Building CXX object audio_stream/CMakeFiles/audio_stream_node.dir/slros_generic_param.cpp.o
+[ 80%] Linking CXX executable /home/alf/catkin_ws/devel/lib/audio_stream/audio_stream_node
+/usr/bin/c++    -fpermissive -O3 -DNDEBUG   CMakeFiles/audio_stream_node.dir/DAHostLib_rtw.c.o CMakeFiles/audio_stream_node.dir/HostLib_Audio.c.o CMakeFiles/audio_stream_node.dir/ert_main.cpp.o CMakeFiles/audio_stream_node.dir/audio_stream.cpp.o CMakeFiles/audio_stream_node.dir/audio_stream_data.cpp.o CMakeFiles/audio_stream_node.dir/linuxinitialize.cpp.o CMakeFiles/audio_stream_node.dir/slros_busmsg_conversion.cpp.o CMakeFiles/audio_stream_node.dir/slros_initialize.cpp.o CMakeFiles/audio_stream_node.dir/slros_generic_param.cpp.o  -o /home/alf/catkin_ws/devel/lib/audio_stream/audio_stream_node -rdynamic /opt/ros/kinetic/lib/libroscpp.so -lboost_filesystem -lboost_signals /opt/ros/kinetic/lib/librosconsole.so /opt/ros/kinetic/lib/librosconsole_log4cxx.so /opt/ros/kinetic/lib/librosconsole_backend_interface.so -llog4cxx -lboost_regex /opt/ros/kinetic/lib/libxmlrpcpp.so /opt/ros/kinetic/lib/libroscpp_serialization.so /opt/ros/kinetic/lib/librostime.so /opt/ros/kinetic/lib/libcpp_common.so -lboost_system -lboost_thread -lboost_chrono -lboost_date_time -lboost_atomic -lpthread -lconsole_bridge -lrt -Wl,-rpath,/opt/ros/kinetic/lib 
+/usr/bin/ld: CMakeFiles/audio_stream_node.dir/DAHostLib_rtw.c.o: undefined reference to symbol 'dlclose@@GLIBC_2.2.5'
+//lib/x86_64-linux-gnu/libdl.so.2: error adding symbols: DSO missing from command line
+collect2: error: ld returned 1 exit status
+audio_stream/CMakeFiles/audio_stream_node.dir/build.make:324: recipe for target '/home/alf/catkin_ws/devel/lib/audio_stream/audio_stream_node' failed
+make[3]: *** [/home/alf/catkin_ws/devel/lib/audio_stream/audio_stream_node] Error 1
+CMakeFiles/Makefile2:1158: recipe for target 'audio_stream/CMakeFiles/audio_stream_node.dir/all' failed
+make[2]: *** [audio_stream/CMakeFiles/audio_stream_node.dir/all] Error 2
+CMakeFiles/Makefile2:1170: recipe for target 'audio_stream/CMakeFiles/audio_stream_node.dir/rule' failed
+make[1]: *** [audio_stream/CMakeFiles/audio_stream_node.dir/rule] Error 2
+Makefile:563: recipe for target 'audio_stream_node' failed
+make: *** [audio_stream_node] Error 2
+Base path: /home/alf/catkin_ws
+Source space: /home/alf/catkin_ws/src
+Build space: /home/alf/catkin_ws/build
+Devel space: /home/alf/catkin_ws/devel
+Install space: /home/alf/catkin_ws/install
+####
+#### Running command: "make cmake_check_build_system" in "/home/alf/catkin_ws/build"
+####
+####
+#### Running command: "make audio_stream_node -j8 -l8" in "/home/alf/catkin_ws/build"
+####
+Invoking "make audio_stream_node -j8 -l8" failed

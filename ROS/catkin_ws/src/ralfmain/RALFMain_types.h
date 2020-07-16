@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'RALFMain'.
 //
-// Model version                  : 1.180
+// Model version                  : 1.188
 // Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
-// C/C++ source code generated on : Thu Apr  9 09:34:26 2020
+// C/C++ source code generated on : Mon Apr 27 13:52:35 2020
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -149,19 +149,49 @@ typedef struct {
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_RALFMain_geometry_msgs_PoseStamped_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_RALFMain_geometry_msgs_PoseStamped_
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance_
 
-// MsgType=geometry_msgs/PoseStamped
+// MsgType=geometry_msgs/PoseWithCovariance
+typedef struct {
+  real_T Covariance[36];
+
+  // MsgType=geometry_msgs/Pose
+  SL_Bus_RALFMain_geometry_msgs_Pose Pose;
+} SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped_
+
+// MsgType=geometry_msgs/PoseWithCovarianceStamped
 typedef struct {
   // MsgType=std_msgs/Header
   SL_Bus_RALFMain_std_msgs_Header Header;
 
-  // MsgType=geometry_msgs/Pose
-  SL_Bus_RALFMain_geometry_msgs_Pose Pose;
-} SL_Bus_RALFMain_geometry_msgs_PoseStamped;
+  // MsgType=geometry_msgs/PoseWithCovariance
+  SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance Pose;
+} SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped;
 
 #endif
+
+#ifndef struct_tag_vxHWSOYrO9xtYchIOe7EKG
+#define struct_tag_vxHWSOYrO9xtYchIOe7EKG
+
+struct tag_vxHWSOYrO9xtYchIOe7EKG
+{
+  int32_T isInitialized;
+};
+
+#endif                                 //struct_tag_vxHWSOYrO9xtYchIOe7EKG
+
+#ifndef typedef_robotics_slcore_internal_bloc_T
+#define typedef_robotics_slcore_internal_bloc_T
+
+typedef struct tag_vxHWSOYrO9xtYchIOe7EKG robotics_slcore_internal_bloc_T;
+
+#endif                                 //typedef_robotics_slcore_internal_bloc_T
 
 #ifndef struct_tag_9SewJ4y3IXNs5GrZti8qkG
 #define struct_tag_9SewJ4y3IXNs5GrZti8qkG
@@ -181,23 +211,6 @@ struct tag_9SewJ4y3IXNs5GrZti8qkG
 typedef struct tag_9SewJ4y3IXNs5GrZti8qkG ros_slros_internal_block_Subs_T;
 
 #endif                                 //typedef_ros_slros_internal_block_Subs_T
-
-#ifndef struct_tag_vxHWSOYrO9xtYchIOe7EKG
-#define struct_tag_vxHWSOYrO9xtYchIOe7EKG
-
-struct tag_vxHWSOYrO9xtYchIOe7EKG
-{
-  int32_T isInitialized;
-};
-
-#endif                                 //struct_tag_vxHWSOYrO9xtYchIOe7EKG
-
-#ifndef typedef_robotics_slcore_internal_bloc_T
-#define typedef_robotics_slcore_internal_bloc_T
-
-typedef struct tag_vxHWSOYrO9xtYchIOe7EKG robotics_slcore_internal_bloc_T;
-
-#endif                                 //typedef_robotics_slcore_internal_bloc_T
 
 // Parameters (default storage)
 typedef struct P_RALFMain_T_ P_RALFMain_T;

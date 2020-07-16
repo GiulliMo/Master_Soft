@@ -1,0 +1,45 @@
+<launch>
+<!--Lidar--> 
+
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen" clear_params="true">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+  <param name="serial_baudrate"     type="int"    value="115200"/><!-- A1/A2 -->
+  <!--<param name="serial_baudrate"     type="int"    value="256000"/>--><!--A3 -->
+  <param name="frame_id"            type="string" value="laser"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+  <remap from="/scan" to="/base_scan"/>
+  </node>
+
+
+  <arg name="limit" default="0.2" />
+  <param name="/leg_detector/leg_reliability_limit" value="$(arg limit)" type="double"/>
+  <include file="/home/alf/catkin_ws/devel/lib/tracking_alfons/leg_detector.launch" />
+  <!--<include file="/opt/ros/kinetic/share/leg_detector/launch/filtered_leg_detector.launch" />
+  <node name="velocity_tracker" pkg="people_velocity_tracker" type="tracker.py" respawn="true" />-->
+
+  <param name="people_tracker/fixed_frame" type="string" value="odom_combined"/>
+<param name="people_tracker/freq" value="10.0"/>
+<param name="people_tracker/start_distance_min" value="0.5"/>
+<param name="people_tracker/reliability_threshold" value="0.75"/>
+<param name="people_tracker/follow_one_person" type="bool" value="true"/>
+
+<!-- Particle without velocity model covariances -->
+<!--param name="people_tracker/sys_sigma_pos_x" value="0.2"/>
+<param name="people_tracker/sys_sigma_pos_y" value="0.2"/>
+<param name="people_tracker/sys_sigma_pos_z" value="0.0001"/>
+<param name="people_tracker/sys_sigma_vel_x" value="0.00000001"/>
+<param name="people_tracker/sys_sigma_vel_y" value="0.00000001"/>
+<param name="people_tracker/sys_sigma_vel_z" value="0.00000001"/-->
+
+
+<!-- Kalman with velocity model covariances -->
+<param name="people_tracker/sys_sigma_pos_x" value="0.8"/>
+<param name="people_tracker/sys_sigma_pos_y" value="0.8"/>
+<param name="people_tracker/sys_sigma_pos_z" value="0.3"/>
+<param name="people_tracker/sys_sigma_vel_x" value="0.5"/>
+<param name="people_tracker/sys_sigma_vel_y" value="0.5"/>
+<param name="people_tracker/sys_sigma_vel_z" value="0.5"/>
+
+<!--<node pkg="people_tracking_filter" type="people_tracker" name="people_tracker" output="screen"/>-->
+</launch>

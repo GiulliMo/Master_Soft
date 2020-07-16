@@ -354,7 +354,7 @@ real_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:570')" name="code2model" class="code2model">&lt;S49&gt;/Compare To Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:570')" name="code2model" class="code2model">&lt;S53&gt;/Compare To Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.CompareToConstant_const
@@ -504,7 +504,7 @@ real32_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:693')" name="code2model" class="code2model">&lt;S45&gt;/Compare To Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:693')" name="code2model" class="code2model">&lt;S49&gt;/Compare To Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.CompareToConstant_const_l
@@ -526,6 +526,36 @@ RALFMain_SLAM_P.CompareToConstant_const_g
 </td>
 <td width="21%" align="left" valign="top">
 real32_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="even">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1263')" name="code2model" class="code2model">&lt;S5&gt;/S-R Flip-Flop</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.SRFlipFlop_initial_condition
+</td>
+<td width="21%" align="left" valign="top">
+boolean_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1265')" name="code2model" class="code2model">&lt;S5&gt;/S-R Flip-Flop1</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.SRFlipFlop1_initial_condition
+</td>
+<td width="21%" align="left" valign="top">
+boolean_T
 </td>
 <td width="10%" align="right" valign="top">
 1
@@ -564,13 +594,13 @@ uint8_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:990')" name="code2model" class="code2model">&lt;S18&gt;/Counter</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1247:55')" name="code2model" class="code2model">&lt;S42&gt;/Out1</a>
 </td>
 <td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Counter_InitialCount_n
+RALFMain_SLAM_P.Out1_Y0
 </td>
 <td width="21%" align="left" valign="top">
-uint8_T
+SL_Bus_RALFMain_SLAM_PoseWithCovarianceStamped_l4ivcs
 </td>
 <td width="10%" align="right" valign="top">
 1
@@ -579,10 +609,40 @@ uint8_T
 </tr>
 <tr class="odd">
 <td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1247:51')" name="code2model" class="code2model">&lt;S40&gt;/Constant</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Constant_Value
+</td>
+<td width="21%" align="left" valign="top">
+SL_Bus_RALFMain_SLAM_PoseWithCovarianceStamped_l4ivcs
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="even">
+<td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:869:55')" name="code2model" class="code2model">&lt;S27&gt;/Out1</a>
 </td>
 <td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Out1_Y0
+RALFMain_SLAM_P.Out1_Y0_b
+</td>
+<td width="21%" align="left" valign="top">
+SL_Bus_RALFMain_SLAM_sensor_msgs_Joy
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:869:51')" name="code2model" class="code2model">&lt;S15&gt;/Constant</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Constant_Value_j
 </td>
 <td width="21%" align="left" valign="top">
 SL_Bus_RALFMain_SLAM_sensor_msgs_Joy
@@ -593,21 +653,6 @@ SL_Bus_RALFMain_SLAM_sensor_msgs_Joy
 
 </tr>
 <tr class="even">
-<td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:869:51')" name="code2model" class="code2model">&lt;S15&gt;/Constant</a>
-</td>
-<td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Constant_Value
-</td>
-<td width="21%" align="left" valign="top">
-SL_Bus_RALFMain_SLAM_sensor_msgs_Joy
-</td>
-<td width="10%" align="right" valign="top">
-1
-</td>
-
-</tr>
-<tr class="odd">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:860:33')" name="code2model" class="code2model">&lt;S11&gt;/Constant</a>
 </td>
@@ -622,9 +667,9 @@ SL_Bus_RALFMain_SLAM_sensor_msgs_Joy
 </td>
 
 </tr>
-<tr class="even">
+<tr class="odd">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:876:55')" name="code2model" class="code2model">&lt;S39&gt;/Out1</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:876:55')" name="code2model" class="code2model">&lt;S43&gt;/Out1</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Out1_Y0_i
@@ -637,9 +682,9 @@ SL_Bus_RALFMain_SLAM_geometry_msgs_PoseStamped
 </td>
 
 </tr>
-<tr class="odd">
+<tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:876:51')" name="code2model" class="code2model">&lt;S38&gt;/Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:876:51')" name="code2model" class="code2model">&lt;S41&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant_Value_l
@@ -652,7 +697,7 @@ SL_Bus_RALFMain_SLAM_geometry_msgs_PoseStamped
 </td>
 
 </tr>
-<tr class="even">
+<tr class="odd">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:963:55')" name="code2model" class="code2model">&lt;S36&gt;/Out1</a>
 </td>
@@ -667,7 +712,7 @@ SL_Bus_RALFMain_SLAM_geometry_msgs_Twist
 </td>
 
 </tr>
-<tr class="odd">
+<tr class="even">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:963:51')" name="code2model" class="code2model">&lt;S30&gt;/Constant</a>
 </td>
@@ -682,27 +727,12 @@ SL_Bus_RALFMain_SLAM_geometry_msgs_Twist
 </td>
 
 </tr>
-<tr class="even">
+<tr class="odd">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1036')" name="code2model" class="code2model">&lt;S2&gt;/Gain1</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1245')" name="code2model" class="code2model">&lt;S5&gt;/Gain1</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Gain1_Gain
-</td>
-<td width="21%" align="left" valign="top">
-real_T
-</td>
-<td width="10%" align="right" valign="top">
-1
-</td>
-
-</tr>
-<tr class="odd">
-<td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1035')" name="code2model" class="code2model">&lt;S2&gt;/Gain</a>
-</td>
-<td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Gain_Gain
 </td>
 <td width="21%" align="left" valign="top">
 real_T
@@ -717,7 +747,7 @@ real_T
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:1128')" name="code2model" class="code2model">&lt;S5&gt;/Gain</a>
 </td>
 <td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Gain_Gain_n
+RALFMain_SLAM_P.Gain_Gain
 </td>
 <td width="21%" align="left" valign="top">
 real_T
@@ -729,7 +759,37 @@ real_T
 </tr>
 <tr class="odd">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1180:14:46:101')" name="code2model" class="code2model">&lt;S62&gt;/Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1036')" name="code2model" class="code2model">&lt;S2&gt;/Gain1</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Gain1_Gain_k
+</td>
+<td width="21%" align="left" valign="top">
+real_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="even">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1035')" name="code2model" class="code2model">&lt;S2&gt;/Gain</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Gain_Gain_j
+</td>
+<td width="21%" align="left" valign="top">
+real_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1180:14:46:101')" name="code2model" class="code2model">&lt;S66&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant_Value_e
@@ -744,7 +804,7 @@ real_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1180:14:46:105')" name="code2model" class="code2model">&lt;S63&gt;/Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1180:14:46:105')" name="code2model" class="code2model">&lt;S67&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant_Value_o
@@ -837,7 +897,7 @@ real_T
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:1135')" name="code2model" class="code2model">&lt;S6&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Constant_Value_j
+RALFMain_SLAM_P.Constant_Value_jl
 </td>
 <td width="21%" align="left" valign="top">
 real_T
@@ -864,7 +924,7 @@ real_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:605')" name="code2model" class="code2model">&lt;S47&gt;/Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:605')" name="code2model" class="code2model">&lt;S51&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant_Value_f
@@ -1074,6 +1134,21 @@ real_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1286')" name="code2model" class="code2model">&lt;S3&gt;/String Constant</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.StringConstant_String
+</td>
+<td width="21%" align="left" valign="top">
+char_T
+</td>
+<td width="10%" align="right" valign="top">
+[256]
+</td>
+
+</tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:1008')" name="code2model" class="code2model">&lt;S4&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
@@ -1087,7 +1162,37 @@ real32_T
 </td>
 
 </tr>
+<tr class="even">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1262')" name="code2model" class="code2model">&lt;S5&gt;/Constant2</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Constant2_Value_c
+</td>
+<td width="21%" align="left" valign="top">
+real32_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
 <tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1261')" name="code2model" class="code2model">&lt;S5&gt;/Constant1</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Constant1_Value_a
+</td>
+<td width="21%" align="left" valign="top">
+real32_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="even">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:63')" name="code2model" class="code2model">&lt;S16&gt;/Magnitude-Angle to Complex</a>
 </td>
@@ -1102,9 +1207,39 @@ real32_T
 </td>
 
 </tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1253')" name="code2model" class="code2model">&lt;S5&gt;/Switch1</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Switch1_Threshold
+</td>
+<td width="21%" align="left" valign="top">
+real32_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:509')" name="code2model" class="code2model">&lt;S46&gt;/Out1</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1252')" name="code2model" class="code2model">&lt;S5&gt;/Switch</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Switch_Threshold
+</td>
+<td width="21%" align="left" valign="top">
+real32_T
+</td>
+<td width="10%" align="right" valign="top">
+1
+</td>
+
+</tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:509')" name="code2model" class="code2model">&lt;S50&gt;/Out1</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Out1_Y0_p
@@ -1117,9 +1252,9 @@ real32_T
 </td>
 
 </tr>
-<tr class="odd">
+<tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:571')" name="code2model" class="code2model">&lt;S50&gt;/Constant</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:571')" name="code2model" class="code2model">&lt;S54&gt;/Constant</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant_Value_h
@@ -1132,7 +1267,7 @@ real32_T
 </td>
 
 </tr>
-<tr class="even">
+<tr class="odd">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:851')" name="code2model" class="code2model">&lt;S10&gt;/Gain</a>
 </td>
@@ -1147,7 +1282,7 @@ real32_T
 </td>
 
 </tr>
-<tr class="odd">
+<tr class="even">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:852')" name="code2model" class="code2model">&lt;S10&gt;/Gain1</a>
 </td>
@@ -1162,7 +1297,7 @@ real32_T
 </td>
 
 </tr>
-<tr class="even">
+<tr class="odd">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:853')" name="code2model" class="code2model">&lt;S10&gt;/Gain2</a>
 </td>
@@ -1177,7 +1312,7 @@ real32_T
 </td>
 
 </tr>
-<tr class="odd">
+<tr class="even">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:799')" name="code2model" class="code2model">&lt;S3&gt;/Constant</a>
 </td>
@@ -1192,27 +1327,12 @@ real32_T
 </td>
 
 </tr>
-<tr class="even">
-<td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:993')" name="code2model" class="code2model">&lt;S18&gt;/Constant</a>
-</td>
-<td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Constant_Value_p
-</td>
-<td width="21%" align="left" valign="top">
-real32_T
-</td>
-<td width="10%" align="right" valign="top">
-1
-</td>
-
-</tr>
 <tr class="odd">
 <td width="42%" align="left" valign="top">
 <a href="matlab:coder.internal.code2model('RALFMain_SLAM:1004')" name="code2model" class="code2model">&lt;S3&gt;/Switch</a>
 </td>
 <td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Switch_Threshold
+RALFMain_SLAM_P.Switch_Threshold_f
 </td>
 <td width="21%" align="left" valign="top">
 real32_T
@@ -1224,7 +1344,7 @@ real32_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:583')" name="code2model" class="code2model">&lt;S50&gt;/Saturation3</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:583')" name="code2model" class="code2model">&lt;S54&gt;/Saturation3</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Saturation3_UpperSat
@@ -1239,7 +1359,7 @@ real32_T
 </tr>
 <tr class="odd">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:583')" name="code2model" class="code2model">&lt;S50&gt;/Saturation3</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:583')" name="code2model" class="code2model">&lt;S54&gt;/Saturation3</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Saturation3_LowerSat
@@ -1314,7 +1434,7 @@ real32_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:673')" name="code2model" class="code2model">&lt;S51&gt;/Constant1</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:673')" name="code2model" class="code2model">&lt;S55&gt;/Constant1</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant1_Value_d
@@ -1329,7 +1449,7 @@ real32_T
 </tr>
 <tr class="odd">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:794')" name="code2model" class="code2model">&lt;S52&gt;/Constant1</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:794')" name="code2model" class="code2model">&lt;S56&gt;/Constant1</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Constant1_Value_i
@@ -1344,7 +1464,7 @@ real32_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:579')" name="code2model" class="code2model">&lt;S41&gt;/Gain3</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:579')" name="code2model" class="code2model">&lt;S45&gt;/Gain3</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Gain3_Gain_i
@@ -1359,7 +1479,7 @@ real32_T
 </tr>
 <tr class="odd">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:578')" name="code2model" class="code2model">&lt;S41&gt;/Gain2</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:578')" name="code2model" class="code2model">&lt;S45&gt;/Gain2</a>
 </td>
 <td width="26%" align="left" valign="top">
 RALFMain_SLAM_P.Gain2_Gain_d
@@ -1374,16 +1494,31 @@ real32_T
 </tr>
 <tr class="even">
 <td width="42%" align="left" valign="top">
-<a href="matlab:coder.internal.code2model('RALFMain_SLAM:989:5')" name="code2model" class="code2model">&lt;S19&gt;/Delay</a>
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1263:135')" name="code2model" class="code2model">&lt;S38&gt;/Logic</a>
 </td>
 <td width="26%" align="left" valign="top">
-RALFMain_SLAM_P.Delay_InitialCondition
+RALFMain_SLAM_P.Logic_table
 </td>
 <td width="21%" align="left" valign="top">
 boolean_T
 </td>
 <td width="10%" align="right" valign="top">
-1
+[8  2]
+</td>
+
+</tr>
+<tr class="odd">
+<td width="42%" align="left" valign="top">
+<a href="matlab:coder.internal.code2model('RALFMain_SLAM:1265:135')" name="code2model" class="code2model">&lt;S39&gt;/Logic</a>
+</td>
+<td width="26%" align="left" valign="top">
+RALFMain_SLAM_P.Logic_table_e
+</td>
+<td width="21%" align="left" valign="top">
+boolean_T
+</td>
+<td width="10%" align="right" valign="top">
+[8  2]
 </td>
 
 </tr>

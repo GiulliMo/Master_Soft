@@ -100,7 +100,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o
  /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
  /opt/ros/kinetic/include/geometry_msgs/Point.h
  /opt/ros/kinetic/include/geometry_msgs/Pose.h
- /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
  /opt/ros/kinetic/include/geometry_msgs/Twist.h
  /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -215,7 +216,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o
  /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
  /opt/ros/kinetic/include/geometry_msgs/Point.h
  /opt/ros/kinetic/include/geometry_msgs/Pose.h
- /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
  /opt/ros/kinetic/include/geometry_msgs/Twist.h
  /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -331,7 +333,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o
  /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
  /opt/ros/kinetic/include/geometry_msgs/Point.h
  /opt/ros/kinetic/include/geometry_msgs/Pose.h
- /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
  /opt/ros/kinetic/include/geometry_msgs/Twist.h
  /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -471,7 +474,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o
  /home/alf/catkin_ws/src/ralfmain/tmwtypes.h
  /opt/ros/kinetic/include/geometry_msgs/Point.h
  /opt/ros/kinetic/include/geometry_msgs/Pose.h
- /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
  /opt/ros/kinetic/include/geometry_msgs/Twist.h
  /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -619,7 +623,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o
  /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
  /opt/ros/kinetic/include/geometry_msgs/Point.h
  /opt/ros/kinetic/include/geometry_msgs/Pose.h
- /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
  /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
  /opt/ros/kinetic/include/geometry_msgs/Twist.h
  /opt/ros/kinetic/include/geometry_msgs/Vector3.h

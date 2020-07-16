@@ -1,0 +1,8 @@
+prefix=/home/alf/catkin_ws2/devel
+
+Name: command_matcher
+Description: Description of command_matcher
+Version: 0.6.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp std_msgs

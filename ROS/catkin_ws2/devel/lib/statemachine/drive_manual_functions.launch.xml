@@ -1,0 +1,9 @@
+<launch>
+<!--RALFMain-->
+
+<node name="ralfmain"  pkg="ralfmain_slam"  type="ralfmain_slam_node" clear_params="true">
+  </node>
+<param name="mode" value="manual" />
+
+
+</launch>

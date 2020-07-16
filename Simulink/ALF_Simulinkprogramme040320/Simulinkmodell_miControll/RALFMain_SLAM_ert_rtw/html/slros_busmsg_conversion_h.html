@@ -25,85 +25,101 @@
 <tr name="7" id="7">
 <td><a id="l7" class='ln'>7</a></td><td><span class="pp">#include &lt;geometry_msgs/PoseStamped.h&gt;</span></td></tr>
 <tr name="8" id="8">
-<td><a id="l8" class='ln'>8</a></td><td><span class="pp">#include &lt;geometry_msgs/Quaternion.h&gt;</span></td></tr>
+<td><a id="l8" class='ln'>8</a></td><td><span class="pp">#include &lt;geometry_msgs/PoseWithCovariance.h&gt;</span></td></tr>
 <tr name="9" id="9">
-<td><a id="l9" class='ln'>9</a></td><td><span class="pp">#include &lt;geometry_msgs/Twist.h&gt;</span></td></tr>
+<td><a id="l9" class='ln'>9</a></td><td><span class="pp">#include &lt;geometry_msgs/PoseWithCovarianceStamped.h&gt;</span></td></tr>
 <tr name="10" id="10">
-<td><a id="l10" class='ln'>10</a></td><td><span class="pp">#include &lt;geometry_msgs/Vector3.h&gt;</span></td></tr>
+<td><a id="l10" class='ln'>10</a></td><td><span class="pp">#include &lt;geometry_msgs/Quaternion.h&gt;</span></td></tr>
 <tr name="11" id="11">
-<td><a id="l11" class='ln'>11</a></td><td><span class="pp">#include &lt;ros/time.h&gt;</span></td></tr>
+<td><a id="l11" class='ln'>11</a></td><td><span class="pp">#include &lt;geometry_msgs/Twist.h&gt;</span></td></tr>
 <tr name="12" id="12">
-<td><a id="l12" class='ln'>12</a></td><td><span class="pp">#include &lt;sensor_msgs/Joy.h&gt;</span></td></tr>
+<td><a id="l12" class='ln'>12</a></td><td><span class="pp">#include &lt;geometry_msgs/Vector3.h&gt;</span></td></tr>
 <tr name="13" id="13">
-<td><a id="l13" class='ln'>13</a></td><td><span class="pp">#include &lt;std_msgs/Header.h&gt;</span></td></tr>
+<td><a id="l13" class='ln'>13</a></td><td><span class="pp">#include &lt;ros/time.h&gt;</span></td></tr>
 <tr name="14" id="14">
-<td><a id="l14" class='ln'>14</a></td><td><span class="pp">#include "RALFMain_SLAM_types.h"</span></td></tr>
+<td><a id="l14" class='ln'>14</a></td><td><span class="pp">#include &lt;sensor_msgs/Joy.h&gt;</span></td></tr>
 <tr name="15" id="15">
-<td><a id="l15" class='ln'>15</a></td><td><span class="pp">#include "slros_msgconvert_utils.h"</span></td></tr>
+<td><a id="l15" class='ln'>15</a></td><td><span class="pp">#include &lt;std_msgs/Header.h&gt;</span></td></tr>
 <tr name="16" id="16">
-<td><a id="l16" class='ln'>16</a></td><td></td></tr>
+<td><a id="l16" class='ln'>16</a></td><td><span class="pp">#include "RALFMain_SLAM_types.h"</span></td></tr>
 <tr name="17" id="17">
-<td><a id="l17" class='ln'>17</a></td><td></td></tr>
+<td><a id="l17" class='ln'>17</a></td><td><span class="pp">#include "slros_msgconvert_utils.h"</span></td></tr>
 <tr name="18" id="18">
-<td><a id="l18" class='ln'>18</a></td><td><span class="kw">void</span> <a id="18c6" class="tk">convertFromBus</a>(<a id="18c21" class="tk">geometry_msgs</a>::<a id="18c36" class="tk">Point</a><a id="18c41" class="tk">*</a> <a id="18c43" class="tk">msgPtr</a>, <a id="18c51" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Point</a> <span class="kw">const</span><a id="18c97" class="tk">*</a> <a id="18c99" class="tk">busPtr</a>);</td></tr>
+<td><a id="l18" class='ln'>18</a></td><td></td></tr>
 <tr name="19" id="19">
-<td><a id="l19" class='ln'>19</a></td><td><span class="kw">void</span> <a id="19c6" class="tk">convertToBus</a>(<a id="19c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Point</a><a id="19c59" class="tk">*</a> <a id="19c61" class="tk">busPtr</a>, <a id="19c69" class="tk">geometry_msgs</a>::<a id="19c84" class="tk">Point</a> <span class="kw">const</span><a id="19c95" class="tk">*</a> <a id="19c97" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l19" class='ln'>19</a></td><td></td></tr>
 <tr name="20" id="20">
-<td><a id="l20" class='ln'>20</a></td><td></td></tr>
+<td><a id="l20" class='ln'>20</a></td><td><span class="kw">void</span> <a id="20c6" class="tk">convertFromBus</a>(<a id="20c21" class="tk">geometry_msgs</a>::<a id="20c36" class="tk">Point</a><a id="20c41" class="tk">*</a> <a id="20c43" class="tk">msgPtr</a>, <a id="20c51" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Point</a> <span class="kw">const</span><a id="20c97" class="tk">*</a> <a id="20c99" class="tk">busPtr</a>);</td></tr>
 <tr name="21" id="21">
-<td><a id="l21" class='ln'>21</a></td><td><span class="kw">void</span> <a id="21c6" class="tk">convertFromBus</a>(<a id="21c21" class="tk">geometry_msgs</a>::<a id="21c36" class="tk">Pose</a><a id="21c40" class="tk">*</a> <a id="21c42" class="tk">msgPtr</a>, <a id="21c50" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Pose</a> <span class="kw">const</span><a id="21c95" class="tk">*</a> <a id="21c97" class="tk">busPtr</a>);</td></tr>
+<td><a id="l21" class='ln'>21</a></td><td><span class="kw">void</span> <a id="21c6" class="tk">convertToBus</a>(<a id="21c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Point</a><a id="21c59" class="tk">*</a> <a id="21c61" class="tk">busPtr</a>, <a id="21c69" class="tk">geometry_msgs</a>::<a id="21c84" class="tk">Point</a> <span class="kw">const</span><a id="21c95" class="tk">*</a> <a id="21c97" class="tk">msgPtr</a>);</td></tr>
 <tr name="22" id="22">
-<td><a id="l22" class='ln'>22</a></td><td><span class="kw">void</span> <a id="22c6" class="tk">convertToBus</a>(<a id="22c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Pose</a><a id="22c58" class="tk">*</a> <a id="22c60" class="tk">busPtr</a>, <a id="22c68" class="tk">geometry_msgs</a>::<a id="22c83" class="tk">Pose</a> <span class="kw">const</span><a id="22c93" class="tk">*</a> <a id="22c95" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l22" class='ln'>22</a></td><td></td></tr>
 <tr name="23" id="23">
-<td><a id="l23" class='ln'>23</a></td><td></td></tr>
+<td><a id="l23" class='ln'>23</a></td><td><span class="kw">void</span> <a id="23c6" class="tk">convertFromBus</a>(<a id="23c21" class="tk">geometry_msgs</a>::<a id="23c36" class="tk">Pose</a><a id="23c40" class="tk">*</a> <a id="23c42" class="tk">msgPtr</a>, <a id="23c50" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Pose</a> <span class="kw">const</span><a id="23c95" class="tk">*</a> <a id="23c97" class="tk">busPtr</a>);</td></tr>
 <tr name="24" id="24">
-<td><a id="l24" class='ln'>24</a></td><td><span class="kw">void</span> <a id="24c6" class="tk">convertFromBus</a>(<a id="24c21" class="tk">geometry_msgs</a>::<a id="24c36" class="tk">PoseStamped</a><a id="24c47" class="tk">*</a> <a id="24c49" class="tk">msgPtr</a>, <a id="24c57" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_PoseStamped</a> <span class="kw">const</span><a id="24c109" class="tk">*</a> <a id="24c111" class="tk">busPtr</a>);</td></tr>
+<td><a id="l24" class='ln'>24</a></td><td><span class="kw">void</span> <a id="24c6" class="tk">convertToBus</a>(<a id="24c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Pose</a><a id="24c58" class="tk">*</a> <a id="24c60" class="tk">busPtr</a>, <a id="24c68" class="tk">geometry_msgs</a>::<a id="24c83" class="tk">Pose</a> <span class="kw">const</span><a id="24c93" class="tk">*</a> <a id="24c95" class="tk">msgPtr</a>);</td></tr>
 <tr name="25" id="25">
-<td><a id="l25" class='ln'>25</a></td><td><span class="kw">void</span> <a id="25c6" class="tk">convertToBus</a>(<a id="25c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_PoseStamped</a><a id="25c65" class="tk">*</a> <a id="25c67" class="tk">busPtr</a>, <a id="25c75" class="tk">geometry_msgs</a>::<a id="25c90" class="tk">PoseStamped</a> <span class="kw">const</span><a id="25c107" class="tk">*</a> <a id="25c109" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l25" class='ln'>25</a></td><td></td></tr>
 <tr name="26" id="26">
-<td><a id="l26" class='ln'>26</a></td><td></td></tr>
+<td><a id="l26" class='ln'>26</a></td><td><span class="kw">void</span> <a id="26c6" class="tk">convertFromBus</a>(<a id="26c21" class="tk">geometry_msgs</a>::<a id="26c36" class="tk">PoseStamped</a><a id="26c47" class="tk">*</a> <a id="26c49" class="tk">msgPtr</a>, <a id="26c57" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_PoseStamped</a> <span class="kw">const</span><a id="26c109" class="tk">*</a> <a id="26c111" class="tk">busPtr</a>);</td></tr>
 <tr name="27" id="27">
-<td><a id="l27" class='ln'>27</a></td><td><span class="kw">void</span> <a id="27c6" class="tk">convertFromBus</a>(<a id="27c21" class="tk">geometry_msgs</a>::<a id="27c36" class="tk">Quaternion</a><a id="27c46" class="tk">*</a> <a id="27c48" class="tk">msgPtr</a>, <a id="27c56" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Quaternion</a> <span class="kw">const</span><a id="27c107" class="tk">*</a> <a id="27c109" class="tk">busPtr</a>);</td></tr>
+<td><a id="l27" class='ln'>27</a></td><td><span class="kw">void</span> <a id="27c6" class="tk">convertToBus</a>(<a id="27c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_PoseStamped</a><a id="27c65" class="tk">*</a> <a id="27c67" class="tk">busPtr</a>, <a id="27c75" class="tk">geometry_msgs</a>::<a id="27c90" class="tk">PoseStamped</a> <span class="kw">const</span><a id="27c107" class="tk">*</a> <a id="27c109" class="tk">msgPtr</a>);</td></tr>
 <tr name="28" id="28">
-<td><a id="l28" class='ln'>28</a></td><td><span class="kw">void</span> <a id="28c6" class="tk">convertToBus</a>(<a id="28c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Quaternion</a><a id="28c64" class="tk">*</a> <a id="28c66" class="tk">busPtr</a>, <a id="28c74" class="tk">geometry_msgs</a>::<a id="28c89" class="tk">Quaternion</a> <span class="kw">const</span><a id="28c105" class="tk">*</a> <a id="28c107" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l28" class='ln'>28</a></td><td></td></tr>
 <tr name="29" id="29">
-<td><a id="l29" class='ln'>29</a></td><td></td></tr>
+<td><a id="l29" class='ln'>29</a></td><td><span class="kw">void</span> <a id="29c6" class="tk">convertFromBus</a>(<a id="29c21" class="tk">geometry_msgs</a>::<a id="29c36" class="tk">PoseWithCovariance</a><a id="29c54" class="tk">*</a> <a id="29c56" class="tk">msgPtr</a>, <a id="29c64" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_PoseWithCovariance</a> <span class="kw">const</span><a id="29c123" class="tk">*</a> <a id="29c125" class="tk">busPtr</a>);</td></tr>
 <tr name="30" id="30">
-<td><a id="l30" class='ln'>30</a></td><td><span class="kw">void</span> <a id="30c6" class="tk">convertFromBus</a>(<a id="30c21" class="tk">geometry_msgs</a>::<a id="30c36" class="tk">Twist</a><a id="30c41" class="tk">*</a> <a id="30c43" class="tk">msgPtr</a>, <a id="30c51" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Twist</a> <span class="kw">const</span><a id="30c97" class="tk">*</a> <a id="30c99" class="tk">busPtr</a>);</td></tr>
+<td><a id="l30" class='ln'>30</a></td><td><span class="kw">void</span> <a id="30c6" class="tk">convertToBus</a>(<a id="30c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_PoseWithCovariance</a><a id="30c72" class="tk">*</a> <a id="30c74" class="tk">busPtr</a>, <a id="30c82" class="tk">geometry_msgs</a>::<a id="30c97" class="tk">PoseWithCovariance</a> <span class="kw">const</span><a id="30c121" class="tk">*</a> <a id="30c123" class="tk">msgPtr</a>);</td></tr>
 <tr name="31" id="31">
-<td><a id="l31" class='ln'>31</a></td><td><span class="kw">void</span> <a id="31c6" class="tk">convertToBus</a>(<a id="31c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Twist</a><a id="31c59" class="tk">*</a> <a id="31c61" class="tk">busPtr</a>, <a id="31c69" class="tk">geometry_msgs</a>::<a id="31c84" class="tk">Twist</a> <span class="kw">const</span><a id="31c95" class="tk">*</a> <a id="31c97" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l31" class='ln'>31</a></td><td></td></tr>
 <tr name="32" id="32">
-<td><a id="l32" class='ln'>32</a></td><td></td></tr>
+<td><a id="l32" class='ln'>32</a></td><td><span class="kw">void</span> <a id="32c6" class="tk">convertFromBus</a>(<a id="32c21" class="tk">geometry_msgs</a>::<a id="32c36" class="tk">PoseWithCovarianceStamped</a><a id="32c61" class="tk">*</a> <a id="32c63" class="tk">msgPtr</a>, <a id="32c71" class="tk">SL_Bus_RALFMain_SLAM_PoseWithCovarianceStamped_l4ivcs</a> <span class="kw">const</span><a id="32c130" class="tk">*</a> <a id="32c132" class="tk">busPtr</a>);</td></tr>
 <tr name="33" id="33">
-<td><a id="l33" class='ln'>33</a></td><td><span class="kw">void</span> <a id="33c6" class="tk">convertFromBus</a>(<a id="33c21" class="tk">geometry_msgs</a>::<a id="33c36" class="tk">Vector3</a><a id="33c43" class="tk">*</a> <a id="33c45" class="tk">msgPtr</a>, <a id="33c53" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Vector3</a> <span class="kw">const</span><a id="33c101" class="tk">*</a> <a id="33c103" class="tk">busPtr</a>);</td></tr>
+<td><a id="l33" class='ln'>33</a></td><td><span class="kw">void</span> <a id="33c6" class="tk">convertToBus</a>(<a id="33c19" class="tk">SL_Bus_RALFMain_SLAM_PoseWithCovarianceStamped_l4ivcs</a><a id="33c72" class="tk">*</a> <a id="33c74" class="tk">busPtr</a>, <a id="33c82" class="tk">geometry_msgs</a>::<a id="33c97" class="tk">PoseWithCovarianceStamped</a> <span class="kw">const</span><a id="33c128" class="tk">*</a> <a id="33c130" class="tk">msgPtr</a>);</td></tr>
 <tr name="34" id="34">
-<td><a id="l34" class='ln'>34</a></td><td><span class="kw">void</span> <a id="34c6" class="tk">convertToBus</a>(<a id="34c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Vector3</a><a id="34c61" class="tk">*</a> <a id="34c63" class="tk">busPtr</a>, <a id="34c71" class="tk">geometry_msgs</a>::<a id="34c86" class="tk">Vector3</a> <span class="kw">const</span><a id="34c99" class="tk">*</a> <a id="34c101" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l34" class='ln'>34</a></td><td></td></tr>
 <tr name="35" id="35">
-<td><a id="l35" class='ln'>35</a></td><td></td></tr>
+<td><a id="l35" class='ln'>35</a></td><td><span class="kw">void</span> <a id="35c6" class="tk">convertFromBus</a>(<a id="35c21" class="tk">geometry_msgs</a>::<a id="35c36" class="tk">Quaternion</a><a id="35c46" class="tk">*</a> <a id="35c48" class="tk">msgPtr</a>, <a id="35c56" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Quaternion</a> <span class="kw">const</span><a id="35c107" class="tk">*</a> <a id="35c109" class="tk">busPtr</a>);</td></tr>
 <tr name="36" id="36">
-<td><a id="l36" class='ln'>36</a></td><td><span class="kw">void</span> <a id="36c6" class="tk">convertFromBus</a>(<a id="36c21" class="tk">ros</a>::<a id="36c26" class="tk">Time</a><a id="36c30" class="tk">*</a> <a id="36c32" class="tk">msgPtr</a>, <a id="36c40" class="tk">SL_Bus_RALFMain_SLAM_ros_time_Time</a> <span class="kw">const</span><a id="36c80" class="tk">*</a> <a id="36c82" class="tk">busPtr</a>);</td></tr>
+<td><a id="l36" class='ln'>36</a></td><td><span class="kw">void</span> <a id="36c6" class="tk">convertToBus</a>(<a id="36c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Quaternion</a><a id="36c64" class="tk">*</a> <a id="36c66" class="tk">busPtr</a>, <a id="36c74" class="tk">geometry_msgs</a>::<a id="36c89" class="tk">Quaternion</a> <span class="kw">const</span><a id="36c105" class="tk">*</a> <a id="36c107" class="tk">msgPtr</a>);</td></tr>
 <tr name="37" id="37">
-<td><a id="l37" class='ln'>37</a></td><td><span class="kw">void</span> <a id="37c6" class="tk">convertToBus</a>(<a id="37c19" class="tk">SL_Bus_RALFMain_SLAM_ros_time_Time</a><a id="37c53" class="tk">*</a> <a id="37c55" class="tk">busPtr</a>, <a id="37c63" class="tk">ros</a>::<a id="37c68" class="tk">Time</a> <span class="kw">const</span><a id="37c78" class="tk">*</a> <a id="37c80" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l37" class='ln'>37</a></td><td></td></tr>
 <tr name="38" id="38">
-<td><a id="l38" class='ln'>38</a></td><td></td></tr>
+<td><a id="l38" class='ln'>38</a></td><td><span class="kw">void</span> <a id="38c6" class="tk">convertFromBus</a>(<a id="38c21" class="tk">geometry_msgs</a>::<a id="38c36" class="tk">Twist</a><a id="38c41" class="tk">*</a> <a id="38c43" class="tk">msgPtr</a>, <a id="38c51" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Twist</a> <span class="kw">const</span><a id="38c97" class="tk">*</a> <a id="38c99" class="tk">busPtr</a>);</td></tr>
 <tr name="39" id="39">
-<td><a id="l39" class='ln'>39</a></td><td><span class="kw">void</span> <a id="39c6" class="tk">convertFromBus</a>(<a id="39c21" class="tk">sensor_msgs</a>::<a id="39c34" class="tk">Joy</a><a id="39c37" class="tk">*</a> <a id="39c39" class="tk">msgPtr</a>, <a id="39c47" class="tk">SL_Bus_RALFMain_SLAM_sensor_msgs_Joy</a> <span class="kw">const</span><a id="39c89" class="tk">*</a> <a id="39c91" class="tk">busPtr</a>);</td></tr>
+<td><a id="l39" class='ln'>39</a></td><td><span class="kw">void</span> <a id="39c6" class="tk">convertToBus</a>(<a id="39c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Twist</a><a id="39c59" class="tk">*</a> <a id="39c61" class="tk">busPtr</a>, <a id="39c69" class="tk">geometry_msgs</a>::<a id="39c84" class="tk">Twist</a> <span class="kw">const</span><a id="39c95" class="tk">*</a> <a id="39c97" class="tk">msgPtr</a>);</td></tr>
 <tr name="40" id="40">
-<td><a id="l40" class='ln'>40</a></td><td><span class="kw">void</span> <a id="40c6" class="tk">convertToBus</a>(<a id="40c19" class="tk">SL_Bus_RALFMain_SLAM_sensor_msgs_Joy</a><a id="40c55" class="tk">*</a> <a id="40c57" class="tk">busPtr</a>, <a id="40c65" class="tk">sensor_msgs</a>::<a id="40c78" class="tk">Joy</a> <span class="kw">const</span><a id="40c87" class="tk">*</a> <a id="40c89" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l40" class='ln'>40</a></td><td></td></tr>
 <tr name="41" id="41">
-<td><a id="l41" class='ln'>41</a></td><td></td></tr>
+<td><a id="l41" class='ln'>41</a></td><td><span class="kw">void</span> <a id="41c6" class="tk">convertFromBus</a>(<a id="41c21" class="tk">geometry_msgs</a>::<a id="41c36" class="tk">Vector3</a><a id="41c43" class="tk">*</a> <a id="41c45" class="tk">msgPtr</a>, <a id="41c53" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Vector3</a> <span class="kw">const</span><a id="41c101" class="tk">*</a> <a id="41c103" class="tk">busPtr</a>);</td></tr>
 <tr name="42" id="42">
-<td><a id="l42" class='ln'>42</a></td><td><span class="kw">void</span> <a id="42c6" class="tk">convertFromBus</a>(<a id="42c21" class="tk">std_msgs</a>::<a id="42c31" class="tk">Header</a><a id="42c37" class="tk">*</a> <a id="42c39" class="tk">msgPtr</a>, <a id="42c47" class="tk">SL_Bus_RALFMain_SLAM_std_msgs_Header</a> <span class="kw">const</span><a id="42c89" class="tk">*</a> <a id="42c91" class="tk">busPtr</a>);</td></tr>
+<td><a id="l42" class='ln'>42</a></td><td><span class="kw">void</span> <a id="42c6" class="tk">convertToBus</a>(<a id="42c19" class="tk">SL_Bus_RALFMain_SLAM_geometry_msgs_Vector3</a><a id="42c61" class="tk">*</a> <a id="42c63" class="tk">busPtr</a>, <a id="42c71" class="tk">geometry_msgs</a>::<a id="42c86" class="tk">Vector3</a> <span class="kw">const</span><a id="42c99" class="tk">*</a> <a id="42c101" class="tk">msgPtr</a>);</td></tr>
 <tr name="43" id="43">
-<td><a id="l43" class='ln'>43</a></td><td><span class="kw">void</span> <a id="43c6" class="tk">convertToBus</a>(<a id="43c19" class="tk">SL_Bus_RALFMain_SLAM_std_msgs_Header</a><a id="43c55" class="tk">*</a> <a id="43c57" class="tk">busPtr</a>, <a id="43c65" class="tk">std_msgs</a>::<a id="43c75" class="tk">Header</a> <span class="kw">const</span><a id="43c87" class="tk">*</a> <a id="43c89" class="tk">msgPtr</a>);</td></tr>
+<td><a id="l43" class='ln'>43</a></td><td></td></tr>
 <tr name="44" id="44">
-<td><a id="l44" class='ln'>44</a></td><td></td></tr>
+<td><a id="l44" class='ln'>44</a></td><td><span class="kw">void</span> <a id="44c6" class="tk">convertFromBus</a>(<a id="44c21" class="tk">ros</a>::<a id="44c26" class="tk">Time</a><a id="44c30" class="tk">*</a> <a id="44c32" class="tk">msgPtr</a>, <a id="44c40" class="tk">SL_Bus_RALFMain_SLAM_ros_time_Time</a> <span class="kw">const</span><a id="44c80" class="tk">*</a> <a id="44c82" class="tk">busPtr</a>);</td></tr>
 <tr name="45" id="45">
-<td><a id="l45" class='ln'>45</a></td><td></td></tr>
+<td><a id="l45" class='ln'>45</a></td><td><span class="kw">void</span> <a id="45c6" class="tk">convertToBus</a>(<a id="45c19" class="tk">SL_Bus_RALFMain_SLAM_ros_time_Time</a><a id="45c53" class="tk">*</a> <a id="45c55" class="tk">busPtr</a>, <a id="45c63" class="tk">ros</a>::<a id="45c68" class="tk">Time</a> <span class="kw">const</span><a id="45c78" class="tk">*</a> <a id="45c80" class="tk">msgPtr</a>);</td></tr>
 <tr name="46" id="46">
-<td><a id="l46" class='ln'>46</a></td><td><span class="pp">#endif</span></td></tr>
+<td><a id="l46" class='ln'>46</a></td><td></td></tr>
 <tr name="47" id="47">
-<td><a id="l47" class='ln'>47</a></td><td></td></tr>
+<td><a id="l47" class='ln'>47</a></td><td><span class="kw">void</span> <a id="47c6" class="tk">convertFromBus</a>(<a id="47c21" class="tk">sensor_msgs</a>::<a id="47c34" class="tk">Joy</a><a id="47c37" class="tk">*</a> <a id="47c39" class="tk">msgPtr</a>, <a id="47c47" class="tk">SL_Bus_RALFMain_SLAM_sensor_msgs_Joy</a> <span class="kw">const</span><a id="47c89" class="tk">*</a> <a id="47c91" class="tk">busPtr</a>);</td></tr>
+<tr name="48" id="48">
+<td><a id="l48" class='ln'>48</a></td><td><span class="kw">void</span> <a id="48c6" class="tk">convertToBus</a>(<a id="48c19" class="tk">SL_Bus_RALFMain_SLAM_sensor_msgs_Joy</a><a id="48c55" class="tk">*</a> <a id="48c57" class="tk">busPtr</a>, <a id="48c65" class="tk">sensor_msgs</a>::<a id="48c78" class="tk">Joy</a> <span class="kw">const</span><a id="48c87" class="tk">*</a> <a id="48c89" class="tk">msgPtr</a>);</td></tr>
+<tr name="49" id="49">
+<td><a id="l49" class='ln'>49</a></td><td></td></tr>
+<tr name="50" id="50">
+<td><a id="l50" class='ln'>50</a></td><td><span class="kw">void</span> <a id="50c6" class="tk">convertFromBus</a>(<a id="50c21" class="tk">std_msgs</a>::<a id="50c31" class="tk">Header</a><a id="50c37" class="tk">*</a> <a id="50c39" class="tk">msgPtr</a>, <a id="50c47" class="tk">SL_Bus_RALFMain_SLAM_std_msgs_Header</a> <span class="kw">const</span><a id="50c89" class="tk">*</a> <a id="50c91" class="tk">busPtr</a>);</td></tr>
+<tr name="51" id="51">
+<td><a id="l51" class='ln'>51</a></td><td><span class="kw">void</span> <a id="51c6" class="tk">convertToBus</a>(<a id="51c19" class="tk">SL_Bus_RALFMain_SLAM_std_msgs_Header</a><a id="51c55" class="tk">*</a> <a id="51c57" class="tk">busPtr</a>, <a id="51c65" class="tk">std_msgs</a>::<a id="51c75" class="tk">Header</a> <span class="kw">const</span><a id="51c87" class="tk">*</a> <a id="51c89" class="tk">msgPtr</a>);</td></tr>
+<tr name="52" id="52">
+<td><a id="l52" class='ln'>52</a></td><td></td></tr>
+<tr name="53" id="53">
+<td><a id="l53" class='ln'>53</a></td><td></td></tr>
+<tr name="54" id="54">
+<td><a id="l54" class='ln'>54</a></td><td><span class="pp">#endif</span></td></tr>
+<tr name="55" id="55">
+<td><a id="l55" class='ln'>55</a></td><td></td></tr>
 </table>
 </pre>
 </body>

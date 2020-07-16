@@ -324,6 +324,7 @@ laserscan_multi_merger_EXTERNAL_OBJECTS =
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libpcl_search.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/libOpenNI.so
+/home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/libOpenNI2.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libz.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libjpeg.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libpng.so
@@ -371,6 +372,7 @@ laserscan_multi_merger_EXTERNAL_OBJECTS =
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libpthread.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libqhull.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/libOpenNI.so
+/home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/libOpenNI2.so
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libflann_cpp_s.a
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libvtkImagingStencil-6.2.so.6.2.0
 /home/alf/catkin_ws/devel/lib/ira_laser_tools/laserscan_multi_merger: /usr/lib/x86_64-linux-gnu/libz.so

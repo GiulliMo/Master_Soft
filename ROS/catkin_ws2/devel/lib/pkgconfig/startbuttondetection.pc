@@ -1,0 +1,8 @@
+prefix=/home/alf/catkin_ws2/devel
+
+Name: startbuttondetection
+Description: Description of startbuttondetection
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp sensor_msgs std_msgs

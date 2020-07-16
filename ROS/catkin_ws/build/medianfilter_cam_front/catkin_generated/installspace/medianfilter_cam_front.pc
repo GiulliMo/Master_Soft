@@ -1,0 +1,8 @@
+prefix=/home/alf/catkin_ws/install
+
+Name: medianfilter_cam_front
+Description: Description of medianfilter_cam_front
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp sensor_msgs std_msgs

@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'RALFMain'.
 //
-// Model version                  : 1.180
+// Model version                  : 1.188
 // Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
-// C/C++ source code generated on : Thu Apr  9 09:34:26 2020
+// C/C++ source code generated on : Mon Apr 27 13:52:35 2020
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -19,6 +19,7 @@
 #ifndef RTW_HEADER_RALFMain_private_h_
 #define RTW_HEADER_RALFMain_private_h_
 #include "rtwtypes.h"
+#include "RALFMain.h"
 
 // Private macros used by the generated code to access rtModel
 #ifndef rtmSetTFinal
@@ -36,6 +37,10 @@ extern real32_T rt_atan2f_snf(real32_T u0, real32_T u1);
 extern real32_T rt_hypotf_snf(real32_T u0, real32_T u1);
 extern real_T rt_atan2d_snf(real_T u0, real_T u1);
 extern "C" void CAN_send(SimStruct *rts);
+extern void CoordinateTransformationCo_Init(DW_CoordinateTransformationCo_T
+  *localDW);
+extern void CoordinateTransformationConvers(const real32_T rtu_0[3],
+  B_CoordinateTransformationCon_T *localB);
 
 #endif                                 // RTW_HEADER_RALFMain_private_h_
 

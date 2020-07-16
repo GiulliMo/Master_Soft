@@ -1,0 +1,2 @@
+hmi_robin/assistant_robin:hmi_robin/command_matcher:hmi_robin/gspeech:hmi_robin/hmi_robin:hmi_robin/speech_database:speechrecognition_alfons:startbuttondetection:statemachine
+-DCATKIN_DEVEL_PREFIX=/home/alf/catkin_ws2/devel -DCMAKE_INSTALL_PREFIX=/home/alf/catkin_ws2/install -G Unix Makefiles

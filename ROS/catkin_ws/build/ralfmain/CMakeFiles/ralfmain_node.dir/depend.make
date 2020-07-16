@@ -99,7 +99,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/b
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Pose.h
-ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Twist.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -214,7 +215,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/incl
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Pose.h
-ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Twist.h
 ralfmain/CMakeFiles/ralfmain_node.dir/RALFMain_data.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -330,7 +332,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/b
 ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
 ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
 ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Pose.h
-ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
 ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Twist.h
 ralfmain/CMakeFiles/ralfmain_node.dir/ert_main.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -470,7 +473,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /home/alf/c
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /home/alf/catkin_ws/src/ralfmain/tmwtypes.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Pose.h
-ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Twist.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_busmsg_conversion.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Vector3.h
@@ -618,7 +622,8 @@ ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/i
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/boost_161_pthread_condition_variable_fwd.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Pose.h
-ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Twist.h
 ralfmain/CMakeFiles/ralfmain_node.dir/slros_initialize.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Vector3.h

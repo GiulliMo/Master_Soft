@@ -1,0 +1,8 @@
+prefix=/home/alf/catkin_ws/devel
+
+Name: speechrecognition_alfons
+Description: Description of speechrecognition_alfons
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

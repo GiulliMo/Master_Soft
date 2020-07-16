@@ -100,17 +100,6 @@ install/strip/fast: install/strip
 
 .PHONY : install/strip/fast
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-
-.PHONY : test/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -132,6 +121,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+
+.PHONY : test/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -196,96 +196,6 @@ std_msgs_generate_messages_eus/fast:
 .PHONY : std_msgs_generate_messages_eus/fast
 
 # Convenience name for target.
-3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
-.PHONY : 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_nodejs: 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
-
-.PHONY : std_msgs_generate_messages_nodejs
-
-# fast build rule for target.
-std_msgs_generate_messages_nodejs/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build.make 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build
-.PHONY : std_msgs_generate_messages_nodejs/fast
-
-# Convenience name for target.
-3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
-.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_lisp: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
-
-.PHONY : roscpp_generate_messages_lisp
-
-# fast build rule for target.
-roscpp_generate_messages_lisp/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/build
-.PHONY : roscpp_generate_messages_lisp/fast
-
-# Convenience name for target.
-3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
-.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_nodejs: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
-
-.PHONY : roscpp_generate_messages_nodejs
-
-# fast build rule for target.
-roscpp_generate_messages_nodejs/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/build
-.PHONY : roscpp_generate_messages_nodejs/fast
-
-# Convenience name for target.
-3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule
-.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_eus: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule
-
-.PHONY : roscpp_generate_messages_eus
-
-# fast build rule for target.
-roscpp_generate_messages_eus/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/build
-.PHONY : roscpp_generate_messages_eus/fast
-
-# Convenience name for target.
-3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
-.PHONY : 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-std_msgs_generate_messages_cpp: 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : std_msgs_generate_messages_cpp
-
-# fast build rule for target.
-std_msgs_generate_messages_cpp/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
-.PHONY : std_msgs_generate_messages_cpp/fast
-
-# Convenience name for target.
-3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
-.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-roscpp_generate_messages_cpp: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
-
-.PHONY : roscpp_generate_messages_cpp
-
-# fast build rule for target.
-roscpp_generate_messages_cpp/fast:
-	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/build
-.PHONY : roscpp_generate_messages_cpp/fast
-
-# Convenience name for target.
 3dslam_alfons/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule:
 	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule
 .PHONY : 3dslam_alfons/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/rule
@@ -329,6 +239,96 @@ roscpp_generate_messages_py: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_p
 roscpp_generate_messages_py/fast:
 	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_py.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_py.dir/build
 .PHONY : roscpp_generate_messages_py/fast
+
+# Convenience name for target.
+3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
+.PHONY : 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
+
+# Convenience name for target.
+std_msgs_generate_messages_nodejs: 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/rule
+
+.PHONY : std_msgs_generate_messages_nodejs
+
+# fast build rule for target.
+std_msgs_generate_messages_nodejs/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build.make 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_nodejs.dir/build
+.PHONY : std_msgs_generate_messages_nodejs/fast
+
+# Convenience name for target.
+3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
+.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
+
+# Convenience name for target.
+roscpp_generate_messages_lisp: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
+
+.PHONY : roscpp_generate_messages_lisp
+
+# fast build rule for target.
+roscpp_generate_messages_lisp/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_lisp.dir/build
+.PHONY : roscpp_generate_messages_lisp/fast
+
+# Convenience name for target.
+3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
+.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
+
+# Convenience name for target.
+roscpp_generate_messages_cpp: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
+
+.PHONY : roscpp_generate_messages_cpp
+
+# fast build rule for target.
+roscpp_generate_messages_cpp/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_cpp.dir/build
+.PHONY : roscpp_generate_messages_cpp/fast
+
+# Convenience name for target.
+3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
+.PHONY : 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
+
+# Convenience name for target.
+std_msgs_generate_messages_cpp: 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
+
+.PHONY : std_msgs_generate_messages_cpp
+
+# fast build rule for target.
+std_msgs_generate_messages_cpp/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make 3dslam_alfons/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
+.PHONY : std_msgs_generate_messages_cpp/fast
+
+# Convenience name for target.
+3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
+.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
+
+# Convenience name for target.
+roscpp_generate_messages_nodejs: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/rule
+
+.PHONY : roscpp_generate_messages_nodejs
+
+# fast build rule for target.
+roscpp_generate_messages_nodejs/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_nodejs.dir/build
+.PHONY : roscpp_generate_messages_nodejs/fast
+
+# Convenience name for target.
+3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule
+.PHONY : 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule
+
+# Convenience name for target.
+roscpp_generate_messages_eus: 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/rule
+
+.PHONY : roscpp_generate_messages_eus
+
+# fast build rule for target.
+roscpp_generate_messages_eus/fast:
+	cd /home/alf/catkin_ws/build && $(MAKE) -f 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/build.make 3dslam_alfons/CMakeFiles/roscpp_generate_messages_eus.dir/build
+.PHONY : roscpp_generate_messages_eus/fast
 
 # Convenience name for target.
 3dslam_alfons/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule:
@@ -402,18 +402,18 @@ help:
 	@echo "... install/strip"
 	@echo "... std_msgs_generate_messages_lisp"
 	@echo "... std_msgs_generate_messages_eus"
-	@echo "... std_msgs_generate_messages_nodejs"
-	@echo "... roscpp_generate_messages_lisp"
-	@echo "... test"
-	@echo "... roscpp_generate_messages_nodejs"
-	@echo "... roscpp_generate_messages_eus"
-	@echo "... std_msgs_generate_messages_cpp"
-	@echo "... roscpp_generate_messages_cpp"
 	@echo "... rebuild_cache"
 	@echo "... rosgraph_msgs_generate_messages_nodejs"
 	@echo "... edit_cache"
 	@echo "... rosgraph_msgs_generate_messages_eus"
 	@echo "... roscpp_generate_messages_py"
+	@echo "... std_msgs_generate_messages_nodejs"
+	@echo "... roscpp_generate_messages_lisp"
+	@echo "... roscpp_generate_messages_cpp"
+	@echo "... std_msgs_generate_messages_cpp"
+	@echo "... test"
+	@echo "... roscpp_generate_messages_nodejs"
+	@echo "... roscpp_generate_messages_eus"
 	@echo "... rosgraph_msgs_generate_messages_cpp"
 	@echo "... rosgraph_msgs_generate_messages_lisp"
 	@echo "... std_msgs_generate_messages_py"

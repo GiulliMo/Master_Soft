@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'RALFMain'.
 //
-// Model version                  : 1.180
+// Model version                  : 1.188
 // Simulink Coder version         : 9.3 (R2020a) 18-Nov-2019
-// C/C++ source code generated on : Thu Apr  9 09:34:26 2020
+// C/C++ source code generated on : Mon Apr 27 13:52:35 2020
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -23,18 +23,18 @@
 P_RALFMain_T RALFMain_P = {
   // Variable: nmax
   //  Referenced by:
-  //    '<S42>/Gain'
-  //    '<S42>/Gain1'
+  //    '<S40>/Gain'
+  //    '<S40>/Gain1'
 
-  1000.0F,
+  200.0F,
 
   // Variable: pwinkel
-  //  Referenced by: '<S49>/Gain4'
+  //  Referenced by: '<S50>/Gain4'
 
   0.05F,
 
   // Variable: pwinkel_vel
-  //  Referenced by: '<S50>/Gain4'
+  //  Referenced by: '<S51>/Gain4'
 
   -4.0F,
 
@@ -44,7 +44,7 @@ P_RALFMain_T RALFMain_P = {
   0.05,
 
   // Mask Parameter: CompareToConstant_const
-  //  Referenced by: '<S51>/Constant'
+  //  Referenced by: '<S52>/Constant'
 
   0.9F,
 
@@ -94,7 +94,7 @@ P_RALFMain_T RALFMain_P = {
   -0.1F,
 
   // Mask Parameter: CompareToConstant_const_l
-  //  Referenced by: '<S46>/Constant'
+  //  Referenced by: '<S47>/Constant'
 
   0.9F,
 
@@ -134,6 +134,112 @@ P_RALFMain_T RALFMain_P = {
   0U,
 
   // Computed Parameter: Out1_Y0
+  //  Referenced by: '<S38>/Out1'
+
+  {
+    {
+      0U,                              // Seq
+
+      {
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U }
+      ,                                // FrameId
+
+      {
+        0U,                            // CurrentLength
+        0U                             // ReceivedLength
+      },                               // FrameId_SL_Info
+
+      {
+        0.0,                           // Sec
+        0.0                            // Nsec
+      }                                // Stamp
+    },                                 // Header
+
+    {
+      {
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }
+      ,                                // Covariance
+
+      {
+        {
+          0.0,                         // X
+          0.0,                         // Y
+          0.0                          // Z
+        },                             // Position
+
+        {
+          0.0,                         // X
+          0.0,                         // Y
+          0.0,                         // Z
+          0.0                          // W
+        }                              // Orientation
+      }                                // Pose
+    }                                  // Pose
+  },
+
+  // Computed Parameter: Constant_Value
+  //  Referenced by: '<S5>/Constant'
+
+  {
+    {
+      0U,                              // Seq
+
+      {
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U }
+      ,                                // FrameId
+
+      {
+        0U,                            // CurrentLength
+        0U                             // ReceivedLength
+      },                               // FrameId_SL_Info
+
+      {
+        0.0,                           // Sec
+        0.0                            // Nsec
+      }                                // Stamp
+    },                                 // Header
+
+    {
+      {
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }
+      ,                                // Covariance
+
+      {
+        {
+          0.0,                         // X
+          0.0,                         // Y
+          0.0                          // Z
+        },                             // Position
+
+        {
+          0.0,                         // X
+          0.0,                         // Y
+          0.0,                         // Z
+          0.0                          // W
+        }                              // Orientation
+      }                                // Pose
+    }                                  // Pose
+  },
+
+  // Computed Parameter: Out1_Y0_b
   //  Referenced by: '<S27>/Out1'
 
   {
@@ -181,7 +287,7 @@ P_RALFMain_T RALFMain_P = {
     }                                  // Header
   },
 
-  // Computed Parameter: Constant_Value
+  // Computed Parameter: Constant_Value_j
   //  Referenced by: '<S15>/Constant'
 
   {
@@ -277,96 +383,6 @@ P_RALFMain_T RALFMain_P = {
     }                                  // Header
   },
 
-  // Computed Parameter: Out1_Y0_i
-  //  Referenced by: '<S40>/Out1'
-
-  {
-    {
-      0U,                              // Seq
-
-      {
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U }
-      ,                                // FrameId
-
-      {
-        0U,                            // CurrentLength
-        0U                             // ReceivedLength
-      },                               // FrameId_SL_Info
-
-      {
-        0.0,                           // Sec
-        0.0                            // Nsec
-      }                                // Stamp
-    },                                 // Header
-
-    {
-      {
-        0.0,                           // X
-        0.0,                           // Y
-        0.0                            // Z
-      },                               // Position
-
-      {
-        0.0,                           // X
-        0.0,                           // Y
-        0.0,                           // Z
-        0.0                            // W
-      }                                // Orientation
-    }                                  // Pose
-  },
-
-  // Computed Parameter: Constant_Value_l
-  //  Referenced by: '<S39>/Constant'
-
-  {
-    {
-      0U,                              // Seq
-
-      {
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U,
-        0U, 0U }
-      ,                                // FrameId
-
-      {
-        0U,                            // CurrentLength
-        0U                             // ReceivedLength
-      },                               // FrameId_SL_Info
-
-      {
-        0.0,                           // Sec
-        0.0                            // Nsec
-      }                                // Stamp
-    },                                 // Header
-
-    {
-      {
-        0.0,                           // X
-        0.0,                           // Y
-        0.0                            // Z
-      },                               // Position
-
-      {
-        0.0,                           // X
-        0.0,                           // Y
-        0.0,                           // Z
-        0.0                            // W
-      }                                // Orientation
-    }                                  // Pose
-  },
-
   // Computed Parameter: Out1_Y0_j
   //  Referenced by: '<S36>/Out1'
 
@@ -412,9 +428,19 @@ P_RALFMain_T RALFMain_P = {
   5.0,
 
   // Expression: 180/pi
-  //  Referenced by: '<S38>/Gain'
+  //  Referenced by: '<Root>/Gain'
 
   57.295779513082323,
+
+  // Expression: 1
+  //  Referenced by: '<S61>/Constant'
+
+  1.0,
+
+  // Expression: 1
+  //  Referenced by: '<S62>/Constant'
+
+  1.0,
 
   // Expression: -2
   //  Referenced by: '<S10>/Constant1'
@@ -437,32 +463,17 @@ P_RALFMain_T RALFMain_P = {
   11.0,
 
   // Expression: 0
-  //  Referenced by: '<Root>/Constant'
+  //  Referenced by: '<S6>/Constant'
 
   0.0,
 
-  // Computed Parameter: CANsendSYNC_P1_Size
-  //  Referenced by: '<Root>/CAN send SYNC'
+  // Expression: 180/pi
+  //  Referenced by: '<S6>/Gain3'
 
-  { 1.0, 1.0 },
-
-  // Expression: Port
-  //  Referenced by: '<Root>/CAN send SYNC'
-
-  1.0,
-
-  // Computed Parameter: CANsendSYNC_P2_Size
-  //  Referenced by: '<Root>/CAN send SYNC'
-
-  { 1.0, 1.0 },
-
-  // Expression: Identifier
-  //  Referenced by: '<Root>/CAN send SYNC'
-
-  128.0,
+  57.295779513082323,
 
   // Expression: -1
-  //  Referenced by: '<S45>/Constant'
+  //  Referenced by: '<S46>/Constant'
 
   -1.0,
 
@@ -551,6 +562,51 @@ P_RALFMain_T RALFMain_P = {
 
   257.0,
 
+  // Expression: 0
+  //  Referenced by: '<Root>/Constant'
+
+  0.0,
+
+  // Computed Parameter: CANsendSYNC_P1_Size
+  //  Referenced by: '<Root>/CAN send SYNC'
+
+  { 1.0, 1.0 },
+
+  // Expression: Port
+  //  Referenced by: '<Root>/CAN send SYNC'
+
+  1.0,
+
+  // Computed Parameter: CANsendSYNC_P2_Size
+  //  Referenced by: '<Root>/CAN send SYNC'
+
+  { 1.0, 1.0 },
+
+  // Expression: Identifier
+  //  Referenced by: '<Root>/CAN send SYNC'
+
+  128.0,
+
+  // Expression: SimulationPace
+  //  Referenced by: '<Root>/Simulation Pace'
+
+  1.0,
+
+  // Expression: 1
+  //  Referenced by: '<Root>/Simulation Pace'
+
+  1.0,
+
+  // Expression: OutputPaceError
+  //  Referenced by: '<Root>/Simulation Pace'
+
+  0.0,
+
+  // Expression: SampleTime
+  //  Referenced by: '<Root>/Simulation Pace'
+
+  -1.0,
+
   // Computed Parameter: Constant_Value_gi
   //  Referenced by: '<S4>/Constant'
 
@@ -562,12 +618,12 @@ P_RALFMain_T RALFMain_P = {
   1.0F,
 
   // Computed Parameter: Out1_Y0_p
-  //  Referenced by: '<S44>/Out1'
+  //  Referenced by: '<S45>/Out1'
 
   0.0F,
 
   // Computed Parameter: Constant_Value_h
-  //  Referenced by: '<S48>/Constant'
+  //  Referenced by: '<S49>/Constant'
 
   { 1.0F, 1.0F, 1.0F, 1.0F, -1.0F, 1.0F, 1.0F, -1.0F },
 
@@ -586,7 +642,7 @@ P_RALFMain_T RALFMain_P = {
 
   -1.0F,
 
-  // Computed Parameter: Constant_Value_la
+  // Computed Parameter: Constant_Value_l
   //  Referenced by: '<S3>/Constant'
 
   0.0F,
@@ -602,34 +658,54 @@ P_RALFMain_T RALFMain_P = {
   0.0F,
 
   // Computed Parameter: Saturation3_UpperSat
-  //  Referenced by: '<S48>/Saturation3'
+  //  Referenced by: '<S49>/Saturation3'
 
   1.0F,
 
   // Computed Parameter: Saturation3_LowerSat
-  //  Referenced by: '<S48>/Saturation3'
+  //  Referenced by: '<S49>/Saturation3'
 
   -1.0F,
 
+  // Computed Parameter: Gain2_Gain_l
+  //  Referenced by: '<S6>/Gain2'
+
+  0.0174532924F,
+
+  // Computed Parameter: Gain_Gain_f
+  //  Referenced by: '<S6>/Gain'
+
+  0.0174532924F,
+
+  // Computed Parameter: Saturation_UpperSat
+  //  Referenced by: '<S6>/Saturation'
+
+  20.0F,
+
+  // Computed Parameter: Saturation_LowerSat
+  //  Referenced by: '<S6>/Saturation'
+
+  -20.0F,
+
   // Computed Parameter: Constant1_Value_d
-  //  Referenced by: '<S49>/Constant1'
-
-  { -1.0F, 1.0F, -1.0F, 1.0F },
-
-  // Computed Parameter: Constant1_Value_i
   //  Referenced by: '<S50>/Constant1'
 
   { -1.0F, 1.0F, -1.0F, 1.0F },
 
-  // Computed Parameter: Gain3_Gain
-  //  Referenced by: '<S42>/Gain3'
+  // Computed Parameter: Constant1_Value_i
+  //  Referenced by: '<S51>/Constant1'
 
-  -1000.0F,
+  { -1.0F, 1.0F, -1.0F, 1.0F },
+
+  // Computed Parameter: Gain3_Gain_i
+  //  Referenced by: '<S40>/Gain3'
+
+  -200.0F,
 
   // Computed Parameter: Gain2_Gain_d
-  //  Referenced by: '<S42>/Gain2'
+  //  Referenced by: '<S40>/Gain2'
 
-  -1000.0F,
+  -200.0F,
 
   // Computed Parameter: Delay_InitialCondition
   //  Referenced by: '<S19>/Delay'

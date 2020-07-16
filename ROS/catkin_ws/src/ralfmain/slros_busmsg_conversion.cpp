@@ -41,19 +41,38 @@ void convertToBus(SL_Bus_RALFMain_geometry_msgs_Pose* busPtr, geometry_msgs::Pos
 }
 
 
-// Conversions between SL_Bus_RALFMain_geometry_msgs_PoseStamped and geometry_msgs::PoseStamped
+// Conversions between SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance and geometry_msgs::PoseWithCovariance
 
-void convertFromBus(geometry_msgs::PoseStamped* msgPtr, SL_Bus_RALFMain_geometry_msgs_PoseStamped const* busPtr)
+void convertFromBus(geometry_msgs::PoseWithCovariance* msgPtr, SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance const* busPtr)
 {
-  const std::string rosMessageType("geometry_msgs/PoseStamped");
+  const std::string rosMessageType("geometry_msgs/PoseWithCovariance");
+
+  convertFromBusFixedPrimitiveArray(msgPtr->covariance, busPtr->Covariance);
+  convertFromBus(&msgPtr->pose, &busPtr->Pose);
+}
+
+void convertToBus(SL_Bus_RALFMain_geometry_msgs_PoseWithCovariance* busPtr, geometry_msgs::PoseWithCovariance const* msgPtr)
+{
+  const std::string rosMessageType("geometry_msgs/PoseWithCovariance");
+
+  convertToBusFixedPrimitiveArray(busPtr->Covariance, msgPtr->covariance, slros::NoopWarning());
+  convertToBus(&busPtr->Pose, &msgPtr->pose);
+}
+
+
+// Conversions between SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped and geometry_msgs::PoseWithCovarianceStamped
+
+void convertFromBus(geometry_msgs::PoseWithCovarianceStamped* msgPtr, SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped const* busPtr)
+{
+  const std::string rosMessageType("geometry_msgs/PoseWithCovarianceStamped");
 
   convertFromBus(&msgPtr->header, &busPtr->Header);
   convertFromBus(&msgPtr->pose, &busPtr->Pose);
 }
 
-void convertToBus(SL_Bus_RALFMain_geometry_msgs_PoseStamped* busPtr, geometry_msgs::PoseStamped const* msgPtr)
+void convertToBus(SL_Bus_RALFMain_geometry_msgs_PoseWithCovarianceStamped* busPtr, geometry_msgs::PoseWithCovarianceStamped const* msgPtr)
 {
-  const std::string rosMessageType("geometry_msgs/PoseStamped");
+  const std::string rosMessageType("geometry_msgs/PoseWithCovarianceStamped");
 
   convertToBus(&busPtr->Header, &msgPtr->header);
   convertToBus(&busPtr->Pose, &msgPtr->pose);

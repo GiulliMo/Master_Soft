@@ -49,6 +49,8 @@ RALFMain_private.h
 /home/alf/catkin_ws/src/ralfmain/RALFMain_private.h
 rtwtypes.h
 /home/alf/catkin_ws/src/ralfmain/rtwtypes.h
+RALFMain.h
+/home/alf/catkin_ws/src/ralfmain/RALFMain.h
 
 /home/alf/catkin_ws/src/ralfmain/RALFMain_types.h
 rtwtypes.h
@@ -341,7 +343,9 @@ geometry_msgs/Point.h
 -
 geometry_msgs/Pose.h
 -
-geometry_msgs/PoseStamped.h
+geometry_msgs/PoseWithCovariance.h
+-
+geometry_msgs/PoseWithCovarianceStamped.h
 -
 geometry_msgs/Quaternion.h
 -
@@ -514,7 +518,25 @@ geometry_msgs/Point.h
 geometry_msgs/Quaternion.h
 -
 
-/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+/opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+string
+-
+vector
+-
+map
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
+-
+geometry_msgs/Pose.h
+-
+
+/opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 string
 -
 vector
@@ -531,7 +553,7 @@ ros/message_operations.h
 -
 std_msgs/Header.h
 -
-geometry_msgs/Pose.h
+geometry_msgs/PoseWithCovariance.h
 -
 
 /opt/ros/kinetic/include/geometry_msgs/Quaternion.h

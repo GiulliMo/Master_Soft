@@ -1,0 +1,4 @@
+terminate called after throwing an instance of 'boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >'
+  what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+[33m[ WARN] [1593693590.736009644]: Shutdown request received.[0m
+[33m[ WARN] [1593693590.736050279]: Reason given for shutdown: [new node registered with same name][0m
