@@ -61,7 +61,7 @@ def initModel(VERSION):
 # Erzeugen der Klasse SpeechRecognition
 class SpeechRecognition:
 
-    def __init__(self, recsec,  pyVersion, nodename, topicnameTranscript, topicnameTask,topicnameTaskConfidence, topicnameBuzz, topicnameSub):
+    def __init__(self, recsec,  pyVersion, nodename, topicnameTranscript, topicnameTask,topicnameTaskConfidence, topicnameBuzz, topicnameSub, topicnameModus, topicnameModusConfidence):
 
         # Definieren von Objekteigenschaften der Klasse Speech Recognition
         self.nodename = nodename
@@ -70,21 +70,26 @@ class SpeechRecognition:
         self.topicnameTask = topicnameTask
         self.topicnameTaskConfidence = topicnameTaskConfidence
         self.topicnameBuzz = topicnameBuzz
+        self.topicnameModus = topicnameModus
+        self.topicnameModusConfidence = topicnameModusConfidence
         self.Version = pyVersion
         self.chunksize = 2048
         self.rate = 16000
         self.recsec = recsec
         self.modelDs = initModel(self.Version)
-        self.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifier.tflite")
+        self.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
+        self.modelModusClassifier = tf.lite.Interpreter("models/autonom_manual.tflite")
         self.buffer = np.zeros(int(self.rate / self.chunksize) * self.recsec * self.chunksize)
         self.frames = []
         self.lstMsg = np.zeros(int(self.rate / self.chunksize) * self.recsec * self.chunksize)
         self.buzzwords = []
         self.transcript = []
         self.words = [0]
-        self.msg = Float32MultiArray()
+        self.wordsModus = [0]
+        self.msg = Float32MultiArray() #Message fuer confidence veroeffentlichung
         self.msg.data = []
-
+        self.msgModus = Float32MultiArray()#Message fuer confidence veroeffentlichung
+        self.msgModus.data = []
 
 
     # Methode um Sprache zu transkripieren
@@ -101,7 +106,6 @@ class SpeechRecognition:
             if not self.transcript:
                 self.transcript = "none"
 
-
             #Transkript in ROS veroeffentlichen
             self.talkerTranscript(len(self.transcript), self.transcript)
             print(self.transcript)
@@ -114,10 +118,22 @@ class SpeechRecognition:
             print("Keyboard Interrupt")
         pass
 
-    # Methode um Handlungen zu klassifizieren
+    # Methode um Handlungen und Modus zu klassifizieren
     def classifierNN(self, transcript):
 
         self.modelTaskClassifier.allocate_tensors()
+        self.modelModusClassifier.allocate_tensors()
+
+        # Bearbeiten Transcript
+        transcript = transcript.replace("'", "")
+        res = transcript.split()
+        phoneRes = []
+        for k in res:
+            phoneRes.append(phonetics.metaphone(k))
+
+        transcript = transcript + ' ' + ' '.join(phoneRes)
+        print(transcript)
+
 
         #  Ein- und Ausgabe Tensoren bestimmen
         input_details = self.modelTaskClassifier.get_input_details()
@@ -126,7 +142,7 @@ class SpeechRecognition:
 
         # Eingabe Tensor definieren
         input = self.bow(transcript.lower(), self.words, show_details=False)
-        input = np.reshape(input, [input_shape[0], input_shape[1]])
+        input = np.reshape(input, (input_shape[0], input_shape[1])) #input_shape[0], input_shape[1]) -1, input_shape[1], input_shape[2]fuer normales Netz ohne rnn
         input_data = np.array(input, dtype=np.float32)
 
         # Eingabe Tensor setzen
@@ -148,7 +164,29 @@ class SpeechRecognition:
         # wait for = 2
         # localization = 3
         # stop = 4
-        # Methode um WAV Datei zu erzeugen
+
+        #  Ein- und Ausgabe Tensoren bestimmen
+        input_details = self.modelModusClassifier.get_input_details()
+        output_details = self.modelModusClassifier.get_output_details()
+        input_shape = input_details[0]['shape']
+
+        # Eingabe Tensor definieren
+        input = self.bow(transcript.lower(), self.wordsModus, show_details=False)
+        input = np.reshape(input,(input_shape[0], input_shape[1]))  # input_shape[0], input_shape[1]) fuer normales Netz
+        input_data = np.array(input, dtype=np.float32)
+
+        # Eingabe Tensor setzen
+        self.modelModusClassifier.set_tensor(input_details[0]['index'], input_data)
+        self.modelModusClassifier.invoke()
+
+        # Ausgabe Tensor berechnen
+        output_data = self.modelModusClassifier.get_tensor(output_details[0]['index'])
+        class_names = ['autonom', 'manual']
+
+        # Ausgabe der Klassifizierung
+        # print(output_data, class_names[np.argmax(output_data)])
+        self.msgModus.data = output_data[0]
+        self.talkerModus(len(class_names[np.argmax(output_data)]), class_names[np.argmax(output_data)], len(class_names))
 
     # Methode um Rohdaten aus WAV Datei zu lesen
     def getBuffer(self, w):
@@ -181,10 +219,7 @@ class SpeechRecognition:
         pass
 
 
-
     ## ROS Initialiserung, Subscriber, und Publisher ##
-
-
 
     def callback(self, msg):
         self.buffer = np.int16(np.asarray(msg.data))
@@ -198,6 +233,7 @@ class SpeechRecognition:
         self.talkerTranscript(size=1, text='init')
         self.talkerBuzz(size=1, text='init')
         self.talkerTask(size=1, text='init', size_confidence=0)
+        self.talkerModus(size=1, text='init', size_confidence=0)
         r = rospy.Rate(0.05)
         while not rospy.is_shutdown():
             try:
@@ -229,6 +265,18 @@ class SpeechRecognition:
 
         rospy.loginfo(self.msg.data)
         pub2.publish(self.msg)
+
+    # ROS Publisher aufrufen fuer klassifizierten Modus
+    def talkerModus(self, size, text, size_confidence):
+
+        pub = rospy.Publisher(self.topicnameModus, String, queue_size=size)
+        pub2 = rospy.Publisher(self.topicnameModusConfidence, Float32MultiArray, queue_size=size_confidence)
+
+        rospy.loginfo(text)
+        pub.publish(text)
+
+        rospy.loginfo(self.msgModus.data)
+        pub2.publish(self.msgModus)
 
     # ROS Publisher aufrufen fuer erkanntes Objekt/Person etc. aus Buzzword matcher
     def talkerBuzz(self, size, text):
@@ -344,7 +392,12 @@ class SpeechRecognition:
         file = open("models/words.txt", 'r')
         words = [line.split(',') for line in file.readlines()]
         words = words[0]
-        self.words = words[0:len(words) - 1]  # split fuegt ein wort hinzu wo keins hinsoll
+        self.words = words[0:len(words) - 1]   # split fuegt ein wort hinzu wo keins hinsoll
+
+        file2 = open("models/words_modus.txt", 'r')
+        words = [line.split(',') for line in file2.readlines()]
+        words = words[0]
+        self.wordsModus = words[0:len(words) - 1]  # split fuegt ein wort hinzu wo keins hinsoll
 
     # Methonde um nur Wortstaemme beachten
     def clean_up_sentence(self, sentence):
@@ -380,7 +433,7 @@ if __name__ == '__main__':
     s = SpeechRecognition(topicnameSub=rospy.get_param(name + 'pub/stream/topic'), pyVersion=rospy.get_param(name + 'language'),
                           nodename=rospy.get_param(name + 'nodename_speechrecognizer'), topicnameTranscript=rospy.get_param(name + 'topicname/transcript'),
                           topicnameTask=rospy.get_param(name + 'topicname/task'), topicnameBuzz=rospy.get_param(name + 'topicname/buzz'),
-                          recsec=rospy.get_param(name + 'recsec'), topicnameTaskConfidence=rospy.get_param(name + 'topicname/task_confidence'))
+                          recsec=rospy.get_param(name + 'recsec'), topicnameTaskConfidence=rospy.get_param(name + 'topicname/task_confidence'), topicnameModus = rospy.get_param(name + 'topicname/modus'), topicnameModusConfidence = rospy.get_param(name + 'topicname/modus_confidence'))
     s.loadJsons()
     s.readWords()
     s.listener()

@@ -41,21 +41,41 @@ def bow(sentence, words, show_details=True):
                     print("found in bag: %s" % w)
     return (np.array(bag))
 
-interpreter = tf.lite.Interpreter("taskClassifier.tflite")
+interpreter = tf.lite.Interpreter("taskClassifierRNN.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 input_shape = input_details[0]['shape']
 
-sentence1 = "dont move"
+
+sentence1 = "launch hector"
 input = bow(sentence1.lower(), words, show_details=False)
-input = np.reshape(input,[input_shape[0], input_shape[1]])
+input = np.reshape(input,(-1, input_shape[1], input_shape[2]))#input_shape[0], input_shape[1]) fuer normales Netz
 input_data = np.array(input, dtype=np.float32)
-print(input_data)
 
 interpreter.set_tensor(input_details[0]['index'], input_data)
 interpreter.invoke()
+
 output_data = interpreter.get_tensor(output_details[0]['index'])
-class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop']
+class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
+print(output_data, class_names[np.argmax(output_data)])
+
+
+interpreter = tf.lite.Interpreter("taskClassifierPhon.tflite")
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+input_shape = input_details[0]['shape']
+
+input = bow(sentence1.lower(), words, show_details=False)
+input = np.reshape(input, (input_shape[0], input_shape[1]))#input_shape[0], input_shape[1]) fuer normales Netz
+input_data = np.array(input, dtype=np.float32)
+
+
+interpreter.set_tensor(input_details[0]['index'], input_data)
+interpreter.invoke()
+
+output_data = interpreter.get_tensor(output_details[0]['index'])
 print(output_data, class_names[np.argmax(output_data)])
