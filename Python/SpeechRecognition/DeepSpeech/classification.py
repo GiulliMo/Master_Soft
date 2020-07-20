@@ -315,6 +315,7 @@ training_data.append({"class":5,  "sentence":"l charlie", "modus":2})
 training_data.append({"class":5,  "sentence":"right o", "modus":2})
 training_data.append({"class":5,  "sentence":"start in again", "modus":2})
 training_data.append({"class":5,  "sentence":"start airs", "modus":2})
+training_data.append({"class":5,  "sentence":"so lamormain S", "modus":2})
 
 
 #Preprocessing
