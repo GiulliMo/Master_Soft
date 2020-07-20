@@ -4,6 +4,7 @@ import rospy
 import os
 import signal
 import subprocess
+from std_msgs.msg import String
 from roslaunch.parent import ROSLaunchParent
 from transitions.extensions.nesting import HierarchicalMachine
 
@@ -19,8 +20,13 @@ class ALF(object):
         self.drive_manual_functions = self.roslaunch("drive_manual_functions")
         #self.drive_autonomous_functions
         self.slam_functions = self.roslaunch("slam_functions")
-        #self.drive_autonomous_explore_functions
-        #self.drive_autonomous_to_target_functions
+        self.drive_autonomous_explore_functions = self.roslaunch("drive_autonomous_explore_functions")
+        self.drive_autonomous_to_target_functions = self.roslaunch("drive_autonomous_to_target_functions")
+        self.task = ""
+        self.mode = ""
+        self.manualcontrol = False
+        self.input = ""
+        self.input2 = ""
 
 
 
@@ -42,20 +48,22 @@ class ALF(object):
         os.system("rosrun sound_play say.py 'Changed to state drive.'")
 
         while True:
-            input = raw_input("Klasse eingeben: ")
-            input2 = raw_input("Modus eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+                self.input2 = raw_input("Modus eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "wait for":
+            elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
-            elif input == "drive":
+            elif self.input == "drive" or self.task == "drive":
                 pass
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
-            if input2 == "manual":
+            if self.mode == "manual":
                 self.toManual()
-            if input2 == "autonomous":
+            if self.mode == "autonom":
                 self.toAutonomous()
 
     def autonomous(self):
@@ -64,15 +72,17 @@ class ALF(object):
         os.system("rosrun sound_play say.py 'Changed to state drive autonomously.'")
 
         while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "wait for":
+            elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
-            elif input == "drive":
+            elif self.input == "drive" or self.task == "drive":
                 pass
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
             if self.is_map == True:
                 self.toTo_target()
@@ -88,13 +98,15 @@ class ALF(object):
         self.drive_manual_functions.start()
 
         while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "wait for":
+            elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
 
     def explore(self):
@@ -102,28 +114,38 @@ class ALF(object):
         print("Explore node starten")
         os.system("rosrun sound_play say.py 'Changed to state explore. I will now check my environment.'")
 
+        self.drive_autonomous_explore_functions = self.roslaunch("drive_autonomous_explore_functions")
+        self.drive_autonomous_explore_functions.start()
+
         while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "wait for":
+            elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
     def to_target(self):
         print("Changing to drive autonomous to target...")
         print("Ziel wird von Rviz veroeffentlicht")
         os.system("rosrun sound_play say.py 'Changed to state drive autonomously to target. Bye bye see you next time!'")
 
+        self.drive_autonomous_to_target_functions = self.roslaunch("drive_autonomous_to_target_functions")
+        self.drive_autonomous_to_target_functions.start()
+
         while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "wait for":
+            elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
     def localization(self):
         print("Changing to localization...")
@@ -134,17 +156,18 @@ class ALF(object):
         self.localization_functions = self.roslaunch("localization_functions")
         self.localization_functions.start()
 
-
         while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "drive":
+            elif self.input == "drive" or self.task == "drive":
                 self.toDrive()
-            elif input == "wait for":
+            elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
     def wait_for(self):
         print("Changing to wait for...")
@@ -156,24 +179,28 @@ class ALF(object):
         self.localization_functions.shutdown()
         self.basic_functions.shutdown()
         self.slam_functions.shutdown()
-        rospy.sleep(10)
+        self.drive_autonomous_to_target_functions.shutdown()
+        self.drive_autonomous_explore_functions.shutdown()
+        #rospy.sleep(10)
         self.basic_functions = self.roslaunch("basic_functions")
         self.basic_functions.start()
         os.system("rosrun sound_play say.py 'Changed to state wait for. Please tell me what to do.'")
 
 
         while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
+            if self.manualcontrol == True:
+                self.input = raw_input("Klasse eingeben: ")
+            if self.input == "stop" or self.task == "stop":
                 self.toStop()
-            elif input == "drive":
+            elif self.input == "drive" or self.task == "drive":
                 self.toLocalization()
-            elif input == "localization":
+            elif self.input == "localization" or self.task == "localization":
                 self.toLocalization()
-            elif input == "slam":
+            elif self.input == "slam" or self.task == "slam":
                 self.toSlam()
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
     def stop(self):
         print("Changing to stop...")
@@ -188,11 +215,12 @@ class ALF(object):
         rospy.sleep(10)
 
         while True:
-            input= raw_input("Quittieren mit Y: ")
-            if input == "Y":
+            self.input = raw_input("Quittieren mit Y: ")
+            if self.input == "Y":
                 self.toWait_for()
             else:
                 print("No legal Transition!")
+                time.sleep(0.1)
 
     def slam(self):
         print("Changing to slam...")
@@ -200,19 +228,17 @@ class ALF(object):
         os.system("rosrun sound_play say.py 'Changed to state slam.'")
 
         self.is_map = False
-        self.slam_functions.shutdown()
-        rospy.sleep(10)
         self.slam_functions = self.roslaunch("slam_functions")
         self.slam_functions.start()
 
-        while True:
-            input = raw_input("Klasse eingeben: ")
-            if input == "stop":
-                self.toStop()
-            elif input == "wait for":
-                self.toWait_for()
-            else:
-                self.toDrive()
+        if self.manualcontrol == True:
+            self.input = raw_input("Klasse eingeben: ")
+        if self.input == "stop":
+            self.toStop()
+        elif self.input == "wait for":
+            self.toWait_for()
+        else:
+            self.toDrive()
 
     def roslaunch(self, launchfile):
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
@@ -220,9 +246,26 @@ class ALF(object):
         launch = roslaunch.parent.ROSLaunchParent(uuid, ["/home/alf/catkin_ws2/devel/lib/statemachine/" + launchfile + ".launch.xml"])
         return launch
 
+    def gettask(self, msg):
+        print(msg.data)
+        self.task = msg.data
+        #self.toWait_for()
+
+    def getmode(self, msg):
+        print(msg.data)
+        self.mode = msg.data
+        #self.toWait_for()
+
 if __name__ == "__main__":
     alf = ALF("alf")
-    alf.toWait_for()
+    rospy.Subscriber("/transcript/modus", String, alf.getmode)
+    rospy.Subscriber("/transcript/task", String, alf.gettask)
+    rospy.init_node('listener', anonymous=True)
+    try:
+        while not rospy.is_shutdown():
+            alf.toWait_for()
+    except KeyboardInterrupt:
+        print("\nShutting down")
 
 
 

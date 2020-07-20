@@ -48,6 +48,7 @@ class PeopleRec:
         self.face = face.face()
         self.person = person.person()
         self.dataoperations = dataoperations.dataoperations()
+        self.slowdown = True
 
 
     ## Callback der vorderen Kamera.
@@ -237,20 +238,30 @@ class PeopleRec:
                 """
                 Hier kann man seriell arbeiten
                 """
+                print(self.slowdown)
+                if self.slowdown == True:
+                    time.sleep(2)
                 start = time.time()
+
                 if self.namespaceoffrontcamera != "":
                     detectionsfront, imagefront = self.detections.getdetectionsbytflite(self.frontimagebgrqhd, "front")
                     #print(detectionsfront)
                     self.managepeople(detectionsfront, self.frontimagebgrqhd, "front")
-                    #self.detections.getdetectionsbytflite(self.frontimagebgrqhd, "front")
 
                 if self.namespaceofrearcamera != "":
                     detectionsrear, imagerear = self.detections.getdetectionsbytflite(self.rearimagebgrqhd, "back")
                     #print(detectionsrear)
                     self.managepeople(detectionsrear, self.rearimagebgrqhd, "back")
 
+
+                if len(detectionsrear) == 0 and len(detectionsfront) == 0:
+                    self.slowdown = True
+                else:
+                    self.slowdown = False
+
                 self.publishposition()
                 end = time.time() - start
+
                 print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")
             self.dataoperations.savedata(self.listofpersons)

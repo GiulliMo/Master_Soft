@@ -61,7 +61,7 @@ class face:
             self.unknownfaces.append(face)
 
         count = 0
-        isunknown = face_recognition.compare_faces(self.unknownfaces, face, 0.4)
+        isunknown = face_recognition.compare_faces(self.unknownfaces, face, 0.5)
         print(isunknown)
         for index, element in enumerate(isunknown):
             # Wenn eingehendes Gesicht zu unbekannten Gesichtern passt zaehle hoch
