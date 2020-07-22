@@ -77,7 +77,7 @@ training_data.append({"class":0, "sentence":"start to drive by hand", "modus":2}
 training_data.append({"class":0, "sentence":"start to drive with joystick", "modus":2})
 training_data.append({"class":0, "sentence":"drive with joystick", "modus":2})
 training_data.append({"class":0, "sentence":"move to the laboratory to grab package", "modus":0})
-training_data.append({"class":0, "sentence":"i use the joystick to drive manually", "modus":1})
+training_data.append({"class":0, "sentence":"make use of the joystick to drive manually", "modus":1})
 training_data.append({"class":0, "sentence":"drive with rviz to a position of your choice", "modus":1})
 training_data.append({"class":0, "sentence":"can you drive to the emperor and deliver your load", "modus":0})
 training_data.append({"class":0, "sentence":"drive to location foxtrot", "modus":0})
@@ -88,6 +88,7 @@ training_data.append({"class":0, "sentence":"follow the next person", "modus":0}
 training_data.append({"class":0, "sentence":"go to last person you saw", "modus":0})
 training_data.append({"class":0, "sentence":"can you drive to the last person you saw", "modus":0})
 training_data.append({"class":0, "sentence":"move to a person", "modus":0})
+training_data.append({"class":0, "sentence":"drive with joy stick", "modus":0})
 
 training_data.append({"class":1, "sentence":"start slam", "modus":2})
 training_data.append({"class":1, "sentence":"switch to expedition mode", "modus":0})

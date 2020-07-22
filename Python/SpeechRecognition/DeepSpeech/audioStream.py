@@ -2,6 +2,8 @@
 # license removed for brevity
 
 import pyaudio
+import os
+import time
 import rospy
 import numpy as np
 from std_msgs.msg import Int16MultiArray, String, Int16
@@ -60,7 +62,9 @@ class AudioStream:
                     self.createAudioStream()
                     pub.publish(self.msg)
                     rospy.loginfo("Finished streaming audio!")
-                    #r.sleep()
+
+
+                time.sleep(0.01)
 
             except KeyboardInterrupt:
                 print("KeyBoard interrupt")
@@ -69,6 +73,7 @@ class AudioStream:
 
 if __name__ == '__main__':
 
-    s = AudioStream(rospy.get_param('/audioStream/pub/stream/topic'), rospy.get_param('/audioStream/sub/button/topic'), rospy.get_param("/audioStream/nodename"), dev=rospy.get_param('/audioStream/deviceID'), recsec=rospy.get_param('/audioStream/recsec'))
+
+    s = AudioStream(rospy.get_param('pub/stream/topic'), rospy.get_param('/audioStream/sub/button/topic'), rospy.get_param("/audioStream/nodename"), dev=rospy.get_param('/audioStream/deviceID'), recsec=rospy.get_param('/audioStream/recsec'))
     s.startNode()
 

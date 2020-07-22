@@ -76,6 +76,13 @@ training_data.append({"class":1, "sentence":"start to solve slam and drive with 
 training_data.append({"class":1, "sentence":"drive to", "modus":1})
 training_data.append({"class":1, "sentence":"drive with slam and make use of joystick", "modus":1})
 training_data.append({"class":1, "sentence":"just drive", "modus":1})
+training_data.append({"class":1, "sentence":"manually", "modus":1})
+training_data.append({"class":1, "sentence":"change to state slam", "modus":1})
+training_data.append({"class":1, "sentence":"change to driving mode and use joy", "modus":1})
+training_data.append({"class":1, "sentence":"change to driving mode and use joystick", "modus":1})
+training_data.append({"class":1, "sentence":"manually", "modus":1})
+training_data.append({"class":1, "sentence":"drive with joy stick", "modus":1})
+training_data.append({"class":0, "sentence":"make use of the joystick to drive manually", "modus":1})
 
 
 #Preprocessing
@@ -222,10 +229,65 @@ converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 open("autonom_manual.tflite", "wb").write(tflite_model)
 
-sentence1 = "drive manually with joystick"
+sentence1 = "drive manually autonom"
 input = bow(sentence1.lower(), words, show_details=False)
 print(model.predict(np.reshape(input,(1, len(words)))))
 
 sentence1 = "drive to hotel"
 input = bow(sentence1.lower(), words, show_details=False)
 print(model.predict(np.reshape(input,(1, len(words)))))
+
+XRNN = np.reshape(X,(X.shape[0],-1, X.shape[1]))
+
+## Recurennt Neuronal Network
+modelRNN = keras.Sequential()
+
+# Input Layer
+model.add(tf.keras.layers.Embedding(input_dim=len(words), input_length = len(words), output_dim=100,
+              trainable=True,
+              mask_zero=True))
+modelRNN.add(tf.keras.layers.InputLayer(input_shape=(1, X.shape[1]), name="input"))
+# Masking layer for pre-trained embeddings
+modelRNN.add(tf.keras.layers.Masking(mask_value=0.0))
+# Recurrent layer
+modelRNN.add(tf.keras.layers.LSTM(units=64, input_shape=(1, 2, X.shape[1]), return_sequences=True, dropout=0.4, recurrent_dropout=0.4))
+modelRNN.add(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, recurrent_dropout=0.3))
+modelRNN.add(tf.keras.layers.LSTM(64))
+# Fully connected layer
+modelRNN.add(tf.keras.layers.Dense(20, activation='relu'))
+# Dropout for regularization
+modelRNN.add(tf.keras.layers.Dropout(0.7))
+# Output layer
+modelRNN.add(tf.keras.layers.Dense(y.shape[1], activation='softmax', name="output"))
+
+modelRNN.summary()
+
+# Definieren des Optimizers
+optimizer = tf.keras.optimizers.Adam(
+    learning_rate=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False,
+    name='RMSprop'
+)
+
+# Compilieren des Modells
+modelRNN.compile(optimizer=optimizer,
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+start = time.time()
+# Trainieren des Modells
+modelRNN.fit(XRNN[0:len(documents)], labels[0:len(documents)], epochs=1000)
+print(time.time()-start)
+
+sentence1 = "use simultaneous loc"
+input = bow(sentence1.lower(), words, show_details=False)
+print(modelRNN.predict(np.reshape(input,(1, 1, len(words)))))
+
+# Speichern als keras Modell
+#modelRNN.save('taskClassifierRNN')
+
+# Konvertieren in Tflite Modell
+
+converter = tf.lite.TFLiteConverter.from_keras_model(modelRNN)
+converter.allow_custom_ops=True
+tflite_model = converter.convert()
+open("autonom_manualRNN.tflite", "wb").write(tflite_model)
