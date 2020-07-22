@@ -2,17 +2,16 @@ import time
 import roslaunch
 import rospy
 import os
-import signal
-import subprocess
 from std_msgs.msg import String
 from roslaunch.parent import ROSLaunchParent
 from transitions.extensions.nesting import HierarchicalMachine
+from transitions.extensions import MachineFactory as factory
 
 class ALF(object):
 
     states = ['wait for', {'name': 'drive', 'children': ['manual', {'name': 'autonomous', 'children': ['explore', 'to target']}]}, 'localization', 'stop', 'slam']
     def __init__(self, name):
-        self.machine = HierarchicalMachine(model=self, states=ALF.states, initial='stop')
+        self.machine = HierarchicalMachine(self, ALF.states, 'wait for')
         self.is_map = False
         self.basic_functions = self.roslaunch("basic_functions")
         self.localization_functions = self.roslaunch("localization_functions")
@@ -24,7 +23,7 @@ class ALF(object):
         self.drive_autonomous_to_target_functions = self.roslaunch("drive_autonomous_to_target_functions")
         self.task = ""
         self.mode = ""
-        self.manualcontrol = False
+        self.manualcontrol = True
         self.input = ""
         self.input2 = ""
 
@@ -58,12 +57,12 @@ class ALF(object):
             elif self.input == "drive" or self.task == "drive":
                 pass
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
-            if self.mode == "manual":
+            if self.input2 == "manual" or self.mode == "manual":
                 self.toManual()
-            if self.mode == "autonom":
+            if self.input2 == "autonom" or self.mode == "autonom":
                 self.toAutonomous()
 
     def autonomous(self):
@@ -81,7 +80,7 @@ class ALF(object):
             elif self.input == "drive" or self.task == "drive":
                 pass
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
             if self.is_map == True:
@@ -105,7 +104,7 @@ class ALF(object):
             elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
 
@@ -125,7 +124,7 @@ class ALF(object):
             elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
     def to_target(self):
@@ -144,7 +143,7 @@ class ALF(object):
             elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
     def localization(self):
@@ -166,7 +165,7 @@ class ALF(object):
             elif self.input == "wait for" or self.task == "wait for":
                 self.toWait_for()
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
     def wait_for(self):
@@ -184,6 +183,9 @@ class ALF(object):
         #rospy.sleep(10)
         self.basic_functions = self.roslaunch("basic_functions")
         self.basic_functions.start()
+        rospy.Subscriber("/transcript/modus", String, alf.getmode)
+        rospy.Subscriber("/transcript/task", String, alf.gettask)
+        rospy.init_node('listener', anonymous=True)
         os.system("rosrun sound_play say.py 'Changed to state wait for. Please tell me what to do.'")
 
 
@@ -199,7 +201,7 @@ class ALF(object):
             elif self.input == "slam" or self.task == "slam":
                 self.toSlam()
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
     def stop(self):
@@ -219,7 +221,7 @@ class ALF(object):
             if self.input == "Y":
                 self.toWait_for()
             else:
-                print("No legal Transition!")
+                print("No legal Transition! State --> " + self.state)
                 time.sleep(0.1)
 
     def slam(self):
@@ -240,6 +242,9 @@ class ALF(object):
         else:
             self.toDrive()
 
+    def problem(self):
+        pass
+
     def roslaunch(self, launchfile):
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
@@ -258,9 +263,7 @@ class ALF(object):
 
 if __name__ == "__main__":
     alf = ALF("alf")
-    rospy.Subscriber("/transcript/modus", String, alf.getmode)
-    rospy.Subscriber("/transcript/task", String, alf.gettask)
-    rospy.init_node('listener', anonymous=True)
+
     try:
         while not rospy.is_shutdown():
             alf.toWait_for()

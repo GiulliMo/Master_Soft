@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+import dataoperations
 
 
 class face:
@@ -8,8 +9,11 @@ class face:
         self.unknownfaces = []
 
     ## Ordnet Gesichter zu
-    def getface(self, xupleft, yupleft, xbellowright, ybellowright, image):
-
+    def getface(self, xupleft, yupleft, xbellowright, ybellowright, image, listofpersons):
+        if len(self.knownfaces) == 0:
+            for person in listofpersons:
+                self.knownfaces.append(person.face)
+        print(len(self.knownfaces))
         # ROI der Person wird zur Ersparnis der Rechenzeit an das Gesicht angepasst
         # facexupleft = int((xupleft + ((xbellowright - xupleft) / 4)) * factor)
         facexupleft = int(xupleft)
@@ -37,12 +41,12 @@ class face:
             face = face_recognition.face_encodings(rgb, boxes)[0]
             # Gehoert das eingehende Gesicht zu
             isknown = face_recognition.compare_faces(self.knownfaces, face, 0.5)
-            print(isknown)
+
             # Das erste Gesicht wird sofort abgespeichert
-            if not isknown:
-                self.knownfaces.append(face)
-                isknown.append(True)
-                print("Neues Gesicht mit der ID" + str(len(self.knownfaces) - 1) + " hinzugefuegt")
+            #if not isknown:
+            #    self.knownfaces.append(face)
+            #    isknown.append(True)
+            #    print("Neues Gesicht mit der ID" + str(len(self.knownfaces) - 1) + " hinzugefuegt")
             # Checke alle Gesichter ob und welches erkennt wurde, wenn nicht, gehoert es zu den unbekannten?
             for index, element in enumerate(isknown):
                 if isknown[index]:
@@ -53,15 +57,19 @@ class face:
                     self.checkunknownfaces(face)
                     return None
 
+            if self.knownfaces == []:
+                print("Erstes Gesicht wird hinzugefuegt.")
+                self.checkunknownfaces(face)
 
-    def checkunknownfaces(self, face, toknownfacesthreshold=3):
+
+    def checkunknownfaces(self, face, toknownfacesthreshold=10):
         print("Unbekanntes Gesicht wird geprueft...")
         # Wenn kein unbekanntes Gesicht vorhanden fuege es hinzu
         if not self.unknownfaces:
             self.unknownfaces.append(face)
 
         count = 0
-        isunknown = face_recognition.compare_faces(self.unknownfaces, face, 0.5)
+        isunknown = face_recognition.compare_faces(self.unknownfaces, face, 0.4)
         print(isunknown)
         for index, element in enumerate(isunknown):
             # Wenn eingehendes Gesicht zu unbekannten Gesichtern passt zaehle hoch

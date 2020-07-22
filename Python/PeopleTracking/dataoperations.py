@@ -13,7 +13,10 @@ class dataoperations:
         try:
             with open('data.pkl', 'rb') as input:
                 list = pickle.load(input)
+
         except EOFError:
             print("Empty File")
 
+        for person in list:
+            print(person.name)
         return list

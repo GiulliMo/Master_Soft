@@ -1,5 +1,6 @@
 import pickle
 import math
+import talk
 import tensorflow
 import tf as transform
 import threading
@@ -16,7 +17,7 @@ import sensor_msgs.point_cloud2 as pc2
 from cv_bridge import CvBridge, CvBridgeError
 import detections
 import face
-import person
+import person as ppl
 import dataoperations
 import sys
 
@@ -46,7 +47,8 @@ class PeopleRec:
         self.rearimagebgrqhd = np.array(0)
         self.detections = detections.detections("tflite")
         self.face = face.face()
-        self.person = person.person()
+        #self.person = person.person()
+        self.talk = talk.talk()
         self.dataoperations = dataoperations.dataoperations()
         self.slowdown = True
 
@@ -92,17 +94,22 @@ class PeopleRec:
     def managepeople(self, detections, imagebgrqhd, sneak):
         framebgrsmall = imutils.resize(imagebgrqhd, width=min(400, imagebgrqhd.shape[1]))
         print(detections)
+        print("list")
+        for person in self.listofpersons:
+            print(person.name)
         for (xupleft, yupleft, xbellowright, ybellowright) in detections:
             """
             Fuer jedes menschenaehnliche Objekt versuche im Interessenbereich ein Gesicht zu erkennen
             """
-            incomingface = self.face.getface(xupleft, yupleft, xbellowright, ybellowright, imagebgrqhd)
+            incomingface = self.face.getface(xupleft, yupleft, xbellowright, ybellowright, imagebgrqhd, self.listofpersons)
+
             if incomingface is not None:
                 """
                 Alle Informationen der eingehenden, erkannten Person werden aktualisiert
                 """
-                knownperson = self.person
-                knownperson.name = "ID" + str(incomingface[9])
+                knownperson = ppl.person()
+                ##knownperson.name = "ID" + str(incomingface[9])
+                knownperson.name = ""
                 knownperson.timestamp = time.time()
                 knownperson.rect = [incomingface[0], incomingface[1], incomingface[2], incomingface[3]]
                 knownperson.face = incomingface[8]
@@ -112,15 +119,22 @@ class PeopleRec:
                     incomingface[0], incomingface[1], incomingface[2], incomingface[3], self.pointcloudmsg)
                 knownperson.localcoordinates = self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall,
                                                                      knownperson.distance)
-                print(self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall, knownperson.distance))
+                #print(self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall, knownperson.distance))
+
                 """
                 Wenn der Index des Gesichts gleich der Laenge der Liste der bekannten Personen ist wird eine 
                 Person hinzugefuegt. Anderenfalls aktualisiere eine bestehende Person. 
                 """
                 if len(self.listofpersons) == incomingface[9]:
+                    knownperson.name = raw_input("Name: ")
                     self.listofpersons.append(knownperson)
                 else:
+                    knownperson.name = self.listofpersons[incomingface[9]].name
                     self.listofpersons[incomingface[9]] = knownperson
+
+                print("actual lis")
+                for person in self.listofpersons:
+                    print(person.name)
 
         #cv2.imshow(sneak, framebgrsmall)
         #key = cv2.waitKey(1) & 0xFF
@@ -191,7 +205,7 @@ class PeopleRec:
                 msg.pose.position.y = -lastperson.localcoordinates[0]
                 msg.pose.position.x = lastperson.localcoordinates[1]
                 msg.header.stamp = rospy.Time.now()
-                self.publisher.publish(msg)
+                self.xypublisher.publish(msg)
             # Wenn Fehler auf der Seite der ROS Software bestehen, fange diese ab
             except (transform.LookupException, transform.ConnectivityException, transform.ExtrapolationException):
                 print("No tf message received...")
@@ -216,11 +230,13 @@ class PeopleRec:
     ## befindlichen Befehle werden widerrum seriell barbeitet.
     def startnode(self):
         self.listofpersons = self.dataoperations.getdata()
-        for person in self.listofpersons:
-            self.face.knownfaces.append(person.face)
+
+        #for person in self.listofpersons:
+         #   self.face.knownfaces.append(person.face)
+
         rospy.init_node('listener', anonymous=True)
         self.listener = transform.TransformListener()
-        self.publisher = rospy.Publisher('people', PoseStamped, queue_size=10)
+        self.xypublisher = rospy.Publisher('people', PoseStamped, queue_size=10)
 
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
@@ -238,7 +254,7 @@ class PeopleRec:
                 """
                 Hier kann man seriell arbeiten
                 """
-                print(self.slowdown)
+
                 if self.slowdown == True:
                     time.sleep(2)
                 start = time.time()
@@ -253,7 +269,7 @@ class PeopleRec:
                     #print(detectionsrear)
                     self.managepeople(detectionsrear, self.rearimagebgrqhd, "back")
 
-
+                self.talk.greet(self.listofpersons)
                 if len(detectionsrear) == 0 and len(detectionsfront) == 0:
                     self.slowdown = True
                 else:
