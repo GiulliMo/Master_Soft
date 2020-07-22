@@ -139,7 +139,7 @@ class detections:
                 box = numpy.asarray(boxes[0, i, :])
                 factor = 0.1
                 box[1] = int(box[1] * image.shape[1] * (1 - factor))
-                box[0] = int(box[0] * image.shape[0] * (1 - factor))
+                box[0] = int(box[0] * image.shape[0] * (1 - factor)) - 30
                 box[3] = int(box[3] * image.shape[1] * (1 + factor))
                 box[2] = int(box[2] * image.shape[0] + (1 + factor))
                 for i in range(0, 1):

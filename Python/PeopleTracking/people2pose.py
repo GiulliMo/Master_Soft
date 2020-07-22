@@ -126,7 +126,9 @@ class PeopleRec:
                 Person hinzugefuegt. Anderenfalls aktualisiere eine bestehende Person. 
                 """
                 if len(self.listofpersons) == incomingface[9]:
+                    self.talk.newperson()
                     knownperson.name = raw_input("Name: ")
+                    self.talk.regcompleted(knownperson.name)
                     self.listofpersons.append(knownperson)
                 else:
                     knownperson.name = self.listofpersons[incomingface[9]].name

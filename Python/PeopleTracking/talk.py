@@ -21,13 +21,7 @@ class talk:
 
             if len(self.peoplenottogreet) == 0 and timepassed <= 10:
                 print("gruss2")
-                namearr = person.name.split()
-                newname = []
-                for chars in namearr:
-                    newname.append(chars)
-                    newname.append(" ")
-                person.name.join(newname)
-                self.publish("Hello and welcome. your name has to be " + person.name)
+                self.publish("Hello and welcome " + person.name)
                 self.peoplenottogreet.append(person.name)
 
             if len(self.peoplenottogreet) == 0 and timepassed >= 10:
@@ -50,16 +44,14 @@ class talk:
 
             if donotgreet == False:
                 print("gruss")
-                namearr = person.name.split()
-                newname = []
-                for chars in namearr:
-                    newname.append(chars)
-                    newname.append(" ")
-                person.name.join(newname)
-                self.publish("Hello and welcome. your name has to be " + person.name)
+                self.publish("Hello and welcome " + person.name)
                 self.peoplenottogreet.append(person.name)
 
+    def newperson(self):
+        self.publish("Registration completed! Please type in you name.")
 
+    def regcompleted(self, name):
+        self.publish("Thank You. Saved Person with name " + name)
 
     def publish(self, str):
         msg = String()

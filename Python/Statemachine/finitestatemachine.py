@@ -23,7 +23,7 @@ class ALF(object):
         self.drive_autonomous_to_target_functions = self.roslaunch("drive_autonomous_to_target_functions")
         self.task = ""
         self.mode = ""
-        self.manualcontrol = True
+        self.manualcontrol = False
         self.input = ""
         self.input2 = ""
 
@@ -190,10 +190,11 @@ class ALF(object):
 
 
         while True:
+            print(self.task)
             if self.manualcontrol == True:
                 self.input = raw_input("Klasse eingeben: ")
-            if self.input == "stop" or self.task == "stop":
-                self.toStop()
+            #if self.input == "stop" or self.task == "stop":
+                #self.toStop()
             elif self.input == "drive" or self.task == "drive":
                 self.toLocalization()
             elif self.input == "localization" or self.task == "localization":
@@ -211,9 +212,11 @@ class ALF(object):
 
         self.is_map = False
         self.drive_manual_functions.shutdown()
-        self.basic_functions.shutdown()
         self.localization_functions.shutdown()
+        self.basic_functions.shutdown()
         self.slam_functions.shutdown()
+        self.drive_autonomous_to_target_functions.shutdown()
+        self.drive_autonomous_explore_functions.shutdown()
         rospy.sleep(10)
 
         while True:
