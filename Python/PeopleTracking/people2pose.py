@@ -116,7 +116,7 @@ class PeopleRec:
                 knownperson.camera = sneak
                 knownperson.facerect = [incomingface[4], incomingface[5], incomingface[6], incomingface[7]]
                 knownperson.xcenterpospixel, knownperson.ycenterpospixel, knownperson.distance = self.getdistance(
-                    incomingface[0], incomingface[1], incomingface[2], incomingface[3], self.pointcloudmsg)
+                    incomingface[0], incomingface[1], incomingface[2], incomingface[3], self.pointcloudmsg, sneak)
                 knownperson.localcoordinates = self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall,
                                                                      knownperson.distance)
                 #print(self.getxycoordinates(knownperson.xcenterpospixel, framebgrsmall, knownperson.distance))
@@ -131,6 +131,7 @@ class PeopleRec:
                     self.talk.regcompleted(knownperson.name)
                     self.listofpersons.append(knownperson)
                 else:
+                    knownperson.face = self.listofpersons[incomingface[9]].face
                     knownperson.name = self.listofpersons[incomingface[9]].name
                     self.listofpersons[incomingface[9]] = knownperson
 
@@ -142,7 +143,7 @@ class PeopleRec:
         #key = cv2.waitKey(1) & 0xFF
         print("Es wurde(n) bisher " + str(len(self.listofpersons)) + " Person(en) registriert")
 
-    def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg):
+    def getdistance(self, xupleft, yupleft, xbellowright, ybellowright, pointcloudmsg, sneak):
         #Kleines Rechteck wird erstellt und aus der der HD-PointCloud geschnitten
         factor = 3
         xcenter = xupleft + (xbellowright - xupleft) / 2
@@ -164,9 +165,14 @@ class PeopleRec:
         for column in range(int(ysmallrectupleft*0.5333), int(ysmallrectbellowright*0.5333)):
             for row in range(int(xsmallrectupleft*0.7851), int(xsmallrectbellowright*0.7851)):
                 listofroi.append([int(column), int(row)])
-        cv2.circle(self.frontimagebgrqhd, (ysmallrectupleft, xsmallrectupleft), 10, (255, 0, 0), 2)
-        cv2.circle(self.frontimagebgrqhd, (ysmallrectbellowright, xsmallrectbellowright), 10, (255, 0, 0), 2)
-        cv2.imshow("roi", self.frontimagebgrqhd)
+        if sneak == "front":
+            cv2.circle(self.frontimagebgrqhd, (ysmallrectupleft, xsmallrectupleft), 10, (255, 0, 0), 2)
+            cv2.circle(self.frontimagebgrqhd, (ysmallrectbellowright, xsmallrectbellowright), 10, (255, 0, 0), 2)
+            cv2.imshow("roi", self.frontimagebgrqhd)
+        if sneak == "back":
+            cv2.circle(self.rearimagebgrqhd, (ysmallrectupleft, xsmallrectupleft), 10, (255, 0, 0), 2)
+            cv2.circle(self.rearimagebgrqhd, (ysmallrectbellowright, xsmallrectbellowright), 10, (255, 0, 0), 2)
+            cv2.imshow("roi", self.rearimagebgrqhd)
         key = cv2.waitKey(1000)
 
         print(type(pointcloudmsg))

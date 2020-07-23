@@ -1,12 +1,14 @@
 import face_recognition
 import cv2
 import dataoperations
+import talk
 
 
 class face:
     def __init__(self):
         self.knownfaces = []
         self.unknownfaces = []
+        self.talk = talk.talk()
 
     ## Ordnet Gesichter zu
     def getface(self, xupleft, yupleft, xbellowright, ybellowright, image, listofpersons):
@@ -78,6 +80,7 @@ class face:
             # Wenn nicht zaehle runter
             else:
                 count = 0
+                #self.talk.newregprocess()
             # Wenn das Gesicht oft genug erkannt wurde fuege es zu bekannten Gesichtern hinzugit status
             if count == toknownfacesthreshold:
                 self.knownfaces.append(face)
@@ -86,6 +89,7 @@ class face:
             # Wenn keins der unbekannten Gesichter dem eingehenden Gesicht aehnelt, erweitere die Liste
             if index + 1 == len(isunknown):
                 self.unknownfaces.append(face)
+                #self.talk.unknown()
             # Wenn das Gesicht oft genug erkannt worden ist, loesche es von den unbekannten Geischtern
             if index + 1 == toknownfacesthreshold:
                 self.unknownfaces.remove(self.unknownfaces[0])

@@ -12,9 +12,9 @@ class talk:
 
     def greet(self, listofpersons):
         print("g")
-        donotgreet = False
         print(self.peoplenottogreet)
         for person in listofpersons:
+            donotgreet = False
             print(person.name)
             timepassed = time.time() - person.timestamp
             print (timepassed)
@@ -52,6 +52,12 @@ class talk:
 
     def regcompleted(self, name):
         self.publish("Thank You. Saved Person with name " + name)
+
+    def unknown(self):
+        self.publish("I dont know you! Please come closer, hold your position and look at the camera.")
+
+    def newregprocess(self):
+        self.publish("Registration Process aborted! Please try again!")
 
     def publish(self, str):
         msg = String()

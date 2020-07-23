@@ -180,7 +180,7 @@ class ALF(object):
         self.slam_functions.shutdown()
         self.drive_autonomous_to_target_functions.shutdown()
         self.drive_autonomous_explore_functions.shutdown()
-        #rospy.sleep(10)
+        #time.sleep(10)
         self.basic_functions = self.roslaunch("basic_functions")
         self.basic_functions.start()
         rospy.Subscriber("/transcript/modus", String, alf.getmode)
