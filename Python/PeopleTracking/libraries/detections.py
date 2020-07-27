@@ -1,11 +1,13 @@
 import time
-
+from libraries.dataset import transform_images, load_tfrecord_dataset
 import numpy
 import numpy as np
 import cv2
 import tensorflow
 import imutils
 from imutils.object_detection import non_max_suppression
+from libraries.models import (YoloV3, YoloV3Tiny)
+from libraries.utils import draw_outputs
 #from tflite_runtime.interpreter import Interpreter as tflruntime
 
 class detections:
@@ -269,3 +271,41 @@ class detections:
             idxs = np.delete(idxs, suppress)
         # return only the bounding boxes that were picked
         return boxes[pick]
+
+    def getdetectionsbyyolov3(self, image, sneak):
+
+        physical_devices = tensorflow.config.experimental.list_physical_devices('GPU')
+        for physical_device in physical_devices:
+            tensorflow.config.experimental.set_memory_growth(physical_device, True)
+
+
+        yolo = YoloV3Tiny(classes=80)
+
+        #yolo = YoloV3(classes=80)
+        yolo.load_weights('nets/yolov3-tiny.tf').expect_partial()
+        #yolo.load_weights('nets/yolov3.tf').expect_partial()
+
+
+        class_names = [c.strip() for c in open('labels/yolov3labels.txt').readlines()]
+
+
+        #if None:
+        #dataset = load_tfrecord_dataset(
+         #   None, 'nets/coco.names',416)
+        #dataset = dataset.shuffle(512)
+        #img_raw, _label = next(iter(dataset.take(1)))
+        #else:
+        img_raw = image#tensorflow.image.decode_image(
+            #image, channels=3)
+
+        img = tensorflow.expand_dims(img_raw, 0)
+        img = transform_images(img, 416)
+        start = time.time()
+        boxes, scores, classes, nums = yolo(img)
+        print(boxes[0])
+        print("YoloV3 " + sneak + " = " + str(time.time() - start))
+        image = draw_outputs(image, (boxes, scores, classes, nums), class_names)
+
+        cv2.imshow(sneak, image)
+        key = cv2.waitKey(1)
+        return boxes, image

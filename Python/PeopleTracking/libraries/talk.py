@@ -1,7 +1,12 @@
+from tempfile import TemporaryFile
+
+import pygame
+from gtts import gTTS
 from std_msgs.msg import String
 import rospy
 import time
 import os
+import pyttsx3
 
 
 class talk:
@@ -59,7 +64,18 @@ class talk:
         self.publish("Registration Process aborted! Please try again!")
 
     def publish(self, str):
-        msg = String()
-        msg.data = str
+        tts = gTTS(str)
+        f = TemporaryFile()
+        tts.write_to_fp(f)
+        f.seek(0)
+        pygame.mixer.init()
+        pygame.mixer.music.load(f)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+        f.close()
+
+        #msg = String()
+        #msg.data = str
         #self.voicepublisher.publish(msg)
-        os.system("rosrun sound_play say.py '" + str + "'")
+        #os.system("rosrun sound_play say.py '" + str + "'")
