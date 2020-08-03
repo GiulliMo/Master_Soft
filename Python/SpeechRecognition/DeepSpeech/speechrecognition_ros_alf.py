@@ -3,16 +3,18 @@
 
 ##################################################
 ## Author: Hannes Dittmann
-## Version: 1.0
+## Version: 2.0
 ## Email: hannes.dittmann@stud.hshl.de
 ## Status: In Entwicklung
 ##################################################
 ## Kommentare:
 ## Dieses Skript dient dazu, eine transkription auf dem Raspberry Pi in Kombination mit dem Robot Operating System durchzufuehren
-## Ein Deepspeech Modell muss mit passender Version vorliegen. Ein Datenstrom wird aus dem ROS-Netzwerk aufgenommen
+## Ein Deepspeech Modell muss mit passender Version vorliegen. Ein Datenstrom wird aus dem ROS-Netzwerk aufgenommen/abonniert
 ## Es wird eine WAV Datei transkribiert, diese kann vorhanden sein, oder neu aufgenommen werden.
 ## Ein Tflite Modell zur bedienungsorientierten Handlungsklassifizierung muss mit entsprechender Wortliste vorliegen
-## Wortliste, Buzzword.json und taskClassifier.tflie mueesen vorhanden sein
+## Wortliste kann veraltet sein ==> "gleichverteilte" Wahrscheinlichkeiten
+## Wortliste, Buzzword.json und taskClassifier.tflite mueesen vorhanden sein
+## GGF muss der Input_tensor bei der Klassifizierung angepasst werden, wenn ein RNN/normales Netz verwendet werden
 
 ## python3 main_ros.pyr 5 -lm gb -tpp recognition -tps audio_stream -nn recognizer in Konsole auf dem ALF PC ausfuehren
 ## python audioStream_ros.py -di 7 -nn audio -tp audio_stream
@@ -20,7 +22,6 @@
 
 import os
 import wave
-
 import deepspeech
 import pyaudio
 import rospy
@@ -72,13 +73,13 @@ class SpeechRecognition:
         self.nodename = nodename
         self.topicnameTranscript = topicnameTranscript # zum veroeffentlichen des deepspeech transkripts
         self.topicnameSub = topicnameSub    # subscriben des audio streams
-        self.topicnameTask = topicnameTask
-        self.topicnameTaskConfidence = topicnameTaskConfidence
-        self.topicnameBuzz = topicnameBuzz
-        self.topicnameModus = topicnameModus
-        self.topicnameModusConfidence = topicnameModusConfidence
-        self.topicnameGoal = topicnameGoal
-        self.Version = pyVersion
+        self.topicnameTask = topicnameTask  # veroeffentlichten der klassifizierten Handlung
+        self.topicnameTaskConfidence = topicnameTaskConfidence  # Konfidenz der Klassifizierung
+        self.topicnameBuzz = topicnameBuzz  # Schlagwoerter werden veroeffentlicht
+        self.topicnameModus = topicnameModus    # modus autonom/manual
+        self.topicnameModusConfidence = topicnameModusConfidence    # konfidenzen fuer modus klassifizierung
+        self.topicnameGoal = topicnameGoal  # zielpose wird veroeffentlicht
+        self.Version = pyVersion # de oder gb
         self.chunksize = 2048
         self.rate = 16000
         self.recsec = recsec
@@ -86,7 +87,7 @@ class SpeechRecognition:
         self.Format = pyaudio.paInt16
         self.channels = 1
         self.modelDs = initModel(self.Version)
-        self.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
+        self.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
         self.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
         self.buffer = np.zeros(int(int(self.rate / self.chunksize) * self.recsec * self.chunksize))
         self.frames = []
@@ -107,7 +108,7 @@ class SpeechRecognition:
 
     ## Methoden um Schlagwoerter in transcript zu finden
 
-    # Pattern Matcher um Schlagwoerter zu finden
+    # Pattern Matcher um Schlagwoerter in Transkript zu finden zu finden
     def Rabin_Karp_Matcher(self, text, pattern, d, q):
         n = len(text)
         m = len(pattern)
@@ -166,7 +167,7 @@ class SpeechRecognition:
         self.wordsModus = words[0:len(words) - 1]  # split fuegt ein wort hinzu wo keins hinsoll
         file2.close()
 
-    # Methonde um nur Wortstaemme beachten
+    # Methonde um nur Wortstaemme zu beachten
     def clean_up_sentence(self, sentence):
 
         # tokenize the pattern
@@ -189,6 +190,7 @@ class SpeechRecognition:
                     bag[i] = 1
                     if show_details:
                         print("found in bag: %s" % w)
+
         return (np.array(bag))
 
     # Methode um Rohdaten aus WAV Datei zu lesen
@@ -198,14 +200,19 @@ class SpeechRecognition:
         type(buffer)
         return (buffer)
 
-    # Methode um Schlagwoerter zu finden
+    ## Methode um Schlagwoerter zu finden ##
+    ## getALFBuzzwords Liste muss ggf weitergepflegt werden
+
     def getAlfBuzzWords(self):
 
+        # leere Schlagwortliste anlegen
         self.recognizedBuzzwords = []
         buzz = []
+
         # Apostroph wird mit leerzeichen ersetzt
         self.transcript = self.transcript.replace("'", "")
         res = self.transcript.split()
+
         phoneResSoundex = []
         # phoneResNysi = []
 
@@ -217,33 +224,34 @@ class SpeechRecognition:
 
         # phonetischen code der transkription nach metaphone
         phoneResMetaphone = phonetics.metaphone(self.transcript.replace(" ", ""))
-        # print(phoneResMetaphone)
+        #phoneResNysi = phonetics.nysiis(self.transcript.replace(" ", ""))
 
-        # Sind Schalgwoerter in dem Transcript, wenn eines vorhanden ist
+
+        # Sind Schalgwoerter in dem Transcript, wenn
         if self.transcript:
 
             for i in range(len(self.buzzwords)):
 
                 # Pruefe auf direktes match
-                if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257,
-                                           11):  # is there a buzzword?
+                if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
                     self.recognizedBuzzwords.append(self.buzzwords[i])  # ['buzzword'][0]['name'])  # Buzzword to list
                     buzz.append(self.buzzwords[i]['buzzword'][0]['name'])
+
                 # Pruefe auf phonetische uebereinstimmung nach Metaphone Codierung
-                elif self.Rabin_Karp_Matcher(phoneResMetaphone,
-                                             phonetics.metaphone(self.buzzwords[i]['buzzword'][0]['name']), 257,
-                                             11):
+                elif self.Rabin_Karp_Matcher(phoneResMetaphone, phonetics.metaphone(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
                     self.recognizedBuzzwords.append(self.buzzwords[i])  # ['buzzword'][0]['name'])  # Buzzword to list
                     buzz.append(self.buzzwords[i]['buzzword'][0]['name'])
 
                 # Pruefe auf phonetische uebereinstimmung nach Soundex Codierung
-                elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResSoundex),
-                                             phonetics.soundex(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
+                elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResSoundex), phonetics.soundex(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
                     self.recognizedBuzzwords.append(self.buzzwords[i])  # ['buzzword'][0]['name'])  # Buzzword to list
                     buzz.append(self.buzzwords[i]['buzzword'][0]['name'])
+
                 # Pruefe auf phonetisches match nach Nysii codierung
-                # elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResNysi), phonetics.nysiis(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
-                # recognizedBuzzwords.append(self.buzzwords[i]['buzzword'][0]['id'])  # Buzzword to list
+                #elif self.Rabin_Karp_Matcher(self.converttoStr(phoneResNysi), phonetics.nysiis(self.buzzwords[i]['buzzword'][0]['name']), 257, 11):
+                   #  self.recognizedBuzzwords.append(self.buzzwords[i])  # ['buzzword'][0]['name'])  # Buzzword to list
+                    # buzz.append(self.buzzwords[i]['buzzword'][0]['name'])
+
             my_string = ','.join(buzz)
 
             if not my_string:
@@ -251,24 +259,34 @@ class SpeechRecognition:
                 rospy.loginfo('No valid buzzwords found')
 
             elif my_string:
-                rospy.loginfo(my_string)
-                self.talkerBuzz(len(my_string), my_string)
+
+                self.talkerBuzz(len(my_string), "Found the following buzzwords: " + my_string)
+
+
+    ## Alles was fuer die Klassifizierung gebraucht wird ##
 
     def classifierPostProcessing(self, classified, mode):
 
         # ausgabe des transcripts tts
         # print(self.transcript)
         str = "rosrun sound_play say.py" + " " + "'" + "i understand " + self.transcript + "'"
-        #os.system(str)
+        os.system(str)
 
-        # festlegen von konfidenzleveln
+        # festlegen von konfidenzleveln bei unkritischen (wait und stop) deutlich geringer als bei fahraufgaben
         threshold_modus = 0.65 #threshold fuer modus autonom oder manuell
         threshold_drive = 0.7
         threshold_slam = 0.7
         threshold_waitfor = 0.5
-        threshold_localization = 0.7
+        threshold_localization = 0.5
         threshold_stop = 0.5
         threshold_unknow = 0.5
+
+        # drive to = 0
+        # slam = 1
+        # wait for = 2
+        # localization = 3
+        # stop = 4
+        # unknow = 5
 
         #veroeffentlichung der klassifizierten Handlunge und Ziele etc.
         if classified == self.class_names[0] and self.msgClass.data[np.argmax(self.msgClass.data)]>threshold_drive:
@@ -276,40 +294,41 @@ class SpeechRecognition:
             # veroeffentlichen von erkannter handlung und konfidenz DRIVE TO
             self.talkerTask(len(self.class_names[np.argmax(self.msgClass.data)]), self.class_names[np.argmax(self.msgClass.data)], len(self.class_names))
             self.ask = False
+            cnt = 0
 
             ## Hier wird nach einem Ziel nachgefragt, solange bis "exit" gesagt wird
             while not rospy.is_shutdown():
 
                 time.sleep(0.01)
 
-                # ein ziel und klasse 0 oder eine person und klasse 2 aus buzzwords
-                if len(self.recognizedBuzzwords)==1 and (self.recognizedBuzzwords[0]['buzzword'][0]['class'] == 0 or self.recognizedBuzzwords[0]['buzzword'][0]['class'] == 2):
+                # ein ziel und klasse 0 oder eine person und klasse 2 aus buzzwords und wenn modus auch autonom dann wird sofort veroeffentlicht
+                if len(self.recognizedBuzzwords)==1 and (self.recognizedBuzzwords[0]['buzzword'][0]['class'] == 0 or self.recognizedBuzzwords[0]['buzzword'][0]['class'] == 2) and (mode == self.modus_names[0] and self.msgModus.data[np.argmax(self.msgModus.data)]>threshold_modus):
 
-                    # tonausgabe
+                    # tonausgabe des verstandenen Transcripts
                     time.sleep(1.0)
-                    str = "rosrun sound_play say.py" + " " + "'"+"i found " + self.recognizedBuzzwords[0]['buzzword'][0]['name'] + " as a buzzword and its a valid destination" +"'"
-                    #os.system(str)
+                    str = "rosrun sound_play say.py" + " " + "'"+"i have " + self.recognizedBuzzwords[0]['buzzword'][0]['name'] + " as a buzzword and its a valid destination" +"'"
+                    os.system(str)
                     rospy.loginfo("Valid location!")
 
-                    # veroeffentlichung autonomer modus und konfidenz
+                    # Veroeffentlichung autonomer modus und konfidenz
                     self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
 
-                    # veröffentlichung des ziels komm hier hin
-
+                    # Veroeffentlichung des Ziels
+                    self.talkerGoal(self.recognizedBuzzwords[0]['buzzword'][0]['name'], self.recognizedBuzzwords[0]['buzzword'][0]['value'])
                     break
 
                 # uerberpruefen ob autonom mit 0.6 prozent anliegt, dann wird nach Ziel gefragt bis  eines anliegt oder exit gesagt wird
                 elif mode == self.modus_names[0] and self.msgModus.data[np.argmax(self.msgModus.data)]>threshold_modus and len(self.recognizedBuzzwords)==0:
 
                     # tonausgabe
-                    #str = "rosrun sound_play say.py" + " " + "'" + "but " + "no valid location push start and repeat your goal!" + "'"
-                    #os.system(str)
+                    str = "rosrun sound_play say.py" + " " + "'" + "but " + "no valid location push start and repeat your goal!" + "'"
+                    os.system(str)
                     rospy.loginfo("No valid location, push start and repeat your goal!")  # tts
 
                     # veroeffentlichung autonomer modus und konfidenz
                     self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
 
-                    ## Hier wird nach einem Ziel nachgefragt, solange bis "exit" gesagt wird
+                    ## Hier wird nach einem Ziel nachgefragt, solange bis "exit" gesagt wird, da er autonom schon hat
                     while not rospy.is_shutdown():
 
                         checksum = sum(self.lstMsg - self.buffer)  # letzte Message gleich neuer? wenn gleich verwerfen
@@ -323,41 +342,47 @@ class SpeechRecognition:
 
                             # laenge 1 und classe 0 oder 1 dann valide position
                             if len(self.recognizedBuzzwords)==1 and (self.recognizedBuzzwords[0]['buzzword'][0]['class'] == 0 or self.recognizedBuzzwords[0]['buzzword'][0]['class'] == 2):
-                                str = "rosrun sound_play say.py" + " " + "'" + "i understand " + self.recognizedBuzzwords[0]['buzzword'][0]['name'] + " and its a valid location" + "'"
-                                #os.system(str)
+                                str = "rosrun sound_play say.py" + " " + "'" + "i understand " + self.recognizedBuzzwords[0]['buzzword'][0]['name'] + " as a buzzword" + "'"
+                                os.system(str)
                                 rospy.loginfo("Valid location!")
-                                # pose veroeffentlichen
+
+                                # veröffentlichung des Ziels
+                                self.talkerGoal(self.recognizedBuzzwords[0]['buzzword'][0]['name'], self.recognizedBuzzwords[0]['buzzword'][0]['value'])
                                 break
 
                             elif len(self.recognizedBuzzwords)==1 and self.recognizedBuzzwords[0]['buzzword'][0]['name'] == "exit":
                                 str = "rosrun sound_play say.py" + " " + "'" + "Exit target finding" + "'"
-                                #os.system(str)
+                                os.system(str)
                                 rospy.loginfo("Exit target finding!")
                                 break
 
                             else:
                                 str = "rosrun sound_play say.py" + " " + "'" + "i understand " + "no valid location push start and repeat your goal!" + "'"
-                                #os.system(str)
+                                os.system(str)
                                 rospy.loginfo("No valid location, push start and repeat your goal!")
 
                         time.sleep(0.01)
 
-                    break
 
-                # ueberpruefen ob manuell mit 0,6 prozent anliegt wenn ja, veroeffentlichen
+                # ueberpruefen ob manuell mit 0,6 prozent anliegt wenn ja, veroeffentlichen ==> Joystick rumfahren
                 elif mode == self.modus_names[1] and self.msgModus.data[np.argmax(self.msgModus.data)] > threshold_modus:
                     # veroeffentlichung manueller modus wenn konfidenz groesser als 0.6 ist
                     self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]), self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
                     break
 
-                # autonom oder manuell erfragen da konfidenzen nicht ausreichten (kein valider modus)
+                # autonom oder manuell erfragen da konfidenzen nicht ausreichten (kein valider modus) ==> Danach wird noch ein Ziel abgefragt
                 else:
 
-                    #str = "rosrun sound_play say.py" + " " + "'" + "i understand " + "no valid mode push start and repeat your mode!" + "'"
-                    #os.system(str)
-                    rospy.loginfo("No valid mode, push start and repeat your mode!")
+                    # damit nur eine Ausgabe bei durch die while schleifen kommt
+                    if cnt == 0:
+                        str = "rosrun sound_play say.py" + " " + "'" + "i understand " + "no valid mode push start and repeat your mode!" + "'"
+                        os.system(str)
+                        rospy.loginfo("No valid mode, push start and repeat your mode!")
+                        cnt = 1
+
                     checksum = sum(self.lstMsg - self.buffer)  # letzte Message gleich neuer? wenn gleich verwerfen
 
+                    # standard fuer transkript und audio holen
                     if not checksum == 0:
 
                         ## hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
@@ -368,83 +393,131 @@ class SpeechRecognition:
                         self.classifierModus(self.transcript)
                         mode = self.modus_names[np.argmax(self.msgModus.data)]
 
-        # drive to = 0
-        # slam = 1
-        # wait for = 2
-        # localization = 3
-        # stop = 4
-        # unknow = 5
+                        # zaehler ruecksetzen
+                        cnt = 0
 
-        ## threshholds der konfidenzen beachten
+
         ## Bei SLAM muss zwischen autonom und manuell unterschieden werden bzw gehandelt
         elif classified == self.class_names[1] and self.msgClass.data[np.argmax(self.msgClass.data)]>threshold_slam:
 
             # veroeffentlichung von erkannter Handlung un zugehoeriger konfidenz
             self.talkerTask(len(self.class_names[np.argmax(self.msgClass.data)]), self.class_names[np.argmax(self.msgClass.data)], len(self.class_names))
             self.ask = False
+            cnt = 0
 
-            if mode == self.modus_names[0] and self.msgModus.data[np.argmax(self.msgModus.data)] > threshold_modus:
-                # Veroeffentlichung autonomer modus und konfidenz
-                self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
+            # solange nachfragen bis klar ist welcher modus genutzt werden soll, oder exit gesagt wird
+            while not rospy.is_shutdown():
 
-            elif mode == self.modus_names[1] and self.msgModus.data[np.argmax(self.msgModus.data)] > threshold_modus:
-                # Veroeffentlichung manueller modus wenn konfidenz groesser als 0.6 ist
-                self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
+                # ueberpruefen ob autonom mit 0,6 prozent anliegt wenn ja, veroeffentlichen
+                if mode == self.modus_names[0] and self.msgModus.data[np.argmax(self.msgModus.data)] > threshold_modus:
+                    # Veroeffentlichung autonomer modus und konfidenz
+                    self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
+                    break
 
-        # keine Unterscheidung bei WAIT FOR
+                # ueberpruefen ob manuell mit 0,6 prozent anliegt wenn ja, veroeffentlichen
+                elif mode == self.modus_names[1] and self.msgModus.data[np.argmax(self.msgModus.data)] > threshold_modus:
+                    # Veroeffentlichung manueller modus wenn konfidenz groesser als 0.6 ist
+                    self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
+                    break
+
+                # exit strategie wenn man keine lust mehr hat nachzufragen
+                elif len(self.recognizedBuzzwords) == 1 and self.recognizedBuzzwords[0]['buzzword'][0]['name'] == "exit":
+                    str = "rosrun sound_play say.py" + " " + "'" + "Exit target finding" + "'"
+                    os.system(str)
+                    rospy.loginfo("Exit mode finding for slam!")
+                    break
+
+                # autonom oder manuell erfragen da konfidenzen nicht ausreichten (kein valider modus)
+                else:
+
+                    if cnt == 0:
+                        str = "rosrun sound_play say.py" + " " + "'" + "i understand " + "no valid mode push start and repeat your mode!" + "'"
+                        os.system(str)
+                        rospy.loginfo("No valid mode, push start and repeat your mode!")
+                        cnt = 1
+
+                    checksum = sum(self.lstMsg - self.buffer)  # letzte Message gleich neuer? wenn gleich verwerfen
+
+                    if not checksum == 0:
+
+                        ## hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
+                        # Audio verarbeiten und auf Buzzwords checken
+                        self.processDataStream(self.buffer)
+
+                        # Schlagwort erzeugen um exit bedienen zu koennen
+                        self.getAlfBuzzWords()
+
+                        # modus neu klassifizieren
+                        self.classifierModus(self.transcript)
+                        mode = self.modus_names[np.argmax(self.msgModus.data)]
+
+                        # zaehler ruecksetzen
+                        cnt = 0
+
+                time.sleep(0.01)
+
+
+        # keine Unterscheidung bei WAIT FOR (manuell oder autonom)
         elif classified == self.class_names[2] and self.msgClass.data[np.argmax(self.msgClass.data)]>threshold_waitfor:
+
             # veroeffentlichung von erkannter Handlung un zugehoeriger konfidenz
             self.talkerTask(len(self.class_names[np.argmax(self.msgClass.data)]),self.class_names[np.argmax(self.msgClass.data)], len(self.class_names))
             self.ask = False
 
         # keine Unterscheidung bei LOCALIZATION
         elif classified == self.class_names[3] and self.msgClass.data[np.argmax(self.msgClass.data)]>threshold_localization:
+
             # veroeffentlichung von erkannter Handlung un zugehoeriger konfidenz
             self.talkerTask(len(self.class_names[np.argmax(self.msgClass.data)]), self.class_names[np.argmax(self.msgClass.data)], len(self.class_names))
             self.ask = False
 
         # keine Unterscheidung bei STOP
         elif classified == self.class_names[4] and self.msgClass.data[np.argmax(self.msgClass.data)]>threshold_stop:
+
             # veroeffentlichung von erkannter Handlung un zugehoeriger konfidenz
             self.talkerTask(len(self.class_names[np.argmax(self.msgClass.data)]),self.class_names[np.argmax(self.msgClass.data)], len(self.class_names))
             self.ask = False
 
         # keine Unterscheidung bei UNKNOW
         elif classified == self.class_names[5] and self.msgClass.data[np.argmax(self.msgClass.data)]>threshold_unknow:
+
             # veroeffentlichung von erkannter Handlung un zugehoeriger konfidenz
             self.talkerTask(len(self.class_names[np.argmax(self.msgClass.data)]),self.class_names[np.argmax(self.msgClass.data)], len(self.class_names))
             str = "rosrun sound_play say.py" + " " + "'" + "i classified no valid task, pleas repeat your command" + "'"
-            #os.system(str)
+            os.system(str)
             rospy.loginfo("No valid task classified, repeat your command!")
             self.ask = False
 
         # Kein threshold reicht aus ==> erneute eingabe
         if self.ask:
             str = "rosrun sound_play say.py" + " " + "'" + "i classified no valid task, pleas repeat your command" + "'"
-            #os.system(str)
+            os.system(str)
             rospy.loginfo("No valid task classified, repeat your command!")
 
         self.ask = True
 
 
 
-    # Methode um Handlungen und Modus zu klassifizieren
+    ## Methode um Handlungen zu klassifizieren ##
+
     def classifierTask(self, transcript):
 
         try:
+
             self.modelTaskClassifier.allocate_tensors()
 
-            # Bearbeiten des Transcripts
+            ## Bearbeiten des Transcripts
             transcript = transcript.replace("'", "")
             res = transcript.split()
             phoneRes = []
+
+            # phonetischen Teil mit metaphone bestimmen
             for k in res:
                 phoneRes.append(phonetics.metaphone(k))
             transcript = transcript + ' ' + ' '.join(phoneRes)
 
             # Transcript mit phonetik ausgeben
             rospy.loginfo("Transcript mit phonetischen Anteil: " + transcript)
-
 
             #  Ein- und Ausgabe Tensoren bestimmen
             input_details = self.modelTaskClassifier.get_input_details()
@@ -453,7 +526,7 @@ class SpeechRecognition:
 
             # Eingabe Tensor definieren
             input = self.bow(transcript.lower(), self.words, show_details=False)
-            input = np.reshape(input, (input_shape[0], input_shape[1])) #input_shape[0], input_shape[1]) -1, input_shape[1], input_shape[2]fuer normales Netz ohne rnn
+            input = np.reshape(input, (-1, input_shape[1], input_shape[2])) #input_shape[0], input_shape[1]) -1, input_shape[1], input_shape[2]fuer normales Netz ohne rnn
             input_data = np.array(input, dtype=np.float32)
 
             # Eingabe Tensor setzen
@@ -463,7 +536,7 @@ class SpeechRecognition:
             # Ausgabe Tensor berechnen
             output_data = self.modelTaskClassifier.get_tensor(output_details[0]['index'])
 
-            # Ausgabe der Klassifizierung
+            # Ausgabe der Klassifizierung bzw zwischenspeichern
             #print(output_data, class_names[np.argmax(output_data)])
             self.msgClass.data = output_data[0]
             print(self.msgClass.data )
@@ -475,11 +548,13 @@ class SpeechRecognition:
             # wait for = 2
             # localization = 3
             # stop = 4
+            # unknow = 5
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
 
-    ## Autonom// manual klassifzieren
+    ## Autonom// manual klassifzieren ##
+    #eigentlich fast das gleiche wie taskclassifier nur anderer Tflite interpreter
 
     def classifierModus(self, transcript):
         self.modelModusClassifier.allocate_tensors()
@@ -489,11 +564,12 @@ class SpeechRecognition:
             transcript = transcript.replace("'", "")
             res = transcript.split()
             phoneRes = []
+
+            # phonetischen Teil fuer eingangs Tensor setzen
             for k in res:
                 phoneRes.append(phonetics.metaphone(k))
 
             transcript = transcript + ' ' + ' '.join(phoneRes)
-            rospy.loginfo("Transcript mit phonetischen Anteil: " + transcript)
 
             #  Ein- und Ausgabe Tensoren bestimmen
             input_details = self.modelModusClassifier.get_input_details()
@@ -523,7 +599,8 @@ class SpeechRecognition:
             print("Keyboard Interrupt")
         pass
 
-    # Methode um Sprache zu transkripieren
+    ## Methode um Sprache zu transkripieren mit dem Deepspeech Package ##
+
     def speechRecognitionDNN(self, stream):
 
         # Recognition from record
@@ -534,6 +611,7 @@ class SpeechRecognition:
             #Transkription erzeugen
             self.transcript = self.modelDs.stt(stream)
 
+            #leeres Transkript durch none ersetzen
             if not self.transcript:
                 self.transcript = "none"
 
@@ -548,7 +626,7 @@ class SpeechRecognition:
             print("Keyboard Interrupt")
         pass
 
-    # Methode um Datenstrom abhaengig der Aufnahmedauer zusammenzusetzen
+    ## Methode um Datenstrom abhaengig der Aufnahmedauer zusammenzusetzen ##
     def processDataStream(self, data):
         self.lstMsg = np.int16(np.asarray(data))
 
@@ -592,8 +670,7 @@ class SpeechRecognition:
         self.talkerBuzz(size=1, text='init')
         self.talkerTask(size=1, text='init', size_confidence=0)
         self.talkerModus(size=1, text='init', size_confidence=0)
-        self.talkerGoal(poseName="init", data =0)
-
+        self.talkerGoal(poseName="init", data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
         while not rospy.is_shutdown():
             try:
@@ -615,19 +692,26 @@ class SpeechRecognition:
                     ## veroeffentliche der klassifizierten handlung, modus und ziel nach nachbearbeitung
                     self.classifierPostProcessing(self.class_names[np.argmax(self.msgClass.data)], self.modus_names[np.argmax(self.msgModus.data)])
 
-                time.sleep(0.05)
+                time.sleep(0.01)
+
+                if len(self.recognizedBuzzwords)==1 and self.recognizedBuzzwords[0]['buzzword'][0]['name'] == "exit":
+                    print("exit")
+                    break
+
             except KeyboardInterrupt:
                 print("Keyboard interrupt")
+                break
             pass
 
-    # ROS Publisher aufrufen fuer gesamtes Transkript
+    # ROS Publisher definieren fuer gesamtes Transkript
     def talkerTranscript(self, size, text):
 
         pub = rospy.Publisher(self.topicnameTranscript, String, queue_size=size)
+
         rospy.loginfo(text)
         pub.publish(text)
 
-    # ROS Publisher aufrufen fuer klassifizierte Handlung
+    # ROS Publisher definieren fuer klassifizierte Handlung
     def talkerTask(self, size, text, size_confidence):
 
         pub = rospy.Publisher(self.topicnameTask, String, queue_size=size)
@@ -639,7 +723,7 @@ class SpeechRecognition:
         rospy.loginfo(self.msgClass.data)
         pub2.publish(self.msgClass)
 
-    # ROS Publisher aufrufen fuer klassifizierten Modus
+    # ROS Publisher definieren fuer klassifizierten Modus
     def talkerModus(self, size, text, size_confidence):
 
         pub = rospy.Publisher(self.topicnameModus, String, queue_size=size)
@@ -651,28 +735,31 @@ class SpeechRecognition:
         rospy.loginfo(self.msgModus.data)
         pub2.publish(self.msgModus)
 
-    # ROS Publisher aufrufen fuer erkanntes Objekt/Person etc. aus Buzzword matcher
+    # ROS Publisher definieren fuer erkanntes Objekt/Person etc. aus Buzzword matcher
     def talkerBuzz(self, size, text):
 
         pub = rospy.Publisher(self.topicnameBuzz, String, queue_size=size)
+
         rospy.loginfo(text)
         pub.publish(text)
 
+    # ROS Publisher definieren um Zielpose zu veroeffentlichen
     def talkerGoal(self, poseName, data):
 
         pub = rospy.Publisher(self.topicnameGoal, PoseStamped, queue_size=10)
 
-        self.msgGoal.header.frame_id = poseName
-        self.msgGoal.pose.position.y = data
-        self.msgGoal.pose.position.x = data
-        self.msgGoal.pose.position.z = 0
-        self.msgGoal.pose.orientation.x = 0
-        self.msgGoal.pose.orientation.y = 0
-        self.msgGoal.pose.orientation.z = 0
-        self.msgGoal.pose.orientation.w = 0
+        self.msgGoal.header.frame_id = "map"
+        self.msgGoal.pose.position.y = data[0]
+        self.msgGoal.pose.position.x = data[1]
+        self.msgGoal.pose.position.z = data[2]
+        self.msgGoal.pose.orientation.x = data[3]
+        self.msgGoal.pose.orientation.y = data[4]
+        self.msgGoal.pose.orientation.z = data[5]
+        self.msgGoal.pose.orientation.w = data[6]
         self.msgGoal.header.stamp = rospy.Time.now()
 
-        rospy.loginfo("Publish pose" + " " + poseName)
+        rospy.loginfo("Publish pose: " + poseName)
+        pub.publish(self.msgGoal)
 
         # ausgeben von Ton der destination
 
@@ -680,6 +767,8 @@ class SpeechRecognition:
 if __name__ == '__main__':
 
     #recsec,  pyVersion, nodename, topicnameTranscript, topicnameTask, topicnameBuzz, topicnameSub
+    # Paramter kommen aus der Launchfile speechrecognition_alfons.launch.xml
+
     s = SpeechRecognition(topicnameSub=rospy.get_param('pub/stream/topic'), pyVersion=rospy.get_param('language'),
                           nodename=rospy.get_param('nodename_speechrecognizer'), topicnameTranscript=rospy.get_param('topicname/transcript'),
                           topicnameTask=rospy.get_param('topicname/task'), topicnameBuzz=rospy.get_param('topicname/buzz'),

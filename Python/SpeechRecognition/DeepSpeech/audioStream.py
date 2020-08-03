@@ -9,7 +9,6 @@ import numpy as np
 from std_msgs.msg import Int16MultiArray, String, Int16
 import sounddevice as sd
 
-print sd.query_devices()
 
 class AudioStream:
 
@@ -37,10 +36,14 @@ class AudioStream:
                                  input_device_index=self.devIndex, input=True,
                                  frames_per_buffer=self.chunksize)
         self.frames=[]
+        self.frames.append(stream.read(self.chunksize))  # Erstes mal append dauert laenger
+
         print("start recording...")
         for i in range(0, int(self.rate / self.chunksize * self.recsec)):
             self.frames.append(stream.read(self.chunksize))
         print("recording finished")
+
+        self.frames.pop(0)# erster Frame wird wieder weggenommen
         self.msg.data = np.frombuffer(np.asarray(self.frames), dtype=np.int16)
         stream.stop_stream()
         stream.close()
@@ -73,7 +76,19 @@ class AudioStream:
 
 if __name__ == '__main__':
 
+    string = sd.query_devices()
+    print(string)
 
-    s = AudioStream(rospy.get_param('pub/stream/topic'), rospy.get_param('/audioStream/sub/button/topic'), rospy.get_param("/audioStream/nodename"), dev=rospy.get_param('/audioStream/deviceID'), recsec=rospy.get_param('/audioStream/recsec'))
+    device = rospy.get_param('/audioStream/deviceID')  # = pulse bzw name, name geht bis zum ersten komma zb Xbox NUI Sensor: USB Audio (hw:1,0)
+
+    for i in range(len(string)):
+
+        if string[i]["name"].count(device):
+            print(i)
+            dev = i
+            break
+
+    s = AudioStream(topicname1=rospy.get_param('pub/stream/topic'), topicname2=rospy.get_param('/audioStream/sub/button/topic'), dev=dev, nodename=rospy.get_param("/audioStream/nodename"), recsec=rospy.get_param('/audioStream/recsec'))
+    print("Use device: " + device)
     s.startNode()
 

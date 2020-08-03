@@ -1,0 +1,242 @@
+##################################################
+## Author: Hannes Dittmann
+## Version: 1.0
+## Email: hannes.dittmann@stud.hshl.de
+## Status: In Entwicklung
+##################################################
+## Dieses Skript dient dazu, ein neuronales Netz um bedienugnsorientierte Handlungen des ALF zu trainieren
+## Ein Tflite Modell sowie eine Wortliste wird aus dem neuronalen Netz abgeleitet
+
+
+# use natural language toolkit
+import time
+
+import nltk
+import tflite as tflite
+from nltk.stem.lancaster import LancasterStemmer
+stemmer = LancasterStemmer()
+import tensorflow as tf
+from tensorflow import keras, lite
+import numpy as np
+import phonetics
+import json
+
+### Pre-proecessing
+
+# classes of training data
+# drive to = 0
+# slam = 1
+# wait for = 2
+# localization = 3
+# stop = 5
+# unknow = 6
+
+class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
+
+# Definieren von Trainingsdaten
+with open('data/train_data.json') as json_file:
+    training_data = json.load(json_file)
+
+#Preprocessing
+print ("%s sentences in training data" % len(training_data))
+words = []
+labels = []
+classes = []
+documents = []
+ignore_words = ['?']
+
+training_data_phon=[]
+# add labels with loop through each training_data element
+for i in range(len(training_data)):
+    labels.append(training_data[i]["class"])
+    sentence = training_data[i]["sentence"].replace("'", "")
+    res = sentence.split()
+    phoneRes = []
+    for k in res:
+        phoneRes.append(phonetics.metaphone(k))
+    training_data_phon.append({"class": training_data[i]["class"], "sentence": training_data[i]["sentence"] + ' ' + ' '.join(phoneRes)})
+
+print(training_data_phon[1]["sentence"])
+
+# loop through each sentence in our training data
+for pattern in training_data_phon:
+    # tokenize each word in the sentence
+    w = nltk.word_tokenize(pattern['sentence'])
+    # add to our words list
+    words.extend(w)
+    # add to documents in our corpus
+    documents.append((w, pattern['class']))
+    # add to our classes list
+    if pattern['class'] not in classes:
+        classes.append(pattern['class'])
+
+
+# stem and lower each word and remove duplicates
+words = [stemmer.stem(w.lower()) for w in words if w not in ignore_words]
+words = list(set(words))
+
+# remove duplicates
+classes = list(set(classes))
+
+print (len(documents), "documents")
+print (len(classes), "classes", classes)
+print (len(words), "unique stemmed words", words)
+
+# List of Words schreiben, da wörter unterschiedlich angeordnet werden
+with open('words.txt', 'w') as f:
+    for item in words:
+        f.write("%s," % item)
+
+# create our training data
+training = []
+output = []
+# create an empty array for our output
+output_empty = [0] * len(classes)
+
+
+# training set, bag of words for each sentence
+for doc in documents:
+    # initialize our bag of words
+    bag = []
+    # list of tokenized words for the pattern
+    pattern_words = doc[0]
+    # stem each word
+    pattern_words = [stemmer.stem(word.lower()) for word in pattern_words]
+    # create our bag of words array
+    for w in words:
+        bag.append(1) if w in pattern_words else bag.append(0)
+
+    training.append(bag)
+    # output is a '0' for each tag and '1' for current tag
+    output_row = list(output_empty)
+    output_row[classes.index(doc[1])] = 1
+    output.append(output_row)
+
+
+X = np.array(training)
+y = np.array(output)
+print ("# words", len(words))
+print ("# classes", len(classes))
+labels = np.array(labels)
+print(documents)
+
+# Reduzieren auf Wortstamm
+def clean_up_sentence(sentence):
+    # tokenize the pattern
+    sentence_words = nltk.word_tokenize(sentence)
+    # stem each word
+    sentence_words = [stemmer.stem(word.lower()) for word in sentence_words]
+    return sentence_words
+
+# return bag of words array: 0 or 1 for each word in the bag that exists in the sentence
+def bow(sentence, words, show_details=False):
+
+    # tokenize the pattern
+    sentence_words = clean_up_sentence(sentence)
+    # bag of words
+    bag = [0] * len(words)
+    for s in sentence_words:
+        for i, w in enumerate(words):
+            if w == s:
+                bag[i] = 1
+                if show_details:
+                    print("found in bag: %s" % w)
+
+    return (np.array(bag))
+
+
+# Definieren Neuronales Netzwerk
+model = keras.Sequential()
+model.add(tf.keras.layers.InputLayer(input_shape=X.shape[1]))
+model.add(tf.keras.layers.Dropout(0.2, input_shape=(1, X.shape[1])))
+model.add(keras.layers.Dense(units=20, activation='softmax'))
+model.add(keras.layers.Dense(units=y.shape[1], activation='softmax'))
+
+model.summary()
+
+# Definieren des Optimizers
+optimizer = tf.keras.optimizers.Adam(
+    learning_rate=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False,
+    name='RMSprop'
+)
+
+# Compilieren des Modells
+model.compile(optimizer=optimizer,
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+# Trainieren des Modells
+model.fit(X, labels, epochs=1500)
+
+# Speichern als keras Modell
+#model.save('taskClassifier')
+
+# Konvertieren in Tflite Modell
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+open("taskClassifierPhon.tflite", "wb").write(tflite_model)
+
+
+# classes of training data
+# drive to = 0
+# slam = 1
+# wait for = 2
+# localization = 3
+# stop = 5
+# unknow = 6
+
+
+XRNN = np.reshape(X,(X.shape[0],-1, X.shape[1]))
+
+## Recurennt Neuronal Network
+modelRNN = keras.Sequential()
+
+# Input Layer
+model.add(tf.keras.layers.Embedding(input_dim=len(words), input_length = len(words), output_dim=100,
+              trainable=True,
+              mask_zero=True))
+modelRNN.add(tf.keras.layers.InputLayer(input_shape=(1, X.shape[1]), name="input"))
+# Masking layer for pre-trained embeddings
+modelRNN.add(tf.keras.layers.Masking(mask_value=0.0))
+# Recurrent layer
+modelRNN.add(tf.keras.layers.LSTM(units=64, input_shape=(1, 2, X.shape[1]), return_sequences=True, dropout=0.4, recurrent_dropout=0.4))
+modelRNN.add(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, recurrent_dropout=0.3))
+modelRNN.add(tf.keras.layers.LSTM(64))
+# Fully connected layer
+modelRNN.add(tf.keras.layers.Dense(20, activation='relu'))
+# Dropout for regularization
+modelRNN.add(tf.keras.layers.Dropout(0.7))
+# Output layer
+modelRNN.add(tf.keras.layers.Dense(y.shape[1], activation='softmax', name="output"))
+
+modelRNN.summary()
+
+# Definieren des Optimizers
+optimizer = tf.keras.optimizers.Adam(
+    learning_rate=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False,
+    name='RMSprop'
+)
+
+# Compilieren des Modells
+modelRNN.compile(optimizer=optimizer,
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+start = time.time()
+# Trainieren des Modells
+modelRNN.fit(XRNN[0:len(documents)], labels[0:len(documents)], epochs=1000)
+print(time.time()-start)
+
+sentence1 = "use simultaneous loc"
+input = bow(sentence1.lower(), words, show_details=False)
+print(modelRNN.predict(np.reshape(input,(1, 1, len(words)))))
+
+# Speichern als keras Modell
+#modelRNN.save('taskClassifierRNN')
+
+# Konvertieren in Tflite Modell
+
+converter = tf.lite.TFLiteConverter.from_keras_model(modelRNN)
+converter.allow_custom_ops=True
+tflite_model = converter.convert()
+open("taskClassifierRNN.tflite", "wb").write(tflite_model)

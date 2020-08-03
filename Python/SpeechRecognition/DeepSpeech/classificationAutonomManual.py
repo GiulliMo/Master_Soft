@@ -83,6 +83,9 @@ training_data.append({"class":1, "sentence":"change to driving mode and use joys
 training_data.append({"class":1, "sentence":"manually", "modus":1})
 training_data.append({"class":1, "sentence":"drive with joy stick", "modus":1})
 training_data.append({"class":0, "sentence":"make use of the joystick to drive manually", "modus":1})
+training_data.append({"class":0, "sentence":"drive to location", "modus":0})
+training_data.append({"class":0, "sentence":"all to no use", "modus":0})
+
 
 
 #Preprocessing

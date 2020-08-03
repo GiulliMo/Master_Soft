@@ -27,6 +27,7 @@ import nltk
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
 
+
 # Methode um IBM SpeechRecognition aufzurufen
 def initRecognizer():
     #recognizer for ibm cloud
@@ -80,7 +81,7 @@ class SpeechRecognition:
         self.audio = pyaudio.PyAudio()
         self.format = pyaudio.paInt16
         self.model = initModel(self.Version)
-        self.modelTaskClassifier = tf.lite.Interpreter("taskClassifier.tflite")
+        self.modelTaskClassifier = tf.lite.Interpreter("taskClassifierPhon.tflite")
         self.recognizer = sr
         self.buffer = np.empty(0)
         self.buzzwordName = "buzzwords.json"
@@ -194,9 +195,13 @@ class SpeechRecognition:
         with self.recognizer.WavFile(filename) as source:  # use "test.wav" as the audio source
             r = initRecognizer()
             audio_file = r.record(source)
-
+        # ibm
         speech_recognition_results = self.speech_to_text.recognize(audio=audio_file.get_wav_data(),
                                                                    content_type='audio/wav').get_result()
+        print("test")
+        # google
+        print(r.recognize_sphinx(audio_file))
+
         print(json.dumps(speech_recognition_results, indent=2))
 
     #Pattern Matcher String
@@ -315,8 +320,11 @@ class SpeechRecognition:
 
 
 if __name__ == '__main__':
+
+
+
     # Version entspricht DS Modell, newRecord == False wav wird genutzt
-    s = SpeechRecognition(newRecord=False, filename='stream.wav', pyVersion='PYTHON3')
+    s = SpeechRecognition(newRecord=True, filename='stream.wav', pyVersion='PYTHON3')
 
     # Json Dateien laden (Buzzwords und Transitions)
     s.loadJsons()
@@ -329,6 +337,7 @@ if __name__ == '__main__':
     while True:
         try:
             s.speechRecognitionDNN(s.record, s.filename)
+            s.speechRecognitionIBM(s.filename)
             print(s.getAlfBuzzWords())
             print(time.time()-start)
         except KeyboardInterrupt:
