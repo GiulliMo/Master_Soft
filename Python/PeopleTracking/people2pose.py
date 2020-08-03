@@ -213,12 +213,12 @@ class PeopleRec:
                 start = time.time()
 
                 if self.namespaceoffrontcamera != "":
-                    detectionsfront, imagefront = self.detections.getdetectionsbycnn(self.frontimagebgrqhd, "front")
+                    detectionsfront, imagefront = self.detections.getdetectionsbytflite(self.frontimagebgrqhd, "front")
                     #print(detectionsfront)
                     self.managepeople(detectionsfront, self.frontimagebgrqhd, "front")
 
                 if self.namespaceofrearcamera != "":
-                    detectionsrear, imagerear = self.detections.getdetectionsbycnn(self.rearimagebgrqhd, "back")
+                    detectionsrear, imagerear = self.detections.getdetectionsbytflite(self.rearimagebgrqhd, "back")
                     #print(detectionsrear)
                     self.managepeople(detectionsrear, self.rearimagebgrqhd, "back")
 
