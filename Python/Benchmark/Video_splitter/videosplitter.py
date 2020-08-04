@@ -67,7 +67,7 @@ class videosplitter:
                 cv2.imwrite('data/' + str(a) + '.jpg', self.rearimagebgrqhd)
                 print("saved frame with name " + str(a))
                 a = a + 1
-                time.sleep(1)
+                time.sleep(15)
 
         except KeyboardInterrupt:
             print("\nShutting down")

@@ -21,6 +21,11 @@
   <component name="ChangeListManager">
     <list default="true" id="938084a4-c1fc-49d8-950a-e5e048926ea4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Video_splitter/data/0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Video_splitter/data/0.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Video_splitter/data/1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Video_splitter/data/1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Video_splitter/data/2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Video_splitter/data/2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Video_splitter/data/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Video_splitter/data/3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Video_splitter/videosplitter.py" beforeDir="false" afterPath="$PROJECT_DIR$/Video_splitter/videosplitter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../ROS/catkin_ws/src/iai_kinect2" beforeDir="false" afterPath="$PROJECT_DIR$/../../ROS/catkin_ws/src/iai_kinect2" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +57,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../labelImg/labelImg.py" />
   </component>
-  <component name="RunManager" selected="Python.labelImg">
+  <component name="RunManager" selected="Python.videosplitter">
     <configuration name="Benchmark (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Benchmark" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -139,8 +144,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.labelImg" />
         <item itemvalue="Python.videosplitter" />
+        <item itemvalue="Python.labelImg" />
         <item itemvalue="Python.Benchmark (1)" />
         <item itemvalue="Python.Benchmark" />
       </list>
@@ -176,21 +181,25 @@
       <screen x="65" y="24" width="959" height="744" />
     </state>
     <state x="331" y="141" width="424" height="482" key="FileChooserDialogImpl/65.24.959.744/65.24.959.744@65.24.959.744" timestamp="1596455407313" />
-    <state width="936" height="335" key="GridCell.Tab.0.bottom" timestamp="1596461349622">
-      <screen x="65" y="24" width="959" height="744" />
+    <state width="1278" height="335" key="GridCell.Tab.0.bottom" timestamp="1596528703555">
+      <screen x="65" y="24" width="1301" height="744" />
     </state>
+    <state width="1278" height="335" key="GridCell.Tab.0.bottom/65.24.1301.744@65.24.1301.744" timestamp="1596528703555" />
     <state width="936" height="335" key="GridCell.Tab.0.bottom/65.24.959.744/65.24.959.744@65.24.959.744" timestamp="1596461349622" />
-    <state width="936" height="335" key="GridCell.Tab.0.center" timestamp="1596461349622">
-      <screen x="65" y="24" width="959" height="744" />
+    <state width="1278" height="335" key="GridCell.Tab.0.center" timestamp="1596528703552">
+      <screen x="65" y="24" width="1301" height="744" />
     </state>
+    <state width="1278" height="335" key="GridCell.Tab.0.center/65.24.1301.744@65.24.1301.744" timestamp="1596528703552" />
     <state width="936" height="335" key="GridCell.Tab.0.center/65.24.959.744/65.24.959.744@65.24.959.744" timestamp="1596461349622" />
-    <state width="936" height="335" key="GridCell.Tab.0.left" timestamp="1596461349622">
-      <screen x="65" y="24" width="959" height="744" />
+    <state width="1278" height="335" key="GridCell.Tab.0.left" timestamp="1596528703552">
+      <screen x="65" y="24" width="1301" height="744" />
     </state>
+    <state width="1278" height="335" key="GridCell.Tab.0.left/65.24.1301.744@65.24.1301.744" timestamp="1596528703552" />
     <state width="936" height="335" key="GridCell.Tab.0.left/65.24.959.744/65.24.959.744@65.24.959.744" timestamp="1596461349622" />
-    <state width="936" height="335" key="GridCell.Tab.0.right" timestamp="1596461349622">
-      <screen x="65" y="24" width="959" height="744" />
+    <state width="1278" height="335" key="GridCell.Tab.0.right" timestamp="1596528703554">
+      <screen x="65" y="24" width="1301" height="744" />
     </state>
+    <state width="1278" height="335" key="GridCell.Tab.0.right/65.24.1301.744@65.24.1301.744" timestamp="1596528703554" />
     <state width="936" height="335" key="GridCell.Tab.0.right/65.24.959.744/65.24.959.744@65.24.959.744" timestamp="1596461349622" />
   </component>
 </project>
