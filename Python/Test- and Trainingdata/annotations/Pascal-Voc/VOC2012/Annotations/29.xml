@@ -1,0 +1,26 @@
+<annotation>
+	<folder>data</folder>
+	<filename>29.jpg</filename>
+	<path>/home/alf/Schreibtisch/data/29.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>960</width>
+		<height>540</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Person</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>276</xmin>
+			<ymin>23</ymin>
+			<xmax>464</xmax>
+			<ymax>540</ymax>
+		</bndbox>
+	</object>
+</annotation>
