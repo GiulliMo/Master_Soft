@@ -38,7 +38,6 @@ class DataSet(object):
         self.create_file()
 
 
-
 if __name__ == '__main__':
     dataset = DataSet()
     dataset.main()
