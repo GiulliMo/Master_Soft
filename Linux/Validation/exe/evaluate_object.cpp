@@ -33,7 +33,7 @@ STATIC EVALUATION PARAMETERS
 // holds the number of test images on the server
 //const int32_t N_TESTIMAGES = 7518;
 //const int32_t N_TESTIMAGES = 7480;
-const int32_t N_TESTIMAGES = 4;
+const int32_t N_TESTIMAGES = 64;
 
 // easy, moderate and hard evaluation level
 enum DIFFICULTY{EASY=0, MODERATE=1, HARD=2};
@@ -800,7 +800,7 @@ bool eval(string result_sha,Mail* mail){
 
     // file name
     char file_name[256];
-    sprintf(file_name,"%06d.txt",i);
+    sprintf(file_name,"%d.txt",i); //%06d.txt
 
     // read ground truth and result poses
     bool gt_success,det_success;
@@ -920,7 +920,7 @@ int32_t main (int32_t argc,char *argv[]) {
     mail->msg("Your evaluation results are available at:");
     mail->msg("http://www.cvlibs.net/datasets/kitti/user_submit_check_login.php?benchmark=object&user=%s&result=%s",argv[2], result_sha.c_str());
   } else {
-    system(("rm -r results/" + result_sha).c_str());
+    //system(("rm -r results/" + result_sha).c_str());
     mail->msg("An error occured while processing your results.");
     mail->msg("Please make sure that the data in your zip archive has the right format!");
   }
