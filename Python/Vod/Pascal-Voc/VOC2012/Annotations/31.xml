@@ -11,7 +11,7 @@
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
-	<object>
+	<!--<object>
 		<name>Unknown</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
@@ -22,5 +22,5 @@
 			<xmax>12</xmax>
 			<ymax>12</ymax>
 		</bndbox>
-	</object>
+	</object>-->
 </annotation>
