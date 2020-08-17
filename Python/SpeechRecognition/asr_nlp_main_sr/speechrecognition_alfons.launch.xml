@@ -1,0 +1,32 @@
+
+<launch>
+
+    <!--Start Button Joystick-->
+
+    <node name="joy2"  pkg="joy"  type="joy_node" clear_params="true">
+          </node>
+	
+    <node name="startbuttondetection" pkg="startbuttondetection" type="startbuttondetection_node" output="screen" clear_params="true">
+          </node>
+
+    <!--Audio Aufnahme und Parameter laden-->
+
+        <param name="language" value="gb" />
+        <param name="pub/stream/topic" value="audio_stream" />
+        <param name="nodename_speechrecognizer" value="recognizer" />
+	    <param name="topicname/transcript" value="transcript/full" />
+	    <param name="topicname/task" value="transcript/task" />
+	    <param name="topicname/task_confidence" value="transcript/task/confidence" />
+	    <param name="topicname/buzz" value="transcript/buzz " />
+	    <param name="topicname/modus" value="transcript/modus" />
+        <param name="topicname/modus_confidence" value="transcript/modus/confidence" />
+        <param name="topicname/goal" value="move_base_simple/goal" />
+
+    <node name="audioStream" pkg="speechrecognition_alfons" type="audioStream.py" output="screen">
+        <param name="sub/button/topic" value="startbutton" />
+	    <param name="nodename" value="audioStream" />
+        <param name="deviceID" value="pulse" />    <!-- Name geht bis zum ersten komma von print(sd.query_devices()) z.B. Xbox NUI Sensor: USB Audio (hw:1,0)-->
+	    <param name="recsec" value="5" />
+    </node>
+
+</launch>

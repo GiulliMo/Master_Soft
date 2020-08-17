@@ -1,0 +1,11 @@
+[{"buzzword":[ {"class":0,"name":"beta", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]} ]},
+{"buzzword":[ {"class":0,"name":"charlie", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]} ]},
+{"buzzword":[ {"class":0,"name":"delta", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]} ]},
+{"buzzword":[ {"class":0,"name":"echo", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]} ]},
+{"buzzword":[ {"class":0,"name":"foxtrot", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]} ]},
+{"buzzword":[ {"class":0,"name":"hotel", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]} ]},
+{"buzzword":[ {"class":0,"name":"laboratory", "value":[ 0.991224765778, 0.161269366741, 0.0, 0.0, 0.0, -0.458006176765, 0.888949009812]}]},
+{"buzzword":[ {"class":2,"name":"bergman","value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}]},
+{"buzzword":[ {"class":2,"name":"person","value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] }]},
+{"buzzword":[ {"class":3,"name":"exit","value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] }]},
+{"buzzword":[ {"class":2,"name":"emperor", "value":[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}]}]
