@@ -55,7 +55,7 @@ class videosplitter:
         try:
             rospy.sleep(4)
             # rospy.spin()
-            a = 0
+            a = 64
             shutil.rmtree('data')
             try:
                 os.mkdir('data')
@@ -67,7 +67,7 @@ class videosplitter:
                 cv2.imwrite('data/' + str(a) + '.jpg', self.rearimagebgrqhd)
                 print("saved frame with name " + str(a))
                 a = a + 1
-                time.sleep(15)
+                time.sleep(7.5)
 
         except KeyboardInterrupt:
             print("\nShutting down")

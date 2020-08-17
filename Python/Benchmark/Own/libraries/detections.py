@@ -8,6 +8,7 @@ import imutils
 from imutils.object_detection import non_max_suppression
 from libraries.models import (YoloV3, YoloV3Tiny)
 from libraries.utils import draw_outputs
+from tensorflow import keras
 #from tflite_runtime.interpreter import Interpreter as tflruntime
 from libraries.ssd_mobilenet_utils import preprocess_image_for_tflite
 
@@ -19,8 +20,8 @@ class detections:
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
         self.labels = self.load_labels("./labels/" + model + "labels.txt")
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
-        self.interpreter = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
-        #self.interpreter = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
+        self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
+        self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
 
 
     def getdetectionsbyhog(self, image, sneak):
@@ -75,6 +76,7 @@ class detections:
         self.net.setInput(blob)
         detections = self.net.forward()
         end = time.time() - start
+        scorelist = []
         for i in np.arange(0, detections.shape[2]):
             # Konfidenz berechnen
             confidence = detections[0, 0, i, 2]
@@ -85,6 +87,7 @@ class detections:
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
                 if self.labels[idx] in self.ignorelabels:
                     continue
+                scorelist.append(confidence)
                 # Erstellung der Boundingbox
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = abs(box.astype("int"))
@@ -101,15 +104,15 @@ class detections:
         #key = cv2.waitKey(1) & 0xFF
         #cv2.imwrite('./results/' + sneak + 'Caffee.jpg', image)
         print("Caffee= " + str(end))
-        return bbox, image, confidence
+        return bbox, image, scorelist
 
     def getdetectionsbytflite(self, image, sneak):
         (h, w) = image.shape[:2]
-        self.interpreter.allocate_tensors()
+        self.interpretercocossdmobilev1.allocate_tensors()
 
         # Get input and output tensors.
-        input_details = self.interpreter.get_input_details()
-        output_details = self.interpreter.get_output_details()
+        input_details = self.interpretercocossdmobilev1.get_input_details()
+        output_details = self.interpretercocossdmobilev1.get_output_details()
 
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
@@ -119,15 +122,15 @@ class detections:
 
         input = np.reshape(input_data, [input_shape[0], input_shape[1], input_shape[2], input_shape[3]])
         start = time.time()
-        self.interpreter.set_tensor(input_details[0]['index'], input)
+        self.interpretercocossdmobilev1.set_tensor(input_details[0]['index'], input)
 
-        self.interpreter.invoke()
+        self.interpretercocossdmobilev1.invoke()
         print("TfLite " + sneak + " = " + str(time.time() - start))
         # get output tensor
-        boxes = self.interpreter.get_tensor(output_details[0]['index'])
-        detectedlabels = self.interpreter.get_tensor(output_details[1]['index'])
-        scores = self.interpreter.get_tensor(output_details[2]['index'])
-        num = self.interpreter.get_tensor(output_details[3]['index'])
+        boxes = self.interpretercocossdmobilev1.get_tensor(output_details[0]['index'])
+        detectedlabels = self.interpretercocossdmobilev1.get_tensor(output_details[1]['index'])
+        scores = self.interpretercocossdmobilev1.get_tensor(output_details[2]['index'])
+        num = self.interpretercocossdmobilev1.get_tensor(output_details[3]['index'])
         bboxlist = []
         bbox = numpy.array([])
         scorelist = []
@@ -136,12 +139,12 @@ class detections:
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             confidence = scores[0, i]
             if confidence > 0.0:
-                scorelist.append(confidence)
                 # Index der Detection
                 idx = int(detectedlabels[0, i])
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
                 if self.labels[idx] in self.ignorelabels:
                     continue
+                scorelist.append(confidence)
                 # Erstellung der Boundingbox
                 box = numpy.asarray(boxes[0, i, :])
                 box2 = numpy.empty([1, 4], dtype=float)
@@ -327,26 +330,25 @@ class detections:
         return boxes, image, confidence
 
     def getdetectionsbymobilenetv2(self, image, sneak):
-        self.interpreter.allocate_tensors()
+        self.interpreterssdmobilev2.allocate_tensors()
 
         # Get input and output tensors.
-        input_details = self.interpreter.get_input_details()
-        output_details = self.interpreter.get_output_details()
+        input_details = self.interpreterssdmobilev2.get_input_details()
+        output_details = self.interpreterssdmobilev2.get_output_details()
         image2 = preprocess_image_for_tflite(image, model_image_size=300)
         # Run model: start to detect
         # Sets the value of the input tensor.
-        self.interpreter.set_tensor(input_details[0]['index'], image2)
+        self.interpreterssdmobilev2.set_tensor(input_details[0]['index'], image2)
         # Invoke the interpreter.
-        self.interpreter.invoke()
+        self.interpreterssdmobilev2.invoke()
 
         # get results
-        boxes = self.interpreter.get_tensor(output_details[0]['index'])
-        detectedlabels = self.interpreter.get_tensor(output_details[1]['index'])
-        scores = self.interpreter.get_tensor(output_details[2]['index'])
-        num = self.interpreter.get_tensor(output_details[3]['index'])
+        boxes = self.interpreterssdmobilev2.get_tensor(output_details[0]['index'])
+        detectedlabels = self.interpreterssdmobilev2.get_tensor(output_details[1]['index'])
+        scores = self.interpreterssdmobilev2.get_tensor(output_details[2]['index'])
+        num = self.interpreterssdmobilev2.get_tensor(output_details[3]['index'])
 
         boxes, scores, classes = np.squeeze(boxes), np.squeeze(scores), np.squeeze(detectedlabels + 1).astype(np.int32)
-
         bboxlist = []
         bbox = numpy.array([])
         scorelist = []
@@ -354,13 +356,13 @@ class detections:
         for i in range(boxes.shape[1]):
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             confidence = scores[i]
-            if confidence > 0.6:
-                scorelist.append(confidence)
+            if confidence > 0.0:
                 # Index der Detection
                 idx = int(detectedlabels[0, i])
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
                 if self.labels[idx] in self.ignorelabels:
                     continue
+                scorelist.append(confidence)
                 # Erstellung der Boundingbox
                 box = numpy.asarray(boxes[i, :])
                 box2 = numpy.empty([1, 4], dtype=float)
@@ -370,14 +372,21 @@ class detections:
                 box[3] = box[3] * float(image.shape[1]) * (1.0 + factor)
                 box[2] = box[2] * float(image.shape[0]) + (1.0 + factor)
                 box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
-                print(box)
-                for i in range(0, 1):
-                    for b in range(0, 3):
-                        if box[b] < 0:
-                            box[b] = 0
 
-                        if box[b] > image.shape[i]:
-                            box[b] = image.shape[i]
+                for i in range(0, 4):
+                    if i == 1 or i == 3:
+                        if box[i] < 0:
+                            box[i] = 0
+
+                        if box[i] > image.shape[0]:
+                            box[i] = image.shape[0]
+
+                    if i == 2 or i == 0:
+                        if box[i] < 0:
+                            box[i] = 0
+
+                        if box[i] > image.shape[1]:
+                            box[i] = image.shape[1]
                 box = box.astype(numpy.int)
                 bboxlist.append(box)
                 bbox = numpy.asarray(bboxlist)
@@ -392,4 +401,6 @@ class detections:
         # cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         # cv2.imshow(sneak, image)
         # key = cv2.waitKey(1)
-        return bbox, image, confidence
+        print(bbox)
+        print(confidence)
+        return bbox, image, scorelist
