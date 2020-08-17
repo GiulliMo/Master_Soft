@@ -1,7 +1,7 @@
 <annotation>
-	<folder>data</folder>
+	<folder>images</folder>
 	<filename>47.jpg</filename>
-	<path>/home/alf/Schreibtisch/data/47.jpg</path>
+	<path>/home/alf/Schreibtisch/images/47.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -31,8 +31,8 @@
 		<bndbox>
 			<xmin>302</xmin>
 			<ymin>236</ymin>
-			<xmax>372</xmax>
-			<ymax>300</ymax>
+			<xmax>412</xmax>
+			<ymax>385</ymax>
 		</bndbox>
 	</object>
 </annotation>

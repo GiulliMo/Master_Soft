@@ -1,7 +1,7 @@
 <annotation>
-	<folder>data</folder>
+	<folder>images</folder>
 	<filename>41.jpg</filename>
-	<path>/home/alf/Schreibtisch/data/41.jpg</path>
+	<path>/home/alf/Schreibtisch/images/41.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -11,16 +11,4 @@
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
-	<object>
-		<name>Unknown</name>
-		<pose>Unspecified</pose>
-		<truncated>1</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>1</xmin>
-			<ymin>1</ymin>
-			<xmax>12</xmax>
-			<ymax>12</ymax>
-		</bndbox>
-	</object>
 </annotation>

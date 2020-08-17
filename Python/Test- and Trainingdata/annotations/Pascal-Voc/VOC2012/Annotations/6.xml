@@ -1,7 +1,7 @@
 <annotation>
-	<folder>data</folder>
+	<folder>images</folder>
 	<filename>6.jpg</filename>
-	<path>/home/alf/Schreibtisch/data/6.jpg</path>
+	<path>/home/alf/Schreibtisch/images/6.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -17,10 +17,10 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>266</xmin>
-			<ymin>179</ymin>
-			<xmax>333</xmax>
-			<ymax>309</ymax>
+			<xmin>262</xmin>
+			<ymin>174</ymin>
+			<xmax>338</xmax>
+			<ymax>391</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -29,8 +29,8 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>482</xmin>
-			<ymin>195</ymin>
+			<xmin>472</xmin>
+			<ymin>190</ymin>
 			<xmax>538</xmax>
 			<ymax>380</ymax>
 		</bndbox>
