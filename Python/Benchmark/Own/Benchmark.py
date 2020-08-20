@@ -6,7 +6,7 @@ from libraries.detections import *
 
 class benchmark:
     def __init__(self):
-        self.detections = detections("caffee")
+        self.detections = detections("tflite")
         self.scores = []
         self.people = []
 
@@ -19,14 +19,14 @@ class benchmark:
                 if len(img) != 0:
                     print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence = self.detections.getdetectionsbycnn(img, "Image: " + str(c))
+                    bboxes, a, confidence = self.detections.getdetectionsbytflite(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c) + ".txt", "w+")
                     annotationcounter = 0
                     for bbox in bboxes:
                         f.write("Pedestrian 0.0 0 -1 " + str(bbox[0]) + " " + str(bbox[1]) + " " + str(bbox[2]) + " " + str(bbox[3]) + " -1 -1 -1 -1 -1 -1 -1 " + str(confidence[annotationcounter]) + "\n")
                         annotationcounter += 1
                     if len(bboxes) == 0:
-                        f.write("Unknown 0.0 0 -1 1 1 12 12 -1 -1 -1 -1 -1 -1 -1 1\n")
+                        f.write("")
 
                     cv2.imwrite("results/images/" + str(c) + ".jpg", a)
 

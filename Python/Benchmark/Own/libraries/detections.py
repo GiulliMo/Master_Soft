@@ -185,7 +185,7 @@ class detections:
         #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, confidence
+        return bbox, image, scorelist
 
     def getdetectionsbytfliteruntime(self, image, sneak):
         image = imutils.resize(image, width=min(400, image.shape[1]))

@@ -1,0 +1,26 @@
+<annotation>
+	<folder>demo</folder>
+	<filename>demo4.png</filename>
+	<path>/home/alf/Schreibtisch/labelImg/demo/demo4.png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1919</width>
+		<height>1079</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>person</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1442</xmin>
+			<ymin>655</ymin>
+			<xmax>1919</xmax>
+			<ymax>1079</ymax>
+		</bndbox>
+	</object>
+</annotation>
