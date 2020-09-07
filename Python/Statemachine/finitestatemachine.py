@@ -29,7 +29,7 @@ class ALF(object):
         self.drive_autonomous_to_target_functions = self.roslaunch("drive_autonomous_to_target_functions")
         self.task = ""
         self.mode = ""
-        self.manualcontrol = False
+        self.manualcontrol = True
         self.input = ""
         self.input2 = ""
 
