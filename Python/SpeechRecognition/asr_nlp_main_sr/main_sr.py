@@ -14,10 +14,10 @@
 import rospy
 from std_msgs.msg import String, Int16MultiArray, Int16, Float32MultiArray
 from geometry_msgs.msg import PoseStamped
-import numpy as np
-import pyaudio
+import tensorflow as tf
 from libraries.asr import *
 from libraries.nlp import *
+import time
 
 
 class recognizer:
@@ -416,7 +416,7 @@ if __name__ == '__main__':
     # NLP initialisieren
     r.nlp.buzzwords = r.nlp.loadJsons("models/buzzwords.json")
     r.nlp.words = r.nlp.readWords("models/words.txt")
-    r.nlp.words_modus = r.nlp.readWords("models/words_modus.txt")
+    r.nlp.wordsModus = r.nlp.readWords("models/words_modus.txt")
     r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
     r.nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
 

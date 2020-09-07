@@ -2,6 +2,7 @@ from libraries.asr import *
 from libraries.nlp import *
 import os
 import tensorflow as tf
+from jiwer import wer, mer
 
 ## preprocessing bevor getestet werden kann
 ## Ordner Data muss angelegt werden mit Data/Name/....
@@ -9,8 +10,11 @@ import tensorflow as tf
 ## wav dateien aus data werden alle(!) in wavfiles gelegt ==> len(wavefiles) == len(mergedlist)
 
 nlp = nlp()
-datadir = os.listdir("Data")
-wavdir = os.listdir("wavfiles")
+dataname = "Data_II"
+wavfilename = "wavfiles"
+
+datadir = os.listdir(dataname)
+wavdir = os.listdir(wavfilename)
 ignore1 = '.DS_Store'
 ignore2 = '.json'
 
@@ -23,11 +27,11 @@ if ignore1 in wavdir:
 
 # data zu strings hinzufuegen ==> Data/name
 for i, s in enumerate(datadir):
-    s = "Data/" + s
+    s = dataname + "/" + s
     datadir[i] = s
 
 datalabels = []
-wavfilenames = []
+
 for d in datadir:
     files = os.listdir(d)
 
@@ -39,7 +43,6 @@ for d in datadir:
         if ".json" in s:
             datalabels.append(s)
 
-print(datalabels)
 mergedlist = []
 listofclass = []
 listofmodus = []
@@ -52,6 +55,7 @@ for i in range (len(datadir)):
     #ignore ds store
     if ignore1 in files:
         files.remove(ignore1)
+        
     # ignore json
     for f in files:
         if ignore2 in f:
@@ -60,6 +64,7 @@ for i in range (len(datadir)):
     for k in range(len(list)):
         for f in files:
             add = str(k)
+            # add = zahl aus k + namensstamm 
             if add in f:
                 #liste der daten mit label und namen, wav namen sind noch nicht dabei
                 list[k]["name"] = f
@@ -74,7 +79,7 @@ for obj in mergedlist:
 
 ## jetzt hab ich eine Liste mit Namen in "list" fuer jedes datadir
 nlp.saveJsons("mergedlabelsfull.json", mergedlist)
-mergedlabels = nlp.loadJsons("mergedlabels.json")
+mergedlabels = nlp.loadJsons("mergedlabelsfull.json")
 
 
 ## wav Dateien liegen in extra Ordner Anzahl muss stimmen
@@ -88,7 +93,7 @@ model = asr.initModel()
 
 #klassifizierer initialisieren
 nlp.words = nlp.readWords("models/words.txt")
-nlp.words_modus = nlp.readWords("models/words_modus.txt")
+nlp.wordsModus = nlp.readWords("models/words_modus.txt")
 nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
 nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
 
@@ -98,20 +103,28 @@ scoreTask = 0
 scoreUnknowTask = 0
 scoreModus = 0
 scoreUnknowModus = 0
+scoreWrongModus = 0
+hypothesis = []
+ground_truth = []
+
 
 for obj in mergedlabels:
+
     #obj["name"] ist das original
     filename = obj["name"]
     task = obj["class"]
     sentence = obj["sentence"]
+    print(filename)
     if any(filename in s for s in wavdir):
-
-        #asr.speechtotext(stream = asr.getBuffer(w=wave.open("wavfiles/" + filename, 'r')))
-        asr.speechtotextIBM("wavfiles/" + filename)
+        print("1")
+        asr.speechtotext(stream=asr.getBuffer(w=wave.open(wavfilename + "/" + filename, 'r')))
+        #asr.speechtotextIBM("wavfiles/" + filename)
         classified = nlp.classifierTask(asr.transcript)
+        modus = nlp.classifierModus(asr.transcript)
 
-        # WER von transcript berechnen
-
+        # Speichern der Hypothesen und Groudn truthWER von transcript berechnen
+        hypothesis.append(asr.transcript)
+        ground_truth.append(sentence)
 
         # score berechnen mit np. argmax und klasse, dann prozentualen anteil bestimmen von der klassifizierten handlun
         # konfidenz auswerten mittlere konfidenz bei richtigem erkennen
@@ -119,7 +132,7 @@ for obj in mergedlabels:
             scoreTask = scoreTask+1
 
         # unknow ist prinzipiell nicht falsch
-        elif nlp.class_names[np.argmax(classified)]=="unknown":
+        elif nlp.class_names[np.argmax(classified)] == "unknown":
             scoreUnknowTask = scoreUnknowTask + 1
 
         # wie stand es um die wer und konfidenz?
@@ -132,11 +145,30 @@ for obj in mergedlabels:
 
         # score berechnen mit np. argmax und klasse, dann prozentualen anteil bestimmen des klassifizierten modi
         # -1 bei labels beachten ==> fallen raus
+        if np.argmax(modus)==listofmodus[i]:# and np.argmax(modus)>=0.65:
+            scoreModus = scoreModus+1
+        elif listofmodus[i] == -1:
+            scoreUnknowModus = scoreUnknowModus + 1
+        else:
+            scoreWrongModus = scoreWrongModus + 1
+            # oder zu niedrige konfidenz
 
-        #
     # index zaehlen
     i = i + 1
 
-print(scoreTask)
-print(scoreUnknowTask)
+# hypotheses und ground truth absoeicher fuer wer und mer
+nlp.saveJsons("ground_truth.json", ground_truth)
+nlp.saveJsons("hypothesis.json", hypothesis)
 
+# Quoten
+print("Gesamtanzahl Daten: " + str(len(mergedlabels)))
+print("Richtig klassifizierte Handlung: " + str(scoreTask))
+print("Unbekannte Handlungen: " + str(scoreUnknowTask))
+print("Richtig klassifizierte Modi: " + str(scoreModus))
+print("Unbekannte/n.n. Modi: " + str(scoreUnknowModus))
+# welche modi wurden falsch? bei schlechtem transkript?
+print("Falsch klassifizierte Modi: " + str(scoreWrongModus))
+
+# wer und mer
+#print(wer(ground_truth,hypothesis))
+#print(mer(ground_truth,hypothesis))

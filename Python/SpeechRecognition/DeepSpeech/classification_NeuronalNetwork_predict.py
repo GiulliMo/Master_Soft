@@ -13,12 +13,9 @@ stemmer = LancasterStemmer()
 import tensorflow as tf
 from tensorflow import lite
 import numpy as np
-import json
+import phonetics
 
-with open('train_data.json') as json_file:
-    training_data = json.load(json_file)
-
-file = open("words.txt", 'r')
+file = open("models/words.txt", 'r')
 words = [line.split(',') for line in file.readlines()]
 words = words[0]
 words = words[0:len(words)-1] #split fügt ein wort hinzu wo keins hinsoll
@@ -44,15 +41,23 @@ def bow(sentence, words, show_details=True):
                     print("found in bag: %s" % w)
     return (np.array(bag))
 
-interpreter = tf.lite.Interpreter("taskClassifierRNN.tflite")
+interpreter = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 input_shape = input_details[0]['shape']
 
+sentence = "localize yourself in known environment"
+sentence1 = sentence.replace("'", "")
+res = sentence.split()
+phoneRes = []
 
-sentence1 = "localize yourself in unknown environment"
+# phonetischen Teil mit metaphone bestimmen
+for k in res:
+    phoneRes.append(phonetics.metaphone(k))
+sentence1 = sentence1 + ' ' + ' '.join(phoneRes)
+
 input = bow(sentence1.lower(), words, show_details=False)
 input = np.reshape(input,(-1, input_shape[1], input_shape[2]))#input_shape[0], input_shape[1]) fuer normales Netz
 input_data = np.array(input, dtype=np.float32)
@@ -65,7 +70,7 @@ class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
 print(output_data, class_names[np.argmax(output_data)])
 
 
-interpreter = tf.lite.Interpreter("taskClassifierPhon.tflite")
+interpreter = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()

@@ -6,11 +6,12 @@
 ##################################################
 ## Dieses Skript dient dazu, ein neuronales Netz um bedienugnsorientierte Handlungen des ALF zu trainieren
 ## Ein Tflite Modell sowie eine Wortliste wird aus dem neuronalen Netz abgeleitet
+## abhängig von datensatz "random_distributed_dataset"
 
 
 # use natural language toolkit
 import time
-
+from lib.preprocessing import preProcessing
 import nltk
 import tflite as tflite
 from nltk.stem.lancaster import LancasterStemmer
@@ -18,8 +19,9 @@ stemmer = LancasterStemmer()
 import tensorflow as tf
 from tensorflow import keras, lite
 import numpy as np
-import phonetics
+import os
 import json
+
 
 ### Pre-proecessing
 
@@ -33,92 +35,32 @@ import json
 
 class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
 
-# Definieren von Trainingsdaten
-with open('data/train_data.json') as json_file:
-    training_data = json.load(json_file)
-
-#Preprocessing
-print ("%s sentences in training data" % len(training_data))
-words = []
-labels = []
-classes = []
-documents = []
-ignore_words = ['?']
-
-training_data_phon=[]
-# add labels with loop through each training_data element
-for i in range(len(training_data)):
-    labels.append(training_data[i]["class"])
-    sentence = training_data[i]["sentence"].replace("'", "")
-    res = sentence.split()
-    phoneRes = []
-    for k in res:
-        phoneRes.append(phonetics.metaphone(k))
-    training_data_phon.append({"class": training_data[i]["class"], "sentence": training_data[i]["sentence"] + ' ' + ' '.join(phoneRes)})
-
-print(training_data_phon[1]["sentence"])
-
-# loop through each sentence in our training data
-for pattern in training_data_phon:
-    # tokenize each word in the sentence
-    w = nltk.word_tokenize(pattern['sentence'])
-    # add to our words list
-    words.extend(w)
-    # add to documents in our corpus
-    documents.append((w, pattern['class']))
-    # add to our classes list
-    if pattern['class'] not in classes:
-        classes.append(pattern['class'])
+# Definieren von Trainingsdaten aus dataset analysis
+with open('data/random_distributed_dataset.json') as json_file:
+    random_distributed_dataset= json.load(json_file)
 
 
-# stem and lower each word and remove duplicates
-words = [stemmer.stem(w.lower()) for w in words if w not in ignore_words]
-words = list(set(words))
+set, output, words, documents, classes, labels = preProcessing(random_distributed_dataset)
 
-# remove duplicates
-classes = list(set(classes))
+# daten splitten 2/3 1/3
+ratio=3/4
+training_data = set[0:int(len(random_distributed_dataset)*ratio)]
+training_labels = labels[0:int(len(random_distributed_dataset)*ratio)]
+print(training_labels)
+test_data = set[int(len(random_distributed_dataset)*ratio):len(random_distributed_dataset)]
+test_labels = labels[int(len(random_distributed_dataset)*ratio):len(random_distributed_dataset)]
 
-print (len(documents), "documents")
-print (len(classes), "classes", classes)
-print (len(words), "unique stemmed words", words)
-
-# List of Words schreiben, da wörter unterschiedlich angeordnet werden
-with open('words.txt', 'w') as f:
-    for item in words:
-        f.write("%s," % item)
-
-# create our training data
-training = []
-output = []
-# create an empty array for our output
-output_empty = [0] * len(classes)
-
-
-# training set, bag of words for each sentence
-for doc in documents:
-    # initialize our bag of words
-    bag = []
-    # list of tokenized words for the pattern
-    pattern_words = doc[0]
-    # stem each word
-    pattern_words = [stemmer.stem(word.lower()) for word in pattern_words]
-    # create our bag of words array
-    for w in words:
-        bag.append(1) if w in pattern_words else bag.append(0)
-
-    training.append(bag)
-    # output is a '0' for each tag and '1' for current tag
-    output_row = list(output_empty)
-    output_row[classes.index(doc[1])] = 1
-    output.append(output_row)
-
-
-X = np.array(training)
-y = np.array(output)
+X = np.array(training_data)
+y = np.array(output[0:int(len(random_distributed_dataset)*ratio)])
 print ("# words", len(words))
 print ("# classes", len(classes))
-labels = np.array(labels)
+labels = np.array(training_labels)
 print(documents)
+
+#X = np.array(test_data)
+#print(len(X))
+#y = np.array(test_data)
+#print(len(y))
 
 # Reduzieren auf Wortstamm
 def clean_up_sentence(sentence):
@@ -166,7 +108,7 @@ model.compile(optimizer=optimizer,
               metrics=['accuracy'])
 
 # Trainieren des Modells
-model.fit(X, labels, epochs=1500)
+model.fit(X,labels, epochs=1500)
 
 # Speichern als keras Modell
 #model.save('taskClassifier')
@@ -177,6 +119,11 @@ tflite_model = converter.convert()
 open("taskClassifierPhon.tflite", "wb").write(tflite_model)
 
 
+
+labels = np.array(test_labels)
+X = np.array(test_data)
+results = model.evaluate(X, labels, batch_size=1)
+print("test loss, test acc:", results)
 # classes of training data
 # drive to = 0
 # slam = 1
@@ -192,9 +139,9 @@ XRNN = np.reshape(X,(X.shape[0],-1, X.shape[1]))
 modelRNN = keras.Sequential()
 
 # Input Layer
-model.add(tf.keras.layers.Embedding(input_dim=len(words), input_length = len(words), output_dim=100,
-              trainable=True,
-              mask_zero=True))
+#model.add(tf.keras.layers.Embedding(input_dim=len(words), input_length = len(words), output_dim=100,
+ #             trainable=True,
+   #           mask_zero=True))
 modelRNN.add(tf.keras.layers.InputLayer(input_shape=(1, X.shape[1]), name="input"))
 # Masking layer for pre-trained embeddings
 modelRNN.add(tf.keras.layers.Masking(mask_value=0.0))
@@ -224,10 +171,10 @@ modelRNN.compile(optimizer=optimizer,
 
 start = time.time()
 # Trainieren des Modells
-modelRNN.fit(XRNN[0:len(documents)], labels[0:len(documents)], epochs=1000)
+modelRNN.fit(XRNN,labels, epochs=1250)
 print(time.time()-start)
 
-sentence1 = "use simultaneous loc"
+sentence1 = "use simultaneous localization and mapping"
 input = bow(sentence1.lower(), words, show_details=False)
 print(modelRNN.predict(np.reshape(input,(1, 1, len(words)))))
 
@@ -240,3 +187,11 @@ converter = tf.lite.TFLiteConverter.from_keras_model(modelRNN)
 converter.allow_custom_ops=True
 tflite_model = converter.convert()
 open("taskClassifierRNN.tflite", "wb").write(tflite_model)
+
+
+labels = np.array(test_labels)
+X = np.array(test_data)
+X = np.reshape(X,(X.shape[0],-1, X.shape[1]))
+
+results = modelRNN.evaluate(X, labels, batch_size=1)
+print("test loss, test acc:", results)
