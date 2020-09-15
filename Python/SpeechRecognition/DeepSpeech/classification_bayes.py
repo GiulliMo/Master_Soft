@@ -34,7 +34,7 @@ import json
 class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
 
 # Definieren von Trainingsdaten
-with open('data/train_data.json') as json_file:
+with open('data/training_data_II.json') as json_file:
     training_data = json.load(json_file)
 
 #Preprocessing
@@ -146,7 +146,7 @@ def bow(sentence, words, show_details=False):
 
 gnb = MultinomialNB() # verschiedene Bayes Klassifikator koennen hier eingesetzt werden
 gnb = gnb.fit(X,labels)
-sentence1 = "localize yourself in unknown environment"
+sentence1 = "slam"
 input = bow(sentence1.lower(), words, show_details=False)
 input = np.reshape(input, (-1,len(words)))
 print(gnb.predict_proba(input))

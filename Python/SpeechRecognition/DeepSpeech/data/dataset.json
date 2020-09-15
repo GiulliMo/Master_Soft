@@ -401,7 +401,7 @@
     "modus": 2
   },
   {
-    "class": 1,
+    "class": 3,
     "sentence": "can you start with pose estimation and mapping",
     "modus": 2
   },
@@ -712,7 +712,7 @@
   },
   {
     "class": 2,
-    "sentence": "take a break from activites",
+    "sentence": "take a break from activities",
     "modus": 2
   },
   {
@@ -1422,8 +1422,893 @@
     "modus": 2
   },
   {
+    "class": 3,
+    "sentence": "find yourself in the laboratory",
+    "modus": 2
+  },
+    {
+    "class": 1,
+    "sentence": "map the laboratory",
+    "modus": 2
+  },
+  {
+    "class": 1,
+    "sentence": "map the laboratory and localize yourself in it",
+    "modus": 2
+  },
+ {
+    "class": 2,
+    "sentence": "hold back for new destinations",
+    "modus": 2
+  },
+  {
+    "class": 4,
+    "sentence": "cancel all your activities",
+    "modus": 2
+  },
+  {
+    "class": 0,
+    "sentence": "proceed your moving to a destination of your choice",
+    "modus": 0
+  },
+  {
+    "class": 1,
+    "sentence": "takeoff to self localization and mapping",
+    "modus": 2
+  },
+  {
+    "class": 2,
+    "sentence": "stay in your actual position and do not shutdown the system",
+    "modus": 2
+  },
+  {
+    "class": 3,
+    "sentence": "where are you",
+    "modus": 2
+  },
+  {
+    "class": 4,
+    "sentence": "stop all of your processes",
+    "modus": 2
+  },
+  {
+    "class": 0,
+    "sentence": "pickup load and drive move to the science building",
+    "modus": 0
+  },
+  {
+    "class": 1,
+    "sentence": "observe your environment and save landmarks and trajectory",
+    "modus": 2
+  },
+  {
+    "class": 2,
+    "sentence": "await the arrival of a person",
+    "modus": 2
+  },
+ {
+    "class": 3,
+    "sentence": "find matching features between known environment and lidar sensor",
+    "modus": 2
+  },
+ {
+    "class": 4,
+    "sentence": "change to risk minimal state",
+    "modus": 2
+  },
+  {
+    "class": 0,
+    "sentence": "get your shipment from the post office",
+    "modus": 0
+  },
+  {
+    "class": 0,
+    "sentence": "grab the joystick and start to maneuver",
+    "modus": 1
+  },
+  {
+    "class": 0,
+    "sentence": "maneuver to a position",
+    "modus": 0
+  },
+  {
+    "class": 1,
+    "sentence": "chart the surroundings and estimate your pose",
+    "modus": 2
+  },
+  {
+    "class": 1,
+    "sentence": "explore the surroundings and estimate your pose",
+    "modus": 0
+  },
+ {
+    "class": 1,
+    "sentence": "explore the possibilities of movement",
+    "modus": 0
+  },
+ {
+    "class": 1,
+    "sentence": "make use of your observation sources to solve the slam problem",
+    "modus": 2
+  },
+ {
+    "class": 2,
+    "sentence": "lie down and go back to sleep",
+    "modus": 2
+  },
+  {
+    "class": 3,
+    "sentence": "estimate your pose in surrounding area",
+    "modus": 2
+  },
+  {
+    "class": 3,
+    "sentence": "what is your position in the surrounding area",
+    "modus": 2
+  },
+ {
+    "class": 4,
+    "sentence": "emergency shutdown",
+    "modus": 2
+  },
+ {
+    "class": 0,
+    "sentence": "navigate without crash to a target",
+    "modus": 0
+  },
+ {
+    "class": 1,
+    "sentence": "takeoff and leave your actual position",
+    "modus": 0
+  },
+ {
+    "class": 1,
+    "sentence": "estimate position and the surrounding area",
+    "modus": 2
+  },
+ {
+    "class": 2,
+    "sentence": "hold on with your current exercise",
+    "modus": 2
+  },
+ {
+    "class": 2,
+    "sentence": "hold on with your current exercise",
+    "modus": 2
+  },
+ {
+    "class": 4,
+    "sentence": "change to maintaining state",
+    "modus": 2
+  },
+  {
     "class": 5,
-    "sentence": "i hear that a note",
+    "sentence": "change state",
+    "modus": 2
+  },
+  {
+    "class": 5,
+    "sentence": "switch to",
+    "modus": 2
+  },
+  {
+    "class": 5,
+    "sentence": "exercise some task",
+    "modus": 2
+  },
+  {
+    "class": 4,
+    "sentence": "end your current activities",
+    "modus": 2
+  },
+  {
+    "class": 5,
+    "sentence": "charlie do not surf",
+    "modus": 2
+  },
+ {
+    "class": 3,
+    "sentence": "detect your base station",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "maneuver to position beta",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "navigate in known area to the living room",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "map the unknown area",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "use the particle filter",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "wait for something to happen",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "wake up and solve the slam challenge",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "wake up and find yourself",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "begin to arise and start hector",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "stand up",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "arise",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "arise and drive to location delta",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "maneuver in known environment by hand",
+    "modus": 1
+  },
+{
+    "class": 0,
+    "sentence": "drive slowly",
+    "modus": 1
+  },
+{
+    "class": 1,
+    "sentence": "generate a travel map for navigation",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "explore the area and check for possible trajectory",
+    "modus": 0
+  },
+{
+    "class": 2,
+    "sentence": "laid back yourself",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "drive towards the dining hall",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "explore the dining hall",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "explore the building",
+    "modus": 0
+  },
+{
+    "class": 3,
+    "sentence": "estimate your location in the building",
+    "modus": 0
+  },
+{
+    "class": 2,
+    "sentence": "wait for new exercises",
+    "modus": 0
+  },
+{
+    "class": 2,
+    "sentence": "wait for new delivery jobs",
+    "modus": 0
+  },
+{
+    "class": 5,
+    "sentence": "autonomous logistic vehicle",
+    "modus": 0
+  },
+{
+    "class": 2,
+    "sentence": "wait for ne logistics quest",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "handle your logistic task with autonomous driving",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "handle your logistic task with manually driving",
+    "modus": 1
+  },
+{
+    "class": 1,
+    "sentence": "slam the environment to setup a static map",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "map the building to solve logistic problem",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "add landmarks to a static map while you localize yourself",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "compare observations with known landmarks",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "shutdown the robot operating system",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "start the robot operating system and drive to a destination",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "start the robot operating system and solve slam",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "start the robot operating system and solve simultaneous localization and mapping",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "ramp down the robot operating system",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "autonomous logistic vehicle drive to a location",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "autonomous logistic vehicle start observation sources and find yourself in known environment",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "autonomous logistic vehicle start observation sources and find yourself in unknown environment",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "can you shutdown all processes",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "can you drive to the emperor",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "explore with explore lite",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "drive to destination alpha",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "drive to destination emperor",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "launch the particle filter",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "launch the particle filter and change state to localization",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "change to simultaneous loc and mapping",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "go to the stop mode",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "switch to the risk minimal state",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "this is some random text to detect the unknown class",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "navigate to the kitchen",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "map the building and the kitchen",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "localize yourself in the building",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "maneuver to location delta",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "navigate and localize yourself in the known environment",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "move to the post office",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "navigate to the dining room",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "launch hector slam and explore the surrounding area",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "simultaneous mapping",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "simultaneous localization",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "your next task is solve the slam problem",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "your next task is to solve the slim problem",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "localize yourself with particle filter and drive with joystick",
+    "modus": 1
+  },
+{
+    "class": 3,
+    "sentence": "localize yourself with particle filter and control the vehicle with the given controller",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "switch to the emergency state",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "this is no emergency change to no state",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "do nothing",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "do not classify any relevant task",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "move to a position from the buzzword list",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "navigate to a position from the buzzword list",
+    "modus": 0
+  },
+{
+    "class": 0,
+    "sentence": "maneuver to a position from the buzzword list",
+    "modus": 0
+  },
+{
+    "class": 1,
+    "sentence": "create a static map and track your position in it",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "track landmarks and your position to solve slam",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "track obstacles and your location to solve slam problem",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "track obstacles and your location simultaneously",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "start to track your location in a static given map",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for localization or other commands",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "find yourself in a given map",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "drive autonomously to location emperor",
+    "modus": 0
+  },
+{
+    "class": 5,
+    "sentence": "dr autno to labory",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "amcl navigation for localization",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "particle filter with kinect sensor and liar",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "solve the slam challenge with the Kinect sensors",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "find yourself in unknown environment",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "solve the slam problem in unknown environment",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "simultaneous localization and mapping in unfamiliar area",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "localize with particle filter in known environment",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for new state inputs through speech recognition",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "hold on for new state commands",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for new destinations or commands",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for new destinations or joystick commands",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for it",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "please wait for me in the laboratory",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "you must wait a few more minutes",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for a person to come back",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "hold on for new decision making speech commands",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for a person you can follow",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "take a ride to location foxtrot",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "take a ride to location foxtrot",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "wait for new state transitions",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "use localization as a state transition",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "autonomous logistic vehicle go to sleep",
+    "modus": 2
+  },
+{
+    "class": 3,
+    "sentence": "estimate your position and prepare for delivery",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "prepare for new delivery",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "charge in state wait for",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "stop charging and change to state emergency",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "stop charging and change to state stop",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "chrging",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "juice up in the waiting state",
+    "modus": 2
+  },
+{
+    "class": 0,
+    "sentence": "after recharging drive to a destination",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge and wait for new activities",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "change to the waiting state and await new activities",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "slam",
+    "modus": 2
+  },
+{
+    "class": 1,
+    "sentence": "slim",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge yourself in the waiting state",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge yourself and wait",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge yourself in the waiting mode",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge yourself",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "charge yourself in the waiting state",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge your batteries",
+    "modus": 2
+  },
+{
+    "class": 2,
+    "sentence": "recharge your accumulators",
+    "modus": 2
+  },
+  {
+    "class": 5,
+    "sentence": "charge",
+    "modus": 2
+  },
+ {
+    "class": 5,
+    "sentence": "none",
+    "modus": 2
+  },
+ {
+    "class": 5,
+    "sentence": "none",
+    "modus": 2
+  },
+ {
+    "class": 5,
+    "sentence": "none",
+    "modus": 2
+  },
+ {
+    "class": 5,
+    "sentence": "nn",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "yourself",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "yourself",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "your",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "yourse",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "you",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "your self",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "your self",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "activities",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "filter",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "stop your activities",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "change to state stop and end all of your activities",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "change to the emergency mode",
+    "modus": 2
+  },
+{
+    "class": 4,
+    "sentence": "in case of emergency change to stop",
+    "modus": 2
+  },
+{
+    "class": 5,
+    "sentence": "case",
+    "modus": 2
+  },
+  {
+    "class": 5,
+    "sentence": "save",
     "modus": 2
   }
 ]

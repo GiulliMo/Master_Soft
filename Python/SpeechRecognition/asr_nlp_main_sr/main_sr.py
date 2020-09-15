@@ -176,6 +176,10 @@ class recognizer:
                     self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
 
                     # Veroeffentlichung des Ziels
+
+                    ## Ziel oder Schlagwort veroeffentlichen?
+                    ## Gggf nur Schlagwort um Ziel in SImulink zu verarbeiten
+
                     self.talkerGoal(self.recognizedBuzzwords[0]['buzzword'][0]['name'], self.recognizedBuzzwords[0]['buzzword'][0]['value'])
                     break
 
@@ -208,6 +212,10 @@ class recognizer:
                                 rospy.loginfo("Valid location!")
 
                                 # veröffentlichung des Ziels
+
+                                ## Ziel oder Schlagwort veroeffentlichen?
+                                ## Gggf nur Schlagwort um Ziel in SImulink zu verarbeiten
+                                
                                 self.talkerGoal(self.recognizedBuzzwords[0]['buzzword'][0]['name'], self.recognizedBuzzwords[0]['buzzword'][0]['value'])
                                 break
 

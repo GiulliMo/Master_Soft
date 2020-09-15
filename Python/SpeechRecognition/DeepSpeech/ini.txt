@@ -4,7 +4,7 @@
 virtualenv -p python deepspeech-venv // ggf. python3
 
 2.Venv aktivieren
-source ./deepspeech-venv2/bin/activate
+source ./deepspeech-venv/bin/activate
 
 3. Tensorflow
 pip install tensorflow==1.15.0

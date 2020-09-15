@@ -70,7 +70,7 @@ class nlp:
         # return string
         return new
 
-    # Schlagwort- und Transitionsliste laden
+    # Methode um json zu laden
     def loadJsons(self, dir):
         f = open(dir, "r")
         jsonfile = json.loads(f.read())

@@ -13,7 +13,7 @@ import wave
 
 #--input_arrays=previous_state_c, input_samples,input_node, input_lengths --output_arrays='logits', 'mfccs',  'metadata_feature_win_len', 'metadata_version', 'metadata_sample_rate', 'new_state_h', 'new_state_c', 'metadata_alphabet', 'metadata_feature_win_step'
 #[[1, 2048],[512],[1, 2048],[1, 16, 19, 26],[1]]
-from tensorflow_core.lite.python.lite import Optimize
+
 
 
 def initModel():
@@ -21,7 +21,7 @@ def initModel():
     # saver = tf.train.import_meta_graph('model.ckpt-54800.meta')
 
     # These are set to the default names from exported models, update as needed.
-    filename = "models-DE/output_graph.pb"
+    filename = "models/output_graph.pb"
 
     # Import the TF graph
     with tf.io.gfile.GFile(filename, 'rb') as f:
@@ -43,14 +43,14 @@ def initModel():
 
 
 if __name__ == '__main__':
-    filename = "models-DE/output_graph.pb"
+    filename = "models/output_graph.pb"
     graph, wts = initModel()
 
     for qp in graph.get_operations():
         abc = graph.get_tensor_by_name(qp.name + ":0")
         print(abc)
 
-graph_def_file = "models-DE/output_graph.pb"
+graph_def_file = "models/output_graph.pb"
 input_arrays = ["previous_state_c", "input_samples", "previous_state_h", "input_node", "input_lengths"]
 output_arrays = ["logits", "mfccs",  "metadata_feature_win_len", "metadata_version", "metadata_sample_rate", "new_state_h", "new_state_c", "metadata_alphabet", "metadata_feature_win_step"]
 #input_arrays=[{'name': 'previous_state_c', 'index': 405, 'shape': np.array([1, 2048], dtype=np.int32), 'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0), 'quantization_parameters': {'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0}}, {'name': 'input_samples', 'index': 380, 'shape': array([512], dtype=int32), 'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0), 'quantization_parameters': {'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0}}, {'name': 'previous_state_h', 'index': 406, 'shape': array([   1, 2048], dtype=int32), 'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0), 'quantization_parameters': {'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0}}, {'name': 'input_node', 'index': 379, 'shape': array([ 1, 16, 19, 26], dtype=int32), 'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0), 'quantization_parameters': {'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0}}]
@@ -65,15 +65,15 @@ input_shapes={"previous_state_c" : [1, 2048], "previous_state_h" : [1, 2048], "i
 #open("converted_model1.tflite", "wb").write(tflite_model)
 
 
-interpreter = tf.lite.Interpreter("models/output_graph.tflite")
+#interpreter = tf.lite.Interpreter("models/output_graph.tflite")
 
-interpreter.allocate_tensors()
+#interpreter.allocate_tensors()
 
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+#input_details = interpreter.get_input_details()
+#output_details = interpreter.get_output_details()
 
-print(input_details)
-print(output_details)
+#print(input_details)
+#print(output_details)
 
 #input_shape = input_details[2]['shape']
 #input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)

@@ -84,7 +84,7 @@ if __name__ == '__main__':
     try:
         # pfad definieren und daten laden
         path = os.path.dirname(sys.argv[0])
-        with open(path + '/' + 'data/test_data.json') as json_file:
+        with open(path + '/' + 'data/test_data_II.json') as json_file:
             test_data = json.load(json_file)
 
         string = sd.query_devices()
@@ -104,6 +104,21 @@ if __name__ == '__main__':
         listofvoices.append("com.apple.speech.synthesis.voice.tessa") #en_za
         listofvoices.append("com.apple.speech.synthesis.voice.veena") #en_in
         listofvoices.append("com.apple.speech.synthesis.voice.Victoria") #en_us4
+        listofvoices.append("com.apple.speech.synthesis.voice.Vicki") #en_us6
+        listofvoices.append("com.apple.speech.synthesis.voice.tom.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.susan.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.serena.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.Ralph")
+        listofvoices.append("com.apple.speech.synthesis.voice.oliver.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.lee.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.kate.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.fiona.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.daniel.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.Bruce")
+        listofvoices.append("com.apple.speech.synthesis.voice.anna.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.ava.premium")
+        listofvoices.append("com.apple.speech.synthesis.voice.allison.premium")
+
 
         voices = engine.getProperty('voices')
         engine.setProperty('rate', 175)
@@ -114,7 +129,7 @@ if __name__ == '__main__':
 
         test_labels = []
         threads = list()
-        '''
+
         for voice in voices:
             print("Voice: %s" % voice.name)
             print(" - ID: %s" % voice.id)
@@ -124,17 +139,19 @@ if __name__ == '__main__':
             print("\n")
         engine.setProperty('voice', "com.apple.speech.synthesis.voice.Alex")
         engine.setProperty('voice', voices[0].id)
-        '''
-        print(len(test_data))
+
+      #  print(len(test_data))
         for voice in listofvoices:
 
-            with open(path + '/' + 'data/train_data_II.json') as json_file:
+            with open(path + '/' + 'data/training_data_II.json') as json_file:
                 test_data = json.load(json_file)
-                print(len(test_data))
+                #print(len(test_data))
+
             engine.setProperty('voice', voice)
             voice = voice.replace(".", "")
             s.filename = voice
             i = 0
+            test_labels = []
             for i in range(len(test_data)):
                 num1 = random.randint(0, len(test_data)-1)
                 sentence = test_data[num1]["sentence"]
@@ -162,6 +179,7 @@ if __name__ == '__main__':
                 test_data.pop(num1)
 
             # labels mit gleichen Namen loeschen
+
             if os.path.exists(s.filename):
                 os.remove(s.filename)
 

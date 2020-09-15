@@ -203,15 +203,15 @@ class SpeechRecognition:
     ## Methode um Schlagwoerter zu finden ##
     ## getALFBuzzwords Liste muss ggf weitergepflegt werden
 
-    def getAlfBuzzWords(self):
+    def getAlfBuzzWords(self, transcript):
 
         # leere Schlagwortliste anlegen
         self.recognizedBuzzwords = []
         buzz = []
 
         # Apostroph wird mit leerzeichen ersetzt
-        self.transcript = self.transcript.replace("'", "")
-        res = self.transcript.split()
+        transcript = transcript.replace("'", "")
+        res = transcript.split()
 
         phoneResSoundex = []
         # phoneResNysi = []
@@ -223,17 +223,17 @@ class SpeechRecognition:
             # phoneResNysi.append(phonetics.nysiis(res[k]))
 
         # phonetischen code der transkription nach metaphone
-        phoneResMetaphone = phonetics.metaphone(self.transcript.replace(" ", ""))
+        phoneResMetaphone = phonetics.metaphone(transcript.replace(" ", ""))
         #phoneResNysi = phonetics.nysiis(self.transcript.replace(" ", ""))
 
 
         # Sind Schalgwoerter in dem Transcript, wenn
-        if self.transcript:
+        if transcript:
 
             for i in range(len(self.buzzwords)):
 
                 # Pruefe auf direktes match
-                if self.Rabin_Karp_Matcher(self.transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
+                if self.Rabin_Karp_Matcher(transcript, self.buzzwords[i]['buzzword'][0]['name'], 257, 11):  # is there a buzzword?
                     self.recognizedBuzzwords.append(self.buzzwords[i])  # ['buzzword'][0]['name'])  # Buzzword to list
                     buzz.append(self.buzzwords[i]['buzzword'][0]['name'])
 
@@ -558,6 +558,7 @@ class SpeechRecognition:
 
     def classifierModus(self, transcript):
         self.modelModusClassifier.allocate_tensors()
+
         try:
 
             # Bearbeiten Transcript
