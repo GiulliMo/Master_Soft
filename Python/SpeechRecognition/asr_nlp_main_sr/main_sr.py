@@ -424,9 +424,13 @@ if __name__ == '__main__':
     # NLP initialisieren
     r.nlp.buzzwords = r.nlp.loadJsons("models/buzzwords.json")
     r.nlp.words = r.nlp.readWords("models/words.txt")
+    r.nlp.vocab_size = len(r.nlp.words)
     r.nlp.wordsModus = r.nlp.readWords("models/words_modus.txt")
-    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
+    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
     r.nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
+    r.nlp.modelTaskClassifier.allocate_tensors()
+    r.nlp.rnn = False
+    r.nlp.embeddinglayer = False
 
     # ROS initialisieren
     r.listener()

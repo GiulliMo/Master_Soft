@@ -13,7 +13,7 @@ import time
 ## wav dateien aus data werden alle(!) in wavfiles gelegt ==> len(wavefiles) == len(mergedlist)
 
 nlp = nlp()
-dataname = "Data_III"
+dataname = "Data_IV"
 datadir = os.listdir(dataname)
 ignore1 = '.DS_Store'
 print(datadir)
@@ -28,7 +28,7 @@ model = asr.initModel()
 #klassifizierer initialisieren
 nlp.words = nlp.readWords("models/words.txt")
 nlp.wordsModus = nlp.readWords("models/words_modus.txt")
-nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
+nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhonRNN.tflite")
 nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
 
 # index und scores zaehler initialisieren
