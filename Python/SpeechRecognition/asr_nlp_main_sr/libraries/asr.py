@@ -1,12 +1,11 @@
 import deepspeech
 import os
 import pyaudio
-import numpy as np
 import speech_recognition as sr
 from watson_developer_cloud.speech_to_text_v1 import SpeechToTextV1
 import json
 import wave
-
+import numpy as np
 
 
 # Klasse erzeugen Automatic Speech Recognition

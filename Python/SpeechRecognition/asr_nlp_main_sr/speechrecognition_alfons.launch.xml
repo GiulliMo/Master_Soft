@@ -25,7 +25,7 @@
     <node name="audioStream" pkg="speechrecognition_alfons" type="audioStream.py" output="screen">
         <param name="sub/button/topic" value="startbutton" />
 	    <param name="nodename" value="audioStream" />
-        <param name="deviceID" value="pulse" />    <!-- Name geht bis zum ersten komma von print(sd.query_devices()) z.B. Xbox NUI Sensor: USB Audio (hw:1,0)-->
+        <param name="deviceID" value="USB Audio (hw:0,0)" />    <!-- Name geht bis zum ersten komma von print(sd.query_devices()) z.B. Xbox NUI Sensor: USB Audio (hw:1,0)-->
 	    <param name="recsec" value="5" />
     </node>
 

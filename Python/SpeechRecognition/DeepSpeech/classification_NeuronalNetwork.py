@@ -171,7 +171,7 @@ modelRNN.compile(optimizer=optimizer,
 
 start = time.time()
 # Trainieren des Modells
-modelRNN.fit(XRNN,labels, epochs=1250)
+modelRNN.fit(XRNN,labels, epochs=1500)
 print(time.time()-start)
 
 sentence1 = "use simultaneous localization and mapping"

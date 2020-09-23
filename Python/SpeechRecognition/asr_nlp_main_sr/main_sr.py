@@ -176,6 +176,10 @@ class recognizer:
                     self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]),self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
 
                     # Veroeffentlichung des Ziels
+
+                    ## Ziel oder Schlagwort veroeffentlichen?
+                    ## Gggf nur Schlagwort um Ziel in SImulink zu verarbeiten
+
                     self.talkerGoal(self.recognizedBuzzwords[0]['buzzword'][0]['name'], self.recognizedBuzzwords[0]['buzzword'][0]['value'])
                     break
 
@@ -208,6 +212,10 @@ class recognizer:
                                 rospy.loginfo("Valid location!")
 
                                 # veröffentlichung des Ziels
+
+                                ## Ziel oder Schlagwort veroeffentlichen?
+                                ## Gggf nur Schlagwort um Ziel in SImulink zu verarbeiten
+                                
                                 self.talkerGoal(self.recognizedBuzzwords[0]['buzzword'][0]['name'], self.recognizedBuzzwords[0]['buzzword'][0]['value'])
                                 break
 
@@ -416,9 +424,13 @@ if __name__ == '__main__':
     # NLP initialisieren
     r.nlp.buzzwords = r.nlp.loadJsons("models/buzzwords.json")
     r.nlp.words = r.nlp.readWords("models/words.txt")
+    r.nlp.vocab_size = len(r.nlp.words)
     r.nlp.wordsModus = r.nlp.readWords("models/words_modus.txt")
-    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierRNN.tflite")
+    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
     r.nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
+    r.nlp.modelTaskClassifier.allocate_tensors()
+    r.nlp.rnn = False
+    r.nlp.embeddinglayer = False
 
     # ROS initialisieren
     r.listener()

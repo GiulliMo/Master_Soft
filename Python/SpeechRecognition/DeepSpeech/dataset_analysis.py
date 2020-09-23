@@ -8,7 +8,7 @@ filename= "dataset.json"
 class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
 
 ## Flag zur unterscheidung post/pre Training
-trained_with_random_dataset = False
+trained_with_random_dataset = True
 
 def saveJsons(dir, data):
     if os.path.exists(dir):
@@ -23,7 +23,7 @@ if trained_with_random_dataset:
     with open('data/' + "random_distributed_dataset.json") as json_file:
         random_distributed_dataset = json.load(json_file)
 
-    with open('data/' + "train_data_II.json") as json_file:
+    with open('data/' + "training_data_II.json") as json_file:
         training_data = json.load(json_file)
 
     with open('data/' + "test_data_II.json") as json_file:
@@ -54,7 +54,7 @@ else:
     training_data = random_distributed_dataset[0:int(len(random_distributed_dataset) * ratio)]
     test_data = random_distributed_dataset[int(len(random_distributed_dataset) * ratio):len(random_distributed_dataset)]
 
-    saveJsons('data/training_data_II.json', training_data)
+    saveJsons('data/train_data_II.json', training_data)
     saveJsons('data/test_data_II.json', test_data)
 
     # testen der laengen

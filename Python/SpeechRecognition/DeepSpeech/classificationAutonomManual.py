@@ -28,7 +28,7 @@ import phonetics
 # manual = 1
 
 class_names = ['autonom', 'manual']
-# Definieren von Trainingsdaten
+# Definieren von Trainingsdaten muessen extra sein, da sonst andere mit trainiert werden
 training_data = []
 training_data.append({"class":0, "sentence":"drive to location alpha", "modus":0})
 training_data.append({"class":0, "sentence":"move to alpha", "modus":0})
@@ -39,6 +39,7 @@ training_data.append({"class":0, "sentence":"plan a trajectorie and move to foxt
 training_data.append({"class":0, "sentence":"moving to location hotel", "modus":0})
 training_data.append({"class":0, "sentence":"deliver to location delta", "modus":0})
 training_data.append({"class":0, "sentence":"deliver to foxtrot", "modus":0})
+training_data.append({"class":0, "sentence":"deliver package to a location of your choice", "modus":0})
 training_data.append({"class":0, "sentence":"start to deliver your load to alpha", "modus":0})
 training_data.append({"class":0, "sentence":"move to position india", "modus":0})
 training_data.append({"class":0, "sentence":"drive autonomously", "modus":0})
@@ -63,7 +64,7 @@ training_data.append({"class":1, "sentence":"explore with slam", "modus":0})
 training_data.append({"class":1, "sentence":"explore with simultaneous localization and mapping", "modus":0})
 training_data.append({"class":1, "sentence":"change to explore mode", "modus":0})
 training_data.append({"class":1, "sentence":"explore the environment with slam and drive manually", "modus":1})
-training_data.append({"class":1, "sentence":"explore with slam and drive autonomously", "modus":0})
+training_data.append({"class":1, "sentence":"explore the environment with slam and drive autonomously", "modus":0})
 training_data.append({"class":1, "sentence":"localize and map manually", "modus":1})
 training_data.append({"class":1, "sentence":"drive and simultaneous localize and map your environment", "modus":0})
 training_data.append({"class":1, "sentence":"simultaneous localization and mapping in unknow environment manually", "modus":1})
@@ -78,17 +79,16 @@ training_data.append({"class":1, "sentence":"drive to", "modus":1})
 training_data.append({"class":1, "sentence":"drive with slam and make use of joystick", "modus":1})
 training_data.append({"class":1, "sentence":"just drive", "modus":1})
 training_data.append({"class":1, "sentence":"manually", "modus":1})
-training_data.append({"class":1, "sentence":"manual", "modus":1})
-training_data.append({"class":1, "sentence":"men you early", "modus":1})
-training_data.append({"class":1, "sentence":"autonomously", "modus":0})
-training_data.append({"class":1, "sentence":"autonom", "modus":0})
+training_data.append({"class":1, "sentence":"change to state slam", "modus":1})
 training_data.append({"class":1, "sentence":"change to driving mode and use joy", "modus":1})
 training_data.append({"class":1, "sentence":"change to driving mode and use joystick", "modus":1})
 training_data.append({"class":1, "sentence":"manually", "modus":1})
-training_data.append({"class":1, "sentence":"drive with manually with joystick", "modus":1})
+training_data.append({"class":1, "sentence":"drive with joy stick", "modus":1})
 training_data.append({"class":0, "sentence":"make use of the joystick to drive manually", "modus":1})
 training_data.append({"class":0, "sentence":"drive to location", "modus":0})
 training_data.append({"class":0, "sentence":"all to no use", "modus":0})
+training_data.append({"class":0, "sentence":"men you early", "modus":1})
+
 
 
 
