@@ -3,6 +3,7 @@ from libraries.dataset import transform_images, load_tfrecord_dataset
 import numpy
 import numpy as np
 import cv2
+
 import tensorflow
 import imutils
 from imutils.object_detection import non_max_suppression
@@ -23,7 +24,6 @@ class detections:
         self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
 
-
     def getdetectionsbyhog(self, image, sneak):
         imagesmall = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
@@ -34,6 +34,7 @@ class detections:
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
         detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
         bboxlist = []
+        scores = []
         for i in range(len(detections)):
 
             # Erstellung der Boundingbox
@@ -51,21 +52,24 @@ class detections:
 
                     if box[b] > image.shape[i]:
                         box[b] = image.shape[i]
+            box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
             box = box.astype(numpy.int)
             bboxlist.append(box)
             bbox = numpy.asarray(bboxlist)
             bbox = self.non_max_suppression(bbox, 0.65)
             label = "Person"
-            cv2.rectangle(image, (box[1], box[0]), (box[3], box[2]),
+            cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]),
                           (255, 0, 255), 2)
             y = box[0] - 15 if box[0] - 15 > 15 else box[0] + 15
             cv2.putText(image, label, (box[1], y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        #cv2.imwrite('./results/' + sneak + 'HOG.jpg', image)
+            confidence = 1
+            scores.append(confidence)
+        cv2.imwrite('./results/images/' + sneak + '.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1) & 0xFF
         print("HOG= " + str(end))
-        return detections, image
+        return detections, image, scores
 
     def getdetectionsbycnn(self, image, sneak):
         (h, w) = image.shape[:2]
@@ -138,12 +142,14 @@ class detections:
         for i in range(boxes.shape[1]):
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             confidence = scores[0, i]
-            if confidence > 0.0:
+            print(confidence)
+            if confidence > 0.4:
                 # Index der Detection
                 idx = int(detectedlabels[0, i])
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
                 if self.labels[idx] in self.ignorelabels:
                     continue
+                #print(self.ignorelabels)
                 scorelist.append(confidence)
                 # Erstellung der Boundingbox
                 box = numpy.asarray(boxes[0, i, :])
@@ -154,7 +160,7 @@ class detections:
                 box[3] = box[3] * float(image.shape[1]) * (1.0 + factor)
                 box[2] = box[2] * float(image.shape[0]) + (1.0 + factor)
                 box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
-                print(box)
+                # print(box)
                 for i in range(0, 4):
                     if i == 1 or i == 3:
                         if box[i] < 0:
@@ -170,7 +176,7 @@ class detections:
                         if box[i] > image.shape[1]:
                             box[i] = image.shape[1]
 
-                print(box)
+                #print(box)
                 box = box.astype(numpy.int)
                 bboxlist.append(box)
                 bbox = numpy.asarray(bboxlist)
@@ -180,9 +186,9 @@ class detections:
                 cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]),
                               (255, 0, 255), 2)
                 y = box[1] - 15 if box[1] - 15 > 15 else box[1] + 15
-                cv2.putText(image, label, (box[0], y),
+                cv2.putText(image, str(confidence), (box[0], y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
+        cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
         return bbox, image, scorelist
@@ -347,12 +353,13 @@ class detections:
         detectedlabels = self.interpreterssdmobilev2.get_tensor(output_details[1]['index'])
         scores = self.interpreterssdmobilev2.get_tensor(output_details[2]['index'])
         num = self.interpreterssdmobilev2.get_tensor(output_details[3]['index'])
-
+        print(detectedlabels)
+        print(boxes)
         boxes, scores, classes = np.squeeze(boxes), np.squeeze(scores), np.squeeze(detectedlabels + 1).astype(np.int32)
         bboxlist = []
         bbox = numpy.array([])
         scorelist = []
-
+        #print(boxes)
         for i in range(boxes.shape[1]):
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             confidence = scores[i]
@@ -398,9 +405,7 @@ class detections:
                 y = box[1] - 15 if box[1] - 15 > 15 else box[1] + 15
                 cv2.putText(image, label, (box[0], y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        # cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
-        # cv2.imshow(sneak, image)
-        # key = cv2.waitKey(1)
-        print(bbox)
-        print(confidence)
+        cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
+        cv2.imshow(sneak, image)
+        key = cv2.waitKey(1)
         return bbox, image, scorelist
