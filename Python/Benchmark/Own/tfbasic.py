@@ -102,8 +102,9 @@ def main():
       print(c)
       labels = load_labels("labels/tflitelabels.txt")
       ignorelabels = load_labels("labels/tfliteignorelabels.txt")
-      interpreter = tensorflow.lite.Interpreter("nets/ssdlite_mobilenet_v2.tflite")
+      interpreter = tensorflow.lite.Interpreter("nets/detect.tflite")
       interpreter.allocate_tensors()
+      print(interpreter)
       _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
       image=mpimg.imread("Dataset/" + str(c) + ".jpg")
       img = Image.fromarray(image)
@@ -170,8 +171,8 @@ def main():
           cv2.putText(image, str(confidence), (box[0], y),
                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
       cv2.imwrite('results/images/' + str(c) + '.jpg', image)
-      #cv2.imshow("b", image)
-      #key = cv2.waitKey(1)
+      cv2.imshow("b", image)
+      key = cv2.waitKey(1)
       f = open("results/annotations/" + str(c) + ".txt", "w+")
       annotationcounter = 0
       for boxes in bbox:

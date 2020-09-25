@@ -271,7 +271,7 @@ class detections:
             pick.append(i)
             suppress = [last]
             # loop over all indexes in the indexes list
-            for pos in xrange(0, last):
+            for pos in range(0, last):
                 # grab the current index
                 j = idxs[pos]
                 # find the largest (x, y) coordinates for the start of
@@ -344,10 +344,12 @@ class detections:
         image2 = preprocess_image_for_tflite(image, model_image_size=300)
         # Run model: start to detect
         # Sets the value of the input tensor.
+        start = time.time()
         self.interpreterssdmobilev2.set_tensor(input_details[0]['index'], image2)
         # Invoke the interpreter.
         self.interpreterssdmobilev2.invoke()
-
+        totaltime = time.time() - start
+        print(totaltime)
         # get results
         boxes = self.interpreterssdmobilev2.get_tensor(output_details[0]['index'])
         detectedlabels = self.interpreterssdmobilev2.get_tensor(output_details[1]['index'])
@@ -406,6 +408,6 @@ class detections:
                 cv2.putText(image, label, (box[0], y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
         cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
-        cv2.imshow(sneak, image)
-        key = cv2.waitKey(1)
+        #cv2.imshow(sneak, image)
+        #key = cv2.waitKey(1)
         return bbox, image, scorelist

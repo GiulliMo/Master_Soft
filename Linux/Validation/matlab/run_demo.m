@@ -29,7 +29,7 @@ clear all; close all;
 disp('======= KITTI DevKit Demo =======');
 
 % options
-root_dir = '/media/data/kitti/2012_object';
+root_dir = '/validation';
 data_set = 'training';
 
 % get sub-directories
