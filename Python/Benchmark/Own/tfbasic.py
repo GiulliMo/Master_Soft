@@ -102,7 +102,7 @@ def main():
       print(c)
       labels = load_labels("labels/tflitelabels.txt")
       ignorelabels = load_labels("labels/tfliteignorelabels.txt")
-      interpreter = tensorflow.lite.Interpreter("nets/detect.tflite")
+      interpreter = tensorflow.lite.Interpreter("nets/model.tflite")
       interpreter.allocate_tensors()
       print(interpreter)
       _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']

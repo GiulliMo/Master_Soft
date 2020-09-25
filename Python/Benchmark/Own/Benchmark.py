@@ -19,18 +19,16 @@ class benchmark:
                 if len(img) != 0:
                     print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence = self.detections.getdetectionsbymobilenetv2(img, "Image: " + str(c))
+                    bboxes, a, confidence = self.detections.getdetectionsbyownnet(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c) + ".txt", "w+")
                     annotationcounter = 0
-                    print(bboxes)
+                    #print(bboxes)
                     for bbox in bboxes:
                         f.write("Pedestrian 0.0 0 -1 " + str(bbox[0]) + " " + str(bbox[1]) + " " + str(bbox[2]) + " " + str(bbox[3]) + " -1 -1 -1 -1 -1 -1 -1 " + str(confidence[annotationcounter]) + "\n")
                         annotationcounter += 1
                     if len(bboxes) == 0:
                         f.write("")
-
                     cv2.imwrite("results/images/" + str(c) + ".jpg", a)
-
                     c = c + 1
                     #time.sleep(0.5)
                 else:

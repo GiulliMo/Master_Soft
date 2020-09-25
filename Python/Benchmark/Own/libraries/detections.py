@@ -23,6 +23,7 @@ class detections:
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
         self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
+        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/model.tflite")
 
     def getdetectionsbyhog(self, image, sneak):
         if image.shape[0]>=400:
@@ -78,6 +79,87 @@ class detections:
             end=0
         return detections, image, scores
 
+    def getdetectionsbyownnet(self, image, sneak):
+        self.interpreterownnet.allocate_tensors()
+        inp_id = self.interpreterownnet.get_input_details()[0]["index"]
+        out_det = self.interpreterownnet.get_output_details()
+        out_id0 = out_det[0]["index"]
+        out_id1 = out_det[1]["index"]
+        out_id2 = out_det[2]["index"]
+        out_id3 = out_det[3]["index"] #vermutlich id der detektion
+
+        img = np.reshape(np.array(cv2.resize(image, (300, 300))), [1, 300, 300, 3])
+        img = img.astype(np.float32) / 128 - 1
+        
+        self.interpreterownnet.set_tensor(inp_id, img)
+        self.interpreterownnet.invoke()
+        boxes = self.interpreterownnet.get_tensor(out_id0)
+        classes = self.interpreterownnet.get_tensor(out_id1)
+        scores = self.interpreterownnet.get_tensor(out_id2)
+        num_det = int(self.interpreterownnet.get_tensor(out_id3))
+        print(boxes)
+        print(classes)
+        print(num_det)
+        #num_det = v.get_tensor(out_id3)
+        bboxlist = []
+        bbox = numpy.array([])
+        scorelist = []
+
+        for i in range(num_det):
+            # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
+            confidence = scores[0, i]
+            #print(confidence)
+            if confidence > 0.0:
+                # Index der Detection
+                idx = int(classes[0, i])
+                # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
+                if self.labels[idx] in self.ignorelabels:
+                    continue
+                #print(self.ignorelabels)
+                scorelist.append(confidence)
+                # Erstellung der Boundingbox
+                box = numpy.asarray(boxes[0, i, :])
+                box2 = numpy.empty([1, 4], dtype=float)
+                factor = 0.0
+                box[1] = box[1] * float(image.shape[1]) * (1.0 - factor)
+                box[0] = box[0] * float(image.shape[0]) * (1.0 - factor)
+                box[3] = box[3] * float(image.shape[1]) * (1.0 + factor)
+                box[2] = box[2] * float(image.shape[0]) + (1.0 + factor)
+                box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
+                # print(box)
+                for i in range(0, 4):
+                    if i == 1 or i == 3:
+                        if box[i] < 0:
+                            box[i] = 0
+
+                        if box[i] > image.shape[0]:
+                            box[i] = image.shape[0]
+
+                    if i == 2 or i == 0:
+                        if box[i] < 0:
+                            box[i] = 0
+
+                        if box[i] > image.shape[1]:
+                            box[i] = image.shape[1]
+
+                #print(box)
+                box = box.astype(numpy.int)
+                bboxlist.append(box)
+                bbox = numpy.asarray(bboxlist)
+                #bbox = self.non_max_suppression(bbox, 0.65)
+                label = "{}: {:.2f}%".format(self.labels[idx],
+                                             confidence * 100)
+                cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]),
+                              (255, 0, 255), 2)
+                y = box[1] - 15 if box[1] - 15 > 15 else box[1] + 15
+                cv2.putText(image, str(confidence), (box[0], y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+        #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
+        #cv2.imshow(sneak, image)
+        #key = cv2.waitKey(1)
+        return bbox, image, scorelist
+        
+    
     def getdetectionsbycnn(self, image, sneak):
         (h, w) = image.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)),
