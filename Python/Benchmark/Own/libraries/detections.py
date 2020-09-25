@@ -25,50 +25,57 @@ class detections:
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
 
     def getdetectionsbyhog(self, image, sneak):
-        imagesmall = imutils.resize(image, width=min(400, image.shape[1]))
-        start = time.time()
-        # Erstellung der Boundingbox
-        (rects, weights) = self.hog.detectMultiScale(imagesmall, winStride=(4, 4), padding=(8, 8), scale=1.05)
-        rects = np.array([[y, x, y + h, x + w] for (x, y, w, h) in rects])
-        end = time.time() - start
-        # Fuer sich ueberschneidende Rechtecke unterdruecke diese
-        detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
-        bboxlist = []
-        scores = []
-        for i in range(len(detections)):
-
+        if image.shape[0]>=400:
+            imagesmall = imutils.resize(image, width=min(400, image.shape[1]))
+            print(imagesmall.shape)
+            start = time.time()
             # Erstellung der Boundingbox
-            box = numpy.asarray(detections[i])
-            print(box)
-            box[0] = int(box[0] * (float(image.shape[0]) / imagesmall.shape[0]))
-            box[1] = int(box[1] * (float(image.shape[1]) / imagesmall.shape[1]))
-            box[2] = int(box[2] * (float(image.shape[0]) / imagesmall.shape[0]))
-            box[3] = int(box[3] * (float(image.shape[1]) / imagesmall.shape[1]))
+            (rects, weights) = self.hog.detectMultiScale(imagesmall, winStride=(4, 4), padding=(8, 8), scale=1.05)
+            rects = np.array([[y, x, y + h, x + w] for (x, y, w, h) in rects])
+            end = time.time() - start
+            # Fuer sich ueberschneidende Rechtecke unterdruecke diese
+            detections = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+            bboxlist = []
+            scores = []
+            for i in range(len(detections)):
 
-            for i in range(0, 1):
-                for b in range(0, 3):
-                    if box[b] < 0:
-                        box[b] = 0
+                # Erstellung der Boundingbox
+                box = numpy.asarray(detections[i])
+                print(box)
+                box[0] = int(box[0] * (float(image.shape[0]) / imagesmall.shape[0]))
+                box[1] = int(box[1] * (float(image.shape[1]) / imagesmall.shape[1]))
+                box[2] = int(box[2] * (float(image.shape[0]) / imagesmall.shape[0]))
+                box[3] = int(box[3] * (float(image.shape[1]) / imagesmall.shape[1]))
 
-                    if box[b] > image.shape[i]:
-                        box[b] = image.shape[i]
-            box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
-            box = box.astype(numpy.int)
-            bboxlist.append(box)
-            bbox = numpy.asarray(bboxlist)
-            bbox = self.non_max_suppression(bbox, 0.65)
-            label = "Person"
-            cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]),
-                          (255, 0, 255), 2)
-            y = box[0] - 15 if box[0] - 15 > 15 else box[0] + 15
-            cv2.putText(image, label, (box[1], y),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-            confidence = 1
-            scores.append(confidence)
-        cv2.imwrite('./results/images/' + sneak + '.jpg', image)
-        #cv2.imshow(sneak, image)
-        #key = cv2.waitKey(1) & 0xFF
-        print("HOG= " + str(end))
+                for i in range(0, 1):
+                    for b in range(0, 3):
+                        if box[b] < 0:
+                            box[b] = 0
+
+                        if box[b] > image.shape[i]:
+                            box[b] = image.shape[i]
+                box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
+                box = box.astype(numpy.int)
+                bboxlist.append(box)
+                bbox = numpy.asarray(bboxlist)
+                bbox = self.non_max_suppression(bbox, 0.65)
+                label = "Person"
+                cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]),
+                              (255, 0, 255), 2)
+                y = box[1] - 15 if box[1] - 15 > 15 else box[1] + 15
+                cv2.putText(image, label, (box[0], y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+                confidence = 1
+                scores.append(confidence)
+            #cv2.imwrite('./results/images/' + sneak + '.jpg', image)
+            #cv2.imshow(sneak, image)
+            #key = cv2.waitKey(1) & 0xFF
+            print("HOG= " + str(end))
+
+        else:
+            detections=[]
+            scores=[]
+            end=0
         return detections, image, scores
 
     def getdetectionsbycnn(self, image, sneak):
@@ -191,7 +198,7 @@ class detections:
         #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist, etime
+        return bbox, image, scorelist
 
     def getdetectionsbytfliteruntime(self, image, sneak):
         image = imutils.resize(image, width=min(400, image.shape[1]))
@@ -410,4 +417,4 @@ class detections:
         #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist, totaltime
+        return bbox, image, scorelist

@@ -19,7 +19,7 @@ class benchmark:
                 if len(img) != 0:
                     print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence = self.detections.getdetectionsbyhog(img, "Image: " + str(c))
+                    bboxes, a, confidence = self.detections.getdetectionsbymobilenetv2(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c) + ".txt", "w+")
                     annotationcounter = 0
                     print(bboxes)
@@ -32,7 +32,7 @@ class benchmark:
                     cv2.imwrite("results/images/" + str(c) + ".jpg", a)
 
                     c = c + 1
-                    time.sleep(0.5)
+                    #time.sleep(0.5)
                 else:
                     break
 
