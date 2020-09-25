@@ -28,7 +28,7 @@ class detections:
         imagesmall = imutils.resize(image, width=min(400, image.shape[1]))
         start = time.time()
         # Erstellung der Boundingbox
-        (rects, weights) = self.hog.detectMultiScale(imagesmall, winStride=(4, 4), padding=(0, 0), scale=1.05)
+        (rects, weights) = self.hog.detectMultiScale(imagesmall, winStride=(4, 4), padding=(8, 8), scale=1.05)
         rects = np.array([[y, x, y + h, x + w] for (x, y, w, h) in rects])
         end = time.time() - start
         # Fuer sich ueberschneidende Rechtecke unterdruecke diese
@@ -129,7 +129,7 @@ class detections:
         self.interpretercocossdmobilev1.set_tensor(input_details[0]['index'], input)
 
         self.interpretercocossdmobilev1.invoke()
-        print("TfLite " + sneak + " = " + str(time.time() - start))
+        etime = time.time() - start
         # get output tensor
         boxes = self.interpretercocossdmobilev1.get_tensor(output_details[0]['index'])
         detectedlabels = self.interpretercocossdmobilev1.get_tensor(output_details[1]['index'])
@@ -143,7 +143,7 @@ class detections:
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             confidence = scores[0, i]
             print(confidence)
-            if confidence > 0.4:
+            if confidence > 0.0:
                 # Index der Detection
                 idx = int(detectedlabels[0, i])
                 # Wenn Klassen erkannt wurden, die auf der Ignore-Liste stehen, ignoriere
@@ -188,10 +188,10 @@ class detections:
                 y = box[1] - 15 if box[1] - 15 > 15 else box[1] + 15
                 cv2.putText(image, str(confidence), (box[0], y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
+        #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist
+        return bbox, image, scorelist, etime
 
     def getdetectionsbytfliteruntime(self, image, sneak):
         image = imutils.resize(image, width=min(400, image.shape[1]))
@@ -407,7 +407,7 @@ class detections:
                 y = box[1] - 15 if box[1] - 15 > 15 else box[1] + 15
                 cv2.putText(image, label, (box[0], y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
-        cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
+        #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist
+        return bbox, image, scorelist, totaltime
