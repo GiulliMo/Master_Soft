@@ -1,5 +1,4 @@
-
-import cv2
+import os
 from libraries.detections import *
 
 
@@ -14,12 +13,13 @@ class benchmark:
     def run(self):
         try:
             c = 0
+            elapsed_time = 0
             while True:
                 img = cv2.imread("Dataset/" + str(c) + ".jpg")
-                if len(img) != 0:
+                if os.path.isfile("Dataset/" + str(c) + ".jpg") == True:
                     print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence = self.detections.getdetectionsbyownnet(img, "Image: " + str(c))
+                    bboxes, a, confidence, etime = self.detections.getdetectionsbymobilenetv2(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c) + ".txt", "w+")
                     annotationcounter = 0
                     #print(bboxes)
@@ -30,8 +30,10 @@ class benchmark:
                         f.write("")
                     cv2.imwrite("results/images/" + str(c) + ".jpg", a)
                     c = c + 1
-                    #time.sleep(0.5)
+                    elapsed_time += etime
+                    #time.sleep(0.01)
                 else:
+                    print(str(elapsed_time/float(c)))
                     break
 
         except(IOError):

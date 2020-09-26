@@ -23,7 +23,7 @@ class detections:
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
         self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
-        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/model.tflite")
+        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/ownssdmobilenetv1.tflite")
 
     def getdetectionsbyhog(self, image, sneak):
         if image.shape[0]>=400:
@@ -90,16 +90,18 @@ class detections:
 
         img = np.reshape(np.array(cv2.resize(image, (300, 300))), [1, 300, 300, 3])
         img = img.astype(np.float32) / 128 - 1
-        
+        start = time.time()
         self.interpreterownnet.set_tensor(inp_id, img)
         self.interpreterownnet.invoke()
+        etime = time.time() - start
+
         boxes = self.interpreterownnet.get_tensor(out_id0)
         classes = self.interpreterownnet.get_tensor(out_id1)
         scores = self.interpreterownnet.get_tensor(out_id2)
         num_det = int(self.interpreterownnet.get_tensor(out_id3))
-        print(boxes)
-        print(classes)
-        print(num_det)
+        #print(boxes)
+        #print(classes)
+        #print(num_det)
         #num_det = v.get_tensor(out_id3)
         bboxlist = []
         bbox = numpy.array([])
@@ -157,7 +159,7 @@ class detections:
         #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist
+        return bbox, image, scorelist, etime
         
     
     def getdetectionsbycnn(self, image, sneak):
@@ -231,7 +233,7 @@ class detections:
         for i in range(boxes.shape[1]):
             # Ab der gegebenen Konfidenz wird das Objekt beruecksichtigt
             confidence = scores[0, i]
-            print(confidence)
+            #print(confidence)
             if confidence > 0.0:
                 # Index der Detection
                 idx = int(detectedlabels[0, i])
@@ -280,7 +282,7 @@ class detections:
         #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist
+        return bbox, image, scorelist, etime
 
     def getdetectionsbytfliteruntime(self, image, sneak):
         image = imutils.resize(image, width=min(400, image.shape[1]))
@@ -438,14 +440,14 @@ class detections:
         # Invoke the interpreter.
         self.interpreterssdmobilev2.invoke()
         totaltime = time.time() - start
-        print(totaltime)
+        #print(totaltime)
         # get results
         boxes = self.interpreterssdmobilev2.get_tensor(output_details[0]['index'])
         detectedlabels = self.interpreterssdmobilev2.get_tensor(output_details[1]['index'])
         scores = self.interpreterssdmobilev2.get_tensor(output_details[2]['index'])
         num = self.interpreterssdmobilev2.get_tensor(output_details[3]['index'])
-        print(detectedlabels)
-        print(boxes)
+        #print(detectedlabels)
+        #print(boxes)
         boxes, scores, classes = np.squeeze(boxes), np.squeeze(scores), np.squeeze(detectedlabels + 1).astype(np.int32)
         bboxlist = []
         bbox = numpy.array([])
@@ -499,4 +501,4 @@ class detections:
         #cv2.imwrite('./results/' + sneak + 'tflite.jpg', image)
         #cv2.imshow(sneak, image)
         #key = cv2.waitKey(1)
-        return bbox, image, scorelist
+        return bbox, image, scorelist, totaltime
