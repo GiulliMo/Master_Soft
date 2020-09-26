@@ -80,7 +80,7 @@ def coco2kitti(catNms, annFile):
 
                     out_str = [catname.replace(" ","")
 
-                               + ' ' + ' '.join(['0']*2)
+                               + ' ' + ' '.join(['0']*3) #2 in 3 geändert
 
                                + ' ' + ' '.join([b for b in bbox])
 
