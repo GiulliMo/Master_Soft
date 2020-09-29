@@ -19,7 +19,7 @@ class benchmark:
                 if os.path.isfile("Dataset/" + str(c) + ".jpg") == True:
                     print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence, etime = self.detections.getdetectionsbymobilenetv2(img, "Image: " + str(c))
+                    bboxes, a, confidence, etime = self.detections.getdetectionsbyownnet(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c) + ".txt", "w+")
                     annotationcounter = 0
                     #print(bboxes)
