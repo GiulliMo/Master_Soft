@@ -57,7 +57,7 @@ class detections:
 
                         if box[b] > image.shape[i]:
                             box[b] = image.shape[i]
-                tight = 30
+                tight = 20
                 box[0], box[1], box[2], box[3] = box[1]+tight, box[0]+tight, box[3]-tight, box[2]-tight
                 box = box.astype(numpy.int)
                 bboxlist.append(box)

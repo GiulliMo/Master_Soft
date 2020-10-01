@@ -27,7 +27,7 @@ class benchmark:
                             c).zfill(12) + ".jpg")
                     print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence, elapsedtime = self.detections.getdetectionsbyownnet(img, "Image: " + str(c))
+                    bboxes, a, confidence, elapsedtime = self.detections.getdetectionsbyhog(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c).zfill(12) + ".txt", "w+")
                     annotationcounter = 0
                     print(bboxes)

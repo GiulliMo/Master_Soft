@@ -33,7 +33,7 @@ STATIC EVALUATION PARAMETERS
 // holds the number of test images on the server
 //const int32_t N_TESTIMAGES = 7518;
 //const int32_t N_TESTIMAGES = 7480;
-const int32_t N_TESTIMAGES = 160;
+const int32_t N_TESTIMAGES = 12755;
 
 // easy, moderate and hard evaluation level
 enum DIFFICULTY{EASY=0, MODERATE=1, HARD=2};
