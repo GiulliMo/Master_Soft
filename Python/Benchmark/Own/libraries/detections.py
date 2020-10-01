@@ -23,7 +23,7 @@ class detections:
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
         self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
-        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/ownssdmobilenetv2.tflite")
+        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/ownnetv280000.tflite")
 
     def getdetectionsbyhog(self, image, sneak):
         if image.shape[0]>=400:
@@ -32,6 +32,8 @@ class detections:
             start = time.time()
             # Erstellung der Boundingbox
             (rects, weights) = self.hog.detectMultiScale(imagesmall, winStride=(4, 4), padding=(8, 8), scale=1.05)
+            print(rects)
+            print(weights)
             rects = np.array([[y, x, y + h, x + w] for (x, y, w, h) in rects])
             end = time.time() - start
             # Fuer sich ueberschneidende Rechtecke unterdruecke diese
@@ -55,7 +57,8 @@ class detections:
 
                         if box[b] > image.shape[i]:
                             box[b] = image.shape[i]
-                box[0], box[1], box[2], box[3] = box[1], box[0], box[3], box[2]
+                tight = 30
+                box[0], box[1], box[2], box[3] = box[1]+tight, box[0]+tight, box[3]-tight, box[2]-tight
                 box = box.astype(numpy.int)
                 bboxlist.append(box)
                 bbox = numpy.asarray(bboxlist)
@@ -77,7 +80,7 @@ class detections:
             detections=[]
             scores=[]
             end=0
-        return detections, image, scores
+        return detections, image, scores, end
 
     def getdetectionsbyownnet(self, image, sneak):
         self.interpreterownnet.allocate_tensors()
