@@ -3,9 +3,14 @@ import os
 import pyaudio
 import speech_recognition as sr
 from watson_developer_cloud.speech_to_text_v1 import SpeechToTextV1
+from pocketsphinx.pocketsphinx import *
+import soundfile
+from espnet_model_zoo.downloader import ModelDownloader
+from espnet2.bin.asr_inference import Speech2Text
 import json
 import wave
 import numpy as np
+
 
 
 # Klasse erzeugen Automatic Speech Recognition
@@ -25,10 +30,26 @@ class asr:
         self.chunksize = 2048
         self.recsec = 5
         self.devIndex = 0  # 0=Boltune, 1= boltune, 2 = builtin Microphone
+
+        # ibm
         self.speech_to_text = SpeechToTextV1(iam_apikey="wsDeuwes_FSm3bo_QiLLQl1Er81u1sqIQxMNZFB67aVq",
                                              url="https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/472d7157-6ba9-4041-b3f3-8b014ebd62cf")
 
-    # Modell je nach Sprache waehlen
+        # pcoketsphinx
+        # sudo nano pocketsphinx-python/deps/sphinxbase/src/libsphinxad/ad_openal.c
+        ##include <OpenAL/al.h>
+        #include <OpenAL/alc.h> muss da für installation stehen
+        self.ModeldirPocketsphinx= 'models'
+        config = Decoder.default_config()
+        config.set_string('-hmm', os.path.join(self.ModeldirPocketsphinx, 'en-us'))
+        config.set_string('-lm', os.path.join(self.ModeldirPocketsphinx , 'en-us.lm.bin'))
+        config.set_string('-dict', os.path.join(self.ModeldirPocketsphinx, 'cmudict-en-us.dict'))
+        self.decoder = Decoder(config)
+        # espnet
+        self.d = ModelDownloader()
+        self.Espnet = Speech2Text(**self.d.download_and_unpack("models/asr_train_asr_transformer_e18_raw_bpe_sp_valid.acc.best.zip"))
+
+    # Model für deepspeechje nach Sprache waehlen
     def initModel(self):
 
         # load and initialzie model - for deepspeech english, ds 0.7.4 hast to be installed
@@ -60,12 +81,13 @@ class asr:
         return recognizer
 
     # Methode um WAV Datei zu erzeugen
-    def createWav(self, filename):
+    def createWav(self, filename, frames):
 
         #loeschen wenn WAV existiert
         if os.path.exists(filename):
             os.remove(filename)
 
+        '''
         # start Recording
         stream = self.audio.open(format=self.Format, rate=self.rate, channels=self.channels,
                                  input_device_index=self.devIndex, input=True,
@@ -81,12 +103,13 @@ class asr:
         stream.stop_stream()
         stream.close()
         #self.audio.terminate()
+        '''
 
         waveFile = wave.open(filename, 'wb')
         waveFile.setnchannels(self.channels)
         waveFile.setsampwidth(self.audio.get_sample_size(self.Format))
         waveFile.setframerate(self.rate)
-        waveFile.writeframes(b''.join(frames))
+        waveFile.writeframes(b''.join(frames)) #self.frames kommen direkt aus der aufnahme
         waveFile.close()
 
     def getBuffer(self, w):
@@ -112,14 +135,60 @@ class asr:
 
         #self.transcript muss noch erzeugt werden
 
-    ## Methode fuer picovoice oder aehnliches
+    # Anwenden von Pocketsphinx
+    def speechtotextPocketSphinx(self, stream):
+        # speechtotext with pocketsphinx
+        # Recognition from datastream / audiostream
+        try:
+            self.decoder.start_utt()
+            # Typumwandlung
+            data16 = np.frombuffer(stream, dtype=np.int16)
+            type(data16)
+            self.decoder.process_raw(data16, False, False)
+            self.decoder.end_utt()
+            words = []
+            hypothesis = self.decoder.hyp()
+            [words.append(seg.word) for seg in self.decoder.seg()]
+
+            if not words:
+                self.transcript = "none"
+            # Transkription erzeugen
+            else:
+                self.transcript = hypothesis.hypstr
+
+            # leeres Transkript durch none ersetzen
+            if not self.transcript:
+                self.transcript = "none"
+
+        except KeyboardInterrupt:
+            print("Keyboard Interrupt")
+        pass
+
+
+    # Anwenden von ESPnet
+    def speechtotextESPnet(self, wavfile):
+        # speechtotext with ESPnet from wavfile
+        # Recognition from datastream / audiostream
+        try:
+            speech, rate = soundfile.read(wavfile)
+            nbests = self.Espnet(speech)
+            # Transkription erzeugen
+            text, *_ = nbests[0]
+            self.transcript = text.lower()
+
+            # leeres Transkript durch none ersetzen
+            if not self.transcript:
+                self.transcript = "none"
+
+        except KeyboardInterrupt:
+            print("Keyboard Interrupt")
+        pass
 
     # Anwenden von Deepspeech
     def speechtotext(self, stream):
-
+        # speechtotext with deepspeech
         # Recognition from datastream / audiostream
         try:
-
             # Typumwandlung
             data16 = np.frombuffer(stream, dtype=np.int16)
             type(data16)

@@ -295,6 +295,5 @@ print(modelRNN.predict(np.reshape(input,(1, 1, len(words)))))
 # Konvertieren in Tflite Modell
 
 converter = tf.lite.TFLiteConverter.from_keras_model(modelRNN)
-converter.allow_custom_ops=True
 tflite_model = converter.convert()
 open("autonom_manualRNN.tflite", "wb").write(tflite_model)

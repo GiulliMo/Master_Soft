@@ -94,18 +94,18 @@ if __name__ == '__main__':
 
         ## 10 mal property setzen
         listofvoices = []
-        listofvoices.append("com.apple.speech.synthesis.voice.Alex")# en_us
-        listofvoices.append("com.apple.speech.synthesis.voice.daniel") #en_gb
-        listofvoices.append("com.apple.speech.synthesis.voice.fiona") #en_scotland
-        listofvoices.append("com.apple.speech.synthesis.voice.Fred") #en_us2
-        listofvoices.append("com.apple.speech.synthesis.voice.karen") #en_au
-        listofvoices.append("com.apple.speech.synthesis.voice.moira") #en_ie
-        listofvoices.append("com.apple.speech.synthesis.voice.samantha.premium") #en_us3
-        listofvoices.append("com.apple.speech.synthesis.voice.tessa") #en_za
-        listofvoices.append("com.apple.speech.synthesis.voice.veena") #en_in
-        listofvoices.append("com.apple.speech.synthesis.voice.Victoria") #en_us4
-        listofvoices.append("com.apple.speech.synthesis.voice.Vicki") #en_us6
-        listofvoices.append("com.apple.speech.synthesis.voice.tom.premium")
+      #  listofvoices.append("com.apple.speech.synthesis.voice.Alex")# en_us
+        #listofvoices.append("com.apple.speech.synthesis.voice.daniel") #en_gb
+        #listofvoices.append("com.apple.speech.synthesis.voice.fiona") #en_scotland
+       ## listofvoices.append("com.apple.speech.synthesis.voice.Fred") #en_us2
+       # listofvoices.append("com.apple.speech.synthesis.voice.karen") #en_au
+        #listofvoices.append("com.apple.speech.synthesis.voice.moira") #en_ie
+       # listofvoices.append("com.apple.speech.synthesis.voice.samantha.premium") #en_us3
+        #listofvoices.append("com.apple.speech.synthesis.voice.tessa") #en_za
+       # listofvoices.append("com.apple.speech.synthesis.voice.veena") #en_in
+        #listofvoices.append("com.apple.speech.synthesis.voice.Victoria") #en_us4
+        #listofvoices.append("com.apple.speech.synthesis.voice.Vicki") #en_us6
+        #listofvoices.append("com.apple.speech.synthesis.voice.tom.premium")
         listofvoices.append("com.apple.speech.synthesis.voice.susan.premium")
         listofvoices.append("com.apple.speech.synthesis.voice.serena.premium")
         listofvoices.append("com.apple.speech.synthesis.voice.Ralph")

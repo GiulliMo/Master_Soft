@@ -37,8 +37,8 @@ class recognizer:
         self.rate = 16000
         self.recsec = recsec
         self.chunksize = 2048
-        self.buffer = np.zeros(int(int(self.rate / self.chunksize) * self.recsec * self.chunksize))
-        self.lstMsg = np.zeros(int(int(self.rate / self.chunksize) * self.recsec * self.chunksize))
+        self.buffer = np.zeros(int(int(self.rate / self.chunksize * self.recsec) * self.chunksize))
+        self.lstMsg = np.zeros(int(int(self.rate / self.chunksize * self.recsec) * self.chunksize))
         self.frames = []
         self.msgClass = Float32MultiArray() #Message fuer confidence veroeffentlichung
         self.msgClass.data = []
@@ -46,7 +46,7 @@ class recognizer:
         self.msgModus.data = []
         self.msgGoal = PoseStamped()
         self.asr = asr(language=language)
-        self.nlp = nlp()
+        self.nlp = nlp(rnn=False, embedded=True)
         self.class_names = self.nlp.class_names
         self.modus_names = self.nlp.modus_names
         self.recognizedBuzzwords = []
@@ -124,8 +124,18 @@ class recognizer:
             # msg.data als array abspeichern
             self.frames = np.asarray(self.buffer)
 
+            self.asr.createWav(filename="transcript.wav", frames=self.frames)
             # Aufruf Transkriptionsmethode
-            self.asr.speechtotext(self.frames)
+            # speechtotext = deepspeech ==> self.frames
+            # speechtotextpockesphinx = pocketsphinx ==> self.frames
+            # speechtotextIBM = ibm ==> wavfile
+            # speechtotextEspnnet = espnet ==> wavfile
+
+            # where the magic happen
+           # self.asr.speechtotext(self.frames)
+           #self.asr.speechtotextESPnet(wavfile="transcript.wav")
+            self.asr.speechtotextPocketSphinx(stream=self.frames)
+
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         pass
@@ -307,7 +317,7 @@ class recognizer:
 
                         ## hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
                         # Audio verarbeiten und auf Buzzwords checken
-                        self.processDataStream(self.buffer)
+                        self.processDataStream()
 
                         # Schlagwort erzeugen um exit bedienen zu koennen
                         self.getAlfBuzzWords(self.asr.transcript)
@@ -426,11 +436,9 @@ if __name__ == '__main__':
     r.nlp.words = r.nlp.readWords("models/words.txt")
     r.nlp.vocab_size = len(r.nlp.words)
     r.nlp.wordsModus = r.nlp.readWords("models/words_modus.txt")
-    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
-    r.nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manualRNN.tflite")
+    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhonWordEmbedding.tflite")
+    r.nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manual.tflite")
     r.nlp.modelTaskClassifier.allocate_tensors()
-    r.nlp.rnn = False
-    r.nlp.embeddinglayer = False
 
     # ROS initialisieren
     r.listener()

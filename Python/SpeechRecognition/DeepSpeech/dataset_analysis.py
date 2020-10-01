@@ -8,6 +8,7 @@ filename= "dataset.json"
 class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
 
 ## Flag zur unterscheidung post/pre Training
+# wenn true, dann wurde damit trainiert!!
 trained_with_random_dataset = True
 
 def saveJsons(dir, data):
@@ -84,10 +85,16 @@ for test in random_distributed_dataset:
         numclassesArray[5] = numclassesArray[5] +1
 
 # Create bars
-plt.bar(np.arange(len(class_names)), np.divide(numclassesArray, len(training_data)))
+plt.title('Verteilung Gesamter Datensatz')
+print(sum(np.divide(numclassesArray, len(random_distributed_dataset))))
+bars = plt.bar(np.arange(len(class_names)), np.around(np.divide(numclassesArray, len(random_distributed_dataset)),4))
 # Create names on the x-axis
 plt.xticks(np.arange(len(class_names)), class_names)
 # Show graphic
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x(), yval + .005, yval)
+
 plt.show()
 
 numclassesArray = [0, 0, 0, 0, 0, 0]
@@ -111,14 +118,19 @@ for test in test_data:
         numclassesArray[5] = numclassesArray[5] +1
 
 # Create bars
-plt.bar(np.arange(len(class_names)), np.divide(numclassesArray, len(training_data)))
+plt.title('Verteilung Testdaten')
+print(sum(np.divide(numclassesArray, len(test_data))))
+bars = plt.bar(np.arange(len(class_names)),  np.around(np.divide(numclassesArray, len(test_data)),4))
 # Create names on the x-axis
 plt.xticks(np.arange(len(class_names)), class_names)
 # Show graphic
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x(), yval + .005, yval)
 plt.show()
 
 numclassesArrayTrain = [0, 0, 0, 0, 0, 0]
-for test in test_data:
+for test in training_data:
     if test["class"] == 0:
         numclassesArrayTrain[0] = numclassesArrayTrain[0] +1
     if test["class"] == 1:
@@ -137,8 +149,13 @@ for test in test_data:
         numclassesArrayTrain[5] = numclassesArrayTrain[5] +1
 
 # Create bars
-plt.bar(np.arange(len(class_names)), np.divide(numclassesArrayTrain, len(test_data)))
+plt.title('Verteilung Trainingsdaten')
+print(sum(np.divide(numclassesArrayTrain, len(training_data))))
+bars = plt.bar(np.arange(len(class_names)),  np.around(np.divide(numclassesArrayTrain, len(training_data)),4))
 # Create names on the x-axis
 plt.xticks(np.arange(len(class_names)), class_names)
 # Show graphic
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x(), yval + .005, yval)
 plt.show()

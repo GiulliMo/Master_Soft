@@ -2,6 +2,8 @@ import json
 import phonetics
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
+from keras_preprocessing.sequence import pad_sequences
+from keras_preprocessing.text import Tokenizer
 stemmer = LancasterStemmer()
 import numpy as np
 from gtts import gTTS
@@ -16,7 +18,7 @@ from tempfile import TemporaryFile
 
 class nlp:
 
-    def __init__(self):
+    def __init__(self, rnn, embedded):
 
         # Definieren von Objekteigenschaften der Klasse Speech Recognition
         self.buzzwords = []
@@ -27,7 +29,13 @@ class nlp:
         self.modus_names = ['autonom', 'manual']
         self.modelTaskClassifier = ""
         self.modelModusClassifier = ""
+        self.edim = 8 # embedded dim
+        self.max_length = 25 # laenge fuer padding
+        self.vocab_size = 0
+        self.t = Tokenizer()
         self.ask = True
+        self.rnn = rnn
+        self.embeddinglayer = embedded
 
         #andere Klassifikatoren muessen geladen werden
 
@@ -99,26 +107,27 @@ class nlp:
 
         # tokenize the pattern
         sentence_words = nltk.word_tokenize(sentence)
-
         # stem each word
-        sentence_words = [stemmer.stem(word.lower()) for word in sentence_words]
+        #sentence_words = [stemmer.stem(word.lower()) for word in sentence_words]
         return sentence_words
 
     # Bag of Words erzeugen
     def bow(self, sentence, words, show_details=True):
-
         # tokenize the pattern
         sentence_words = self.clean_up_sentence(sentence)
         # bag of words
         bag = [0] * len(words)
+        one = []
+        onehot = [0]
         for s in sentence_words:
             for i, w in enumerate(words):
                 if w == s:
                     bag[i] = 1
+                    one.append(i + 1)
                     if show_details:
                         print("found in bag: %s" % w)
-
-        return (np.array(bag))
+        onehot[0] = list(one)
+        return (np.array(bag)), onehot
 
         ## Methode um Schlagwoerter zu finden ##
         ## getALFBuzzwords Liste muss ggf weitergepflegt werden
@@ -191,8 +200,6 @@ class nlp:
     ## Methode um Handlungen zu klassifizieren mit neuronalem Netz##
     def classifierTask(self, transcript):
 
-        self.modelTaskClassifier.allocate_tensors()
-
         try:
 
             ## Bearbeiten des Transcripts
@@ -209,16 +216,27 @@ class nlp:
             input_details = self.modelTaskClassifier.get_input_details()
             output_details = self.modelTaskClassifier.get_output_details()
             input_shape = input_details[0]['shape']
-
+            bow, encoded_sentence = self.bow(transcript.lower(), self.words, show_details=False)
+            print(transcript)
+            print(encoded_sentence)
             # Eingabe Tensor definieren
-            input = self.bow(transcript.lower(), self.words, show_details=False)
-            input = np.reshape(input, (-1, input_shape[1], input_shape[2])) #input_shape[0], input_shape[1]) -1, input_shape[1], input_shape[2]fuer normales Netz ohne rnn
+            if self.embeddinglayer:
+                input = pad_sequences(encoded_sentence, maxlen=self.max_length, padding='post')
+
+            elif self.embeddinglayer and self.rnn:
+                input = pad_sequences(encoded_sentence, maxlen=self.max_length, padding='post')
+                input = np.reshape(input, (-1, input_shape[1], input_shape[2]))
+
+            elif (not self.rnn) and (not self.embeddinglayer):
+                input = bow
+                input = np.reshape(input, (input_shape[0], input_shape[1]))
+
             input_data = np.array(input, dtype=np.float32)
 
             # Eingabe Tensor setzen
             self.modelTaskClassifier.set_tensor(input_details[0]['index'], input_data)
+            
             self.modelTaskClassifier.invoke()
-
             # Ausgabe Tensor berechnen
             output_data = self.modelTaskClassifier.get_tensor(output_details[0]['index'])
 
@@ -264,8 +282,8 @@ class nlp:
             input_shape = input_details[0]['shape']
 
             # Eingabe Tensor definieren
-            input = self.bow(transcript.lower(), self.wordsModus, show_details=False)
-            input = np.reshape(input, (-1, input_shape[1], input_shape[2]))  # input_shape[0], input_shape[1]) fuer normales Netz
+            input, rest = self.bow(transcript.lower(), self.wordsModus, show_details=False)
+            input = np.reshape(input, (input_shape[0], input_shape[1]))  # input_shape[0], input_shape[1])-1, input_shape[1], input_shape[2]) fuer normales Netz
             input_data = np.array(input, dtype=np.float32)
 
             # Eingabe Tensor setzen

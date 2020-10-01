@@ -39,7 +39,7 @@ class AudioStream:
         self.frames.append(stream.read(self.chunksize))  # Erstes mal append dauert laenger
 
         print("start recording...")
-        for i in range(0, int(self.rate / self.chunksize * self.recsec)):
+        for i in range(0, int(self.rate / self.chunksize) * self.recsec):
             self.frames.append(stream.read(self.chunksize))
         print("recording finished")
 
