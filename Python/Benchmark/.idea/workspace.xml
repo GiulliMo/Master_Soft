@@ -13104,6 +13104,7 @@
       <change beforePath="$PROJECT_DIR$/Own/results/annotations/99.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../ROS/catkin_ws/src/iai_kinect2" beforeDir="false" afterPath="$PROJECT_DIR$/../../ROS/catkin_ws/src/iai_kinect2" afterDir="false" />
     </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13142,6 +13143,18 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Own/libraries" />
     </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
   </component>
   <component name="RunManager" selected="Python.COCO-Benchmark">
     <configuration name="Benchmark (2)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -13277,12 +13290,13 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="426" y="141" width="424" height="482" key="FileChooserDialogImpl" timestamp="1601021745717">
