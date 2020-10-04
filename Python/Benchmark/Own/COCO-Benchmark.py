@@ -25,19 +25,19 @@ class benchmark:
                     img = cv2.imread(
                         "/home/alf/coco/Trainingsdaten/data_object_image_2/training/image_2/" + str(
                             c).zfill(12) + ".jpg")
-                    print(c)
+                  #  print(c)
                     # bboxes, a = self.detections.getdetectionsbytflite(image, str(c))
-                    bboxes, a, confidence, elapsedtime = self.detections.getdetectionsbyhog(img, "Image: " + str(c))
-                    f = open("results/annotations/" + str(c).zfill(12) + ".txt", "w+")
+                    bboxes, a, confidence, elapsedtime = self.detections.getdetectionsbyownnet(img, "Image: " + str(c))
+                   # f = open("results/annotations/" + str(c).zfill(12) + ".txt", "w+")
                     annotationcounter = 0
-                    print(bboxes)
+                   # print(bboxes)
                     time += elapsedtime
-                    print(time)
-                    for bbox in bboxes:
-                        f.write("pedestrian 0.0 0 -1 " + str(bbox[0]) + " " + str(bbox[1]) + " " + str(bbox[2]) + " " + str(bbox[3]) + " -1 -1 -1 -1 -1 -1 -1 " + str(confidence[annotationcounter]) + "\n")
-                        annotationcounter += 1
-                    if len(bboxes) == 0:
-                        f.write("")
+                  #  print(time)
+                  #  for bbox in bboxes:
+                  #      f.write("pedestrian 0.0 0 -1 " + str(bbox[0]) + " " + str(bbox[1]) + " " + str(bbox[2]) + " " + str(bbox[3]) + " -1 -1 -1 -1 -1 -1 -1 " + str(confidence[annotationcounter]) + "\n")
+                  #      annotationcounter += 1
+                  #  if len(bboxes) == 0:
+                  #      f.write("")
 
                     #cv2.imwrite("results/images/" + str(c) + ".jpg", a)
                     d = d + 1
