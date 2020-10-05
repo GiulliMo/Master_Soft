@@ -24,7 +24,7 @@ class detections:
         self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
         self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/ownnetv248.tflite")
-	self.interpreterownnet = tflite.Interpreter("nets/ownnetv248.tflite)
+        self.interpreterownnet = tflite.Interpreter("nets/ownnetv248.tflite)
 
     def getdetectionsbyhog(self, image, sneak):
         if image.shape[0]>=400:
