@@ -54,9 +54,9 @@ class asr:
 
         # load and initialzie model - for deepspeech english, ds 0.7.4 hast to be installed
         if self.language == 'gb':
-            model_file_path = 'models/deepspeech-0.7.1-models.pbmm'
+            model_file_path = 'models/deepspeech-0.7.4-models.tflite'
             self.model = deepspeech.Model(model_file_path)
-            self.model.enableExternalScorer('models/deepspeech-0.7.1-models.scorer')
+            self.model.enableExternalScorer('models/deepspeech-0.7.4-models.scorer')
             self.model.setScorerAlphaBeta(alpha=0.931289039105002,
                                      beta=1.1834137581510284)  # alpha=0.931289039105002, beta=1.1834137581510284)
             self.model.setBeamWidth(500)

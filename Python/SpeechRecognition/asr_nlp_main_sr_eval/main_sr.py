@@ -149,7 +149,7 @@ class recognizer:
         self.nlp.texttospeech( "i understand " + self.asr.transcript)
 
         # festlegen von konfidenzleveln bei unkritischen (wait und stop) deutlich geringer als bei fahraufgaben
-        threshold_modus = 0.65 #threshold fuer modus autonom oder manuell
+        threshold_modus = 0.5#threshold fuer modus autonom oder manuell
         threshold_drive = 0.7
         threshold_slam = 0.7
         threshold_waitfor = 0.5
@@ -243,11 +243,16 @@ class recognizer:
 
                         time.sleep(0.01)
 
-
                 # ueberpruefen ob manuell mit 0,6 prozent anliegt wenn ja, veroeffentlichen ==> Joystick rumfahren
                 elif mode == self.modus_names[1] and self.msgModus.data[np.argmax(self.msgModus.data)] > threshold_modus:
                     # veroeffentlichung manueller modus wenn konfidenz groesser als 0.6 ist
                     self.talkerModus(len(self.modus_names[np.argmax(self.msgModus.data)]), self.modus_names[np.argmax(self.msgModus.data)], len(self.modus_names))
+                    break
+
+                # exit geht auch hier
+                elif len(self.recognizedBuzzwords) == 1 and self.recognizedBuzzwords[0]['buzzword'][0]['name'] == "exit":
+                    self.nlp.texttospeech("Exit mode finding Process")
+                    rospy.loginfo("Exit mode finding!")
                     break
 
                 # autonom oder manuell erfragen da konfidenzen nicht ausreichten (kein valider modus) ==> Danach wird noch ein Ziel abgefragt
@@ -267,11 +272,12 @@ class recognizer:
                         ## hier geht er nur hin wenn eine neue message da ist, checksumme ungleich 0
                         # Audio verarbeiten und auf Buzzwords checken
                         self.processDataStream()
-
+                        self.nlp.getAlfBuzzWords(self.asr.transcript)
+                        self.recognizedBuzzwords = self.nlp.recognizedBuzzwords
                         # modus neu klassifizieren
-                        self.nlp.classifierModus(self.asr.transcript)
+                        self.msgModus.data = self.nlp.classifierModus(self.asr.transcript)
                         mode = self.modus_names[np.argmax(self.msgModus.data)]
-
+                        rospy.loginfo(mode)
                         # zaehler ruecksetzen
                         cnt = 0
 
@@ -328,9 +334,10 @@ class recognizer:
                         self.recognizedBuzzwords = self.nlp.recognizedBuzzwords
 
                         # modus neu klassifizieren
-                        self.nlp.classifierModus(self.asr.transcript)
+                        self.msgModus.data = self.nlp.classifierModus(self.asr.transcript)
+                        rospy.loginfo(self.asr.transcript)
                         mode = self.modus_names[np.argmax(self.msgModus.data)]
-
+                        rospy.loginfo(mode)
                         # zaehler ruecksetzen
                         cnt = 0
 

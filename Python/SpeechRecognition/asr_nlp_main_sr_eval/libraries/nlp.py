@@ -26,7 +26,7 @@ class nlp:
         self.words = [0]
         self.wordsModus = [0]
         self.class_names = ['drive', 'slam', 'wait for', 'localization', 'stop', 'unknown']
-        self.modus_names = ['autonom', 'manual']
+        self.modus_names = ['autonom','manual','unknow']
         self.modelTaskClassifier = ""
         self.modelModusClassifier = ""
         self.edim = 8 # embedded dim
@@ -292,7 +292,6 @@ class nlp:
 
             # Ausgabe Tensor berechnen
             output_data = self.modelModusClassifier.get_tensor(output_details[0]['index'])
-            self.modus_names = ['autonom', 'manual']
 
             # Ausgabe der Klassifizierung
             print(output_data[0])
