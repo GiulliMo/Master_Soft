@@ -21,7 +21,7 @@ class detections:
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
         self.labels = self.load_labels("./labels/" + model + "labels.txt")
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
-        self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/detect.tflite")
+        self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/trained_mobilenet_v1_ssd.tflite")
         self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/ssdlite_mobilenet_v2.tflite")
         self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/ownnetv248.tflite")
        # self.interpreterownnet = tflite.Interpreter("nets/ownnetv248.tflite") #tflite
@@ -215,7 +215,7 @@ class detections:
 
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
-        input_data = np.array(cv2.resize(image, (300, 300)), dtype=np.uint8)
+        input_data = np.array(cv2.resize(image, (300, 300)), dtype=np.float32)
         #cv2.imshow("test", cv2.resize(framebgrsmall, (300, 300)))
         #key = cv2.waitKey(1) & 0xFF
 
