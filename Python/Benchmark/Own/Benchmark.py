@@ -1,3 +1,5 @@
+
+#! /usr/bin/python3
 import os
 from libraries.detections import *
 
@@ -22,7 +24,7 @@ class benchmark:
                     bboxes, a, confidence, etime = self.detections.getdetectionsbyownnet(img, "Image: " + str(c))
                     f = open("results/annotations/" + str(c) + ".txt", "w+")
                     annotationcounter = 0
-                    #print(bboxes)
+                    print(bboxes)
                     for bbox in bboxes:
                         f.write("Pedestrian 0.0 0 -1 " + str(bbox[0]) + " " + str(bbox[1]) + " " + str(bbox[2]) + " " + str(bbox[3]) + " -1 -1 -1 -1 -1 -1 -1 " + str(confidence[annotationcounter]) + "\n")
                         annotationcounter += 1
