@@ -29,7 +29,7 @@ class ALF(object):
         self.drive_autonomous_to_target_functions = self.roslaunch("drive_autonomous_to_target_functions")
         self.task = ""
         self.mode = ""
-        self.manualcontrol = False
+        self.manualcontrol = True
         self.input = ""
         self.input2 = ""
 
@@ -51,8 +51,8 @@ class ALF(object):
 
         while True:
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
-                self.input2 = raw_input("Modus eingeben: ")
+                self.input = input("Klasse eingeben: ")
+                self.input2 = input("Modus eingeben: ")
             if self.input == "stop" or self.task == "stop":
                 self.toStop()
             elif self.input == "wait for" or self.task == "wait for":
@@ -75,7 +75,7 @@ class ALF(object):
 
         while True:
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
+                self.input = input("Klasse eingeben: ")
             if self.input == "stop" or self.task == "stop":
                 self.toStop()
             elif self.input == "wait for" or self.task == "wait for":
@@ -101,7 +101,7 @@ class ALF(object):
 
         while True:
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
+                self.input = input("Klasse eingeben: ")
             if self.input == "stop" or self.task == "stop":
                 self.toStop()
             elif self.input == "wait for" or self.task == "wait for":
@@ -120,7 +120,7 @@ class ALF(object):
 
         while True:
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
+                self.input = input("Klasse eingeben: ")
             if self.input == "stop" or self.task == "stop":
                 self.toStop()
             elif self.input == "wait for" or self.task == "wait for":
@@ -139,7 +139,7 @@ class ALF(object):
 
         while True:
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
+                self.input = input("Klasse eingeben: ")
             if self.input == "stop" or self.task == "stop":
                 self.toStop()
             elif self.input == "wait for" or self.task == "wait for":
@@ -159,7 +159,7 @@ class ALF(object):
 
         while True:
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
+                self.input = input("Klasse eingeben: ")
             if self.input == "stop" or self.task == "stop":
                 self.toStop()
             elif self.input == "drive" or self.task == "drive":
@@ -194,7 +194,7 @@ class ALF(object):
             print(self.task)
             print(self.input)
             if self.manualcontrol == True:
-                self.input = raw_input("Klasse eingeben: ")
+                self.input = input("Klasse eingeben: ")
             # if self.input == "stop" or self.task == "stop":
             # self.toStop()
             if self.input == "drive" or self.task == "drive":
@@ -222,7 +222,7 @@ class ALF(object):
         rospy.sleep(10)
 
         while True:
-            self.input = raw_input("Quittieren mit Y: ")
+            self.input = input("Quittieren mit Y: ")
             if self.input == "Y":
                 self.toWait_for()
             else:
@@ -239,7 +239,7 @@ class ALF(object):
         self.slam_functions.start()
 
         if self.manualcontrol == True:
-            self.input = raw_input("Klasse eingeben: ")
+            self.input = input("Klasse eingeben: ")
         if self.input == "stop":
             self.toStop()
         elif self.input == "wait for":
