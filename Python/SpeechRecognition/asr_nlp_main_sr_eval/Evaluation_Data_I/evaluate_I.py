@@ -48,7 +48,7 @@ ptall = [processingtime1, processingtime2, processingtime3, processingtime4]
 data = []
 
 ## nur die saetze aus test data_II
-
+'''
 with open('test_data_II.json') as json_file:
     dataset = json.load(json_file)
 
@@ -63,14 +63,14 @@ gtall = [sentence]
 htall = [sentence]
 ptall = [0]
 labelsall = [lbl]
-
+'''
 
 #scores = [score[0]["task"], score[0]["unknow"], score[0]["iterationen"]]
 
-nlp.words = nlp.readWords("../models/words.txt")
+nlp.words = nlp.readWords("../models/words_embedding.txt")
 print(len(nlp.words))
 nlp.vocab_size = len(nlp.words)
-nlp.modelTaskClassifier = tf.lite.Interpreter("../models/taskClassifierPhonWordEmbeddingRNN.tflite") # Flags setzen!!
+nlp.modelTaskClassifier = tf.lite.Interpreter("../models/taskClassifierPhonWordEmbeddingRNNII.tflite") # Flags setzen!!
 nlp.modelTaskClassifier.allocate_tensors()
 
 for i in range(len(gtall)):
