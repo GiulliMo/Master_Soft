@@ -46,7 +46,7 @@ class recognizer:
         self.msgModus.data = []
         self.msgGoal = PoseStamped()
         self.asr = asr(language=language)
-        self.nlp = nlp(rnn=False, embedded=True)
+        self.nlp = nlp(rnn=False, embedded=False)
         self.class_names = self.nlp.class_names
         self.modus_names = self.nlp.modus_names
         self.recognizedBuzzwords = []
@@ -309,7 +309,6 @@ class recognizer:
                 # exit strategie wenn man keine lust mehr hat nachzufragen
                 elif len(self.recognizedBuzzwords) == 1 and self.recognizedBuzzwords[0]['buzzword'][0]['name'] == "exit":
                     self.nlp.texttospeech("Exit target finding process")
-                    os.system(str)
                     rospy.loginfo("Exit mode finding for slam!")
                     break
 
@@ -382,7 +381,7 @@ class recognizer:
 
         self.ask = True
 
-    # ROS Knoten initialisieren und Subscriber aufrufen
+    # ROS Knoten initialisieren und Subscriber aufrufen(
     def listener(self):
 
         # ROS-Knoten initialisieren
@@ -395,7 +394,7 @@ class recognizer:
         self.talkerTask(size=1, text='init', size_confidence=0)
         self.talkerModus(size=1, text='init', size_confidence=0)
         self.talkerGoal(poseName="init", data=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-
+        rospy.loginfo("Initialisierung erfolgreich!")
         while not rospy.is_shutdown():
             try:
                 checksum = sum(self.lstMsg - self.buffer)  # letzte Message gleich neuer? wenn gleich verwerfen, wird ueperprueft durch array summe
@@ -411,6 +410,9 @@ class recognizer:
                     # Schlagwoerter finden
                     self.nlp.getAlfBuzzWords(self.asr.transcript)
                     self.recognizedBuzzwords = self.nlp.recognizedBuzzwords
+
+                    if len(self.recognizedBuzzwords) == 1:
+                        self.talkerBuzz(len(self.recognizedBuzzwords[0]['buzzword'][0]['name']),self.recognizedBuzzwords[0]['buzzword'][0]['name'])
 
                     # Aufruf Methode um bedienungsorientierte Handlung zu klassifizieren
                     self.msgClass.data = self.nlp.classifierTask(self.asr.transcript)
@@ -447,7 +449,7 @@ if __name__ == '__main__':
     r.nlp.words = r.nlp.readWords("models/words.txt")
     r.nlp.vocab_size = len(r.nlp.words)
     r.nlp.wordsModus = r.nlp.readWords("models/words_modus.txt")
-    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhonWordEmbedding.tflite")
+    r.nlp.modelTaskClassifier = tf.lite.Interpreter("models/taskClassifierPhon.tflite")
     r.nlp.modelModusClassifier = tf.lite.Interpreter("models/autonom_manual.tflite")
     r.nlp.modelTaskClassifier.allocate_tensors()
 

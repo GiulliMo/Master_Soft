@@ -2,6 +2,7 @@ import json
 import tensorflow as tf
 import phonetics
 import nltk
+import os
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
 from keras_preprocessing.sequence import pad_sequences
@@ -11,7 +12,7 @@ from sklearn.decomposition import PCA
 from tensorflow import keras
 import numpy as np
 from numpy import savetxt
-from lib.sentence2vec import Sentence2Vec
+
 
 
 class_names = ['drive to', 'slam', 'wait for', 'localization', 'stop', 'unknow']
@@ -42,15 +43,34 @@ labelsTask2 = loadJsons("data/labelsTaskEspnet_DataII.json")
 hypothesis3 = loadJsons("data/hypothesisPocket_DataII.json")
 labelsTask3 = loadJsons("data/labelsTaskPocket_DataII.json")
 
+hypothesis1_val = loadJsons("data/hypothesisDeepSpeech_DataI.json")
+labelsTask1_val = loadJsons("data/labelsTaskDeepSpeech_DataI.json")
+hypothesis2_val = loadJsons("data/hypothesisEspnetDataI.json")
+labelsTask2_val = loadJsons("data/labelsTaskEspnetDataI.json")
+hypothesis3_val = loadJsons("data/hypothesisPocketDataI.json")
+labelsTask3_val = loadJsons("data/labelsTaskPocketDataI.json")
+hypothesis4_val = loadJsons("data/hypothesisIBM_DataI.json")
+labelsTask4_val = loadJsons("data/labelsTaskIBM_DataI.json")
 
-hypothesis = hypothesis + hypothesis2 + hypothesis3
-labelsTask = labelsTask + labelsTask2 + labelsTask3
-print(len(hypothesis))
-print(len(labelsTask))
+with open('data/training_data_II.json') as json_file:
+    set = json.load(json_file)
+
+sentence = []
+lbl = []
+
+for data in set:
+    lbl.append(data["class"])
+    sentence.append(data["sentence"])
+
+
+hypothesis = hypothesis + hypothesis2 + hypothesis3 + sentence
+labelsTask = labelsTask + labelsTask2 + labelsTask3 + lbl
 hypothesisPhon =[]
 
-# daten splitten
-ratio=3/4
+hypothesis_val = hypothesis1_val+ hypothesis2_val + hypothesis3_val + hypothesis4_val
+labelsTask_val = labelsTask1_val + labelsTask2_val + labelsTask3_val + labelsTask4_val
+
+
 
 numclass1 = []
 numclass2 = []
@@ -65,6 +85,7 @@ testlabels = []
 
 
 # add labels with loop through each training_data element
+# phonetischen Teil anhängen
 for i in range(len(training_data)):
     #labels.append(training_data[i]["class"])
     sentence = training_data[i]["sentence"].replace("'", "")
@@ -74,7 +95,7 @@ for i in range(len(training_data)):
         phoneRes.append(phonetics.metaphone(k))
     training_data_phon.append({"class": training_data[i]["class"], "sentence": training_data[i]["sentence"] + ' ' + ' '.join(phoneRes)})
 
-
+    # numclasses fuer scatter plot
     if training_data[i]["class"] == 0:
         numclass1.append(i)
 
@@ -136,7 +157,6 @@ for sen in hypothesisPhon:#training_data_phon:
 t = Tokenizer()
 t.fit_on_texts(corpus)
 words = list(t.word_index)
-#print(words)
 
 
 def clean_up_sentence(sentence):
@@ -173,14 +193,13 @@ with open('words_embedding.txt', 'w') as f:
 encoded_docs = []
 for d in corpus:
     encoded_docs.append(bow(sentence=d.lower(),words=words, show_details=False))
-print(encoded_docs)
 vocab_size = len(t.word_index) + 1
 print(vocab_size)
+
 #encoded_docs = [one_hot(d, vocab_size) for d in corpus]
 # embedding dimension
 edim = 8
 
-# pad documents to a max length of 25 words
 max_length = 25
 padded_docs = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
 # define the model
@@ -188,9 +207,7 @@ model = keras.Sequential()
 model.add(tf.keras.layers.Embedding(vocab_size,8, input_length=max_length, name="first"))
 model.add(tf.keras.layers.Flatten(name='second'))
 model.add(tf.keras.layers.Dropout(0.2, input_shape=(1, max_length*edim)))
-model.add(keras.layers.Dense(units=30, activation='relu'))
-model.add(keras.layers.Dense(units=20, activation='sigmoid'))
-model.add(keras.layers.Dense(units=10, activation='sigmoid'))
+model.add(keras.layers.Dense(units=300, activation='sigmoid'))
 model.add(keras.layers.Dense(units=6, activation='softmax', name = 'third'))
 
 # Definieren des Optimizers
@@ -209,21 +226,59 @@ print(model.summary())
 
 padded_docs = np.array(padded_docs)
 labels = np.array(labelsTask)
-# fit the model
-#model.fit(padded_docs[0:int(len(training_data)*ratio)], labels[0:int(len(training_data)*ratio)], epochs=100)
-model.fit(padded_docs, labels, epochs=100)
 
+
+sentence_validate = []
+lbl_validate = []
+encoded_docs = []
+
+for data in test_data:
+    lbl_validate.append(data["class"])
+    transcript = data["sentence"]
+    ## Bearbeiten des Transcripts
+    transcript = transcript.replace("'", "")
+    res = transcript.split()
+    phoneRes = []
+
+    # phonetischen Teil mit metaphone bestimmen
+    for k in res:
+        phoneRes.append(phonetics.metaphone(k))
+    transcript = transcript + ' ' + ' '.join(phoneRes)
+    sentence_validate.append(transcript)
+
+print(lbl_validate)
+
+for de in hypothesis_val:
+    sentence = de
+    res = sentence.split()
+    phoneRes = []
+    for k in res:
+        phoneRes.append(phonetics.metaphone(k))
+    de = de + ' ' + ' '.join(phoneRes)
+    encoded_docs.append(bow(sentence=de.lower(),words=words, show_details=False))
+
+padded_docs_validate = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+print(padded_docs_validate)
+padded_docs_validate = np.array(padded_docs_validate)
+lbl_validate = np.array(labelsTask_val)
+
+# fit the model
+history = model.fit(padded_docs, labels, batch_size=50, epochs=200, validation_data=(padded_docs_validate, lbl_validate))
+
+name = "historyFFWE.csv"
+if os.path.exists(name):
+    os.remove(name)
+np.savetxt(name,(history.history['accuracy'],history.history['loss'],history.history['val_accuracy'],history.history['val_loss'] ),fmt='%f')
 # Konvertieren in Tflite Modell
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
-open("taskClassifierPhonWordEmbedding.tflite", "wb").write(tflite_model)
 
 
 modelRNN = keras.Sequential()
-modelRNN.add(tf.keras.layers.Embedding(vocab_size,8, input_length=max_length, name="first"))
-modelRNN.add(tf.keras.layers.SimpleRNN(12))
-modelRNN.add(keras.layers.Dense(units=30, activation='sigmoid'))
-modelRNN.add(keras.layers.Dense(units=20, activation='sigmoid'))
+modelRNN.add(tf.keras.layers.Embedding(vocab_size,12, input_length=max_length, name="first"))
+modelRNN.add(tf.keras.layers.SimpleRNN(12, return_sequences=True))
+modelRNN.add(tf.keras.layers.SimpleRNN(8))
+modelRNN.add(keras.layers.Dense(units=8, activation='sigmoid'))
 modelRNN.add(keras.layers.Dense(units=6, activation='softmax'))
 
 
@@ -240,18 +295,21 @@ optimizer = tf.keras.optimizers.Adam(
 )
 
 # fit the model
-modelRNN.fit(padded_docs, labels, epochs=100)
+
+history = modelRNN.fit(padded_docs, labels, batch_size=20, epochs=200,validation_data=(padded_docs_validate, lbl_validate))
+
+name = "historyRNN.csv"
+if os.path.exists(name):
+    os.remove(name)
+np.savetxt(name,(history.history['accuracy'],history.history['loss'],history.history['val_accuracy'],history.history['val_loss'] ),fmt='%f')
 
 # Konvertieren in Tflite Modell
 converter = tf.lite.TFLiteConverter.from_keras_model(modelRNN)
 tflite_model = converter.convert()
 open("taskClassifierPhonWordEmbeddingRNN.tflite", "wb").write(tflite_model)
 
-results = model.evaluate(padded_docs, labels, batch_size=1)
-print("test loss, test acc:", results)
-
-results = modelRNN.evaluate(padded_docs[int(len(training_data)*ratio):len(training_data)], labels[int(len(training_data)*ratio):len(training_data)], batch_size=1)
-print("test loss, test acc:", results)
+#results = modelRNN.evaluate(padded_docs[int(len(training_data)*ratio):len(training_data)], labels[int(len(training_data)*ratio):len(training_data)], batch_size=1)
+#print("test loss, test acc:", results)
 
 
 ## jetzt das ganze plotten
@@ -300,7 +358,7 @@ print(numclass3)
 print(numclass4)
 print(numclass5)
 print(numclass6)
-savetxt('pca_results.csv', [result_x,result_y, result_z], delimiter=',')
+savetxt('pca_results346.csv', [result_x,result_y, result_z], delimiter=',')
 
 colors = ['b', 'c', 'y', 'm', 'r', 'g']
 drive = pyplot.scatter(result_x[numclass1],result_y[numclass1],color=colors[0])

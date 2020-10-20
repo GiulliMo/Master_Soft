@@ -70,7 +70,7 @@ labelsall = [lbl]
 nlp.words = nlp.readWords("../models/words_embedding.txt")
 print(len(nlp.words))
 nlp.vocab_size = len(nlp.words)
-nlp.modelTaskClassifier = tf.lite.Interpreter("../models/taskClassifierPhonWordEmbeddingRNNII.tflite") # Flags setzen!!
+nlp.modelTaskClassifier = tf.lite.Interpreter("../models/taskClassifierPhonWordEmbeddingRNN.tflite") # Flags setzen!!
 nlp.modelTaskClassifier.allocate_tensors()
 
 for i in range(len(gtall)):
