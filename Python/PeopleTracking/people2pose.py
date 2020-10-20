@@ -131,7 +131,7 @@ class PeopleRec:
             cv2.imshow("roi", self.rearimagebgrqhd)
         key = cv2.waitKey(1000)
 
-        print(type(pointcloudmsg))
+        # print(type(pointcloudmsg))
         # Alle relevanten (NaNs werden aussortiert) Points werden aus der anliegenden PointCloud gezogen
         pc = pc2.read_points(pointcloudmsg, skip_nans=True, field_names=("x", "y", "z"), uvs=listofroi)
         for p in pc:
@@ -144,7 +144,7 @@ class PeopleRec:
         #Mittelwert wird gebildet und zusammen mit den entsprechenden Pixelkoordinaten ausgegeben
         if len(pc_list) != 0:
             depthaverage = depthsum / len(pc_list)
-            print(depthaverage, len(pc_list))
+            print(depthaverage, xcenter, ycenter)
             return xcenter, ycenter, depthaverage
 
 
@@ -173,14 +173,15 @@ class PeopleRec:
     # Berechnung der lokalen X/Y-Koordinaten gemessen von der jeweiligen Kamera zum Objekt mithilfe der
     # intrinsischen Kamerainformationen
     def getxycoordinates(self, xcenter, framebgrsmall, depthaverage):
-        print(xcenter)
-        fovhorizontal = 80
+        # print(xcenter)
+        fovhorizontal = 70
         fovhorizontaldegree = fovhorizontal * (math.pi / 180)
         pixelhorizontal = 960
-        print(pixelhorizontal)
+        # print(pixelhorizontal)
         focallength = pixelhorizontal / (2 * math.tan(fovhorizontaldegree / 2))
-        xpospersonlocal = ((xcenter - (pixelhorizontal / 2)) / focallength) * depthaverage
-        print(xpospersonlocal)
+        # xpospersonlocal = ((xcenter - (pixelhorizontal / 2)) / focallength) * depthaverage
+        xpospersonlocal = ((xcenter - (pixelhorizontal / 2))*depthaverage) / math.sqrt(focallength ** 2 + (xcenter - (pixelhorizontal / 2)) ** 2)
+        # print(xpospersonlocal)
         ypospersonlocal = math.sqrt(depthaverage ** 2 - xpospersonlocal ** 2)
 
         return [xpospersonlocal, ypospersonlocal]
@@ -196,7 +197,7 @@ class PeopleRec:
 
         if self.namespaceoffrontcamera != "":
             rospy.Subscriber("/" + self.namespaceoffrontcamera + "/qhd/image_color", Image, self.processingqhdfront)
-            rospy.Subscriber("/" + self.namespaceoffrontcamera + "/sd/points", PointCloud2, self.callback_pointcloud)
+            # rospy.Subscriber("/" + self.namespaceoffrontcamera + "/sd/points", PointCloud2, self.callback_pointcloud)
 
         if self.namespaceofrearcamera != "":
             rospy.Subscriber("/" + self.namespaceofrearcamera + "/qhd/image_color", Image, self.processingqhdrear)
@@ -209,7 +210,7 @@ class PeopleRec:
             while not rospy.is_shutdown():
                 # Hier kann man seriell arbeiten
                 if self.slowdown == True:
-                    time.sleep(2)
+                    time.sleep(0.01)
                 start = time.time()
 
                 if self.namespaceoffrontcamera != "":
@@ -231,7 +232,7 @@ class PeopleRec:
                 self.publishposition()
                 end = time.time() - start
 
-                print("Die letzte Iteration dauerte " + str(end) + "s.")
+                # print("Die letzte Iteration dauerte " + str(end) + "s.")
             print("\nShutdown...")
             self.dataoperations.savedata(self.listofpersons)
 

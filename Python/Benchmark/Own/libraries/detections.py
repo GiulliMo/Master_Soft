@@ -23,8 +23,8 @@ class detections:
         self.ignorelabels = self.load_labels("./labels/" + model + "ignorelabels.txt")
         self.interpretercocossdmobilev1 = tensorflow.lite.Interpreter(model_path="nets/trained_mobilenet_v1_ssd.tflite")
        # self.interpreterssdmobilev2 = tensorflow.lite.Interpreter(model_path="nets/trained_mobilenet_v1_ssd.tflite")
-        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/trained_mobilenet_v1_ssd.tflite")
-       # self.interpreterownnet = tflite.Interpreter("nets/ownnetv248.tflite") #tflite
+        self.interpreterownnet = tensorflow.lite.Interpreter(model_path="nets/trained_mobilenet_v2_ssdlite.tflite")
+        #self.interpreterownnet = tflite.Interpreter("nets/trained_mobilenet_v2_ssd.tflite") #tflite
 
     def getdetectionsbyhog(self, image, sneak):
         if image.shape[0]>=400:

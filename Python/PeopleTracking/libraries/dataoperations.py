@@ -19,4 +19,5 @@ class dataoperations:
 
         for person in list:
             print(person.name)
+            print(person.localcoordinates)
         return list

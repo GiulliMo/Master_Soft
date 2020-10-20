@@ -19,9 +19,9 @@ class talk:
         #print(self.peoplenottogreet)
         for person in listofpersons:
             donotgreet = False
-            print(person.name)
+            # print(person.name)
             timepassed = time.time() - person.timestamp
-            print ("Nicht gesehen seit " + str(int(timepassed)) + "s.")
+            # print ("Nicht gesehen seit " + str(int(timepassed)) + "s.")
 
             if len(self.peoplenottogreet) == 0 and timepassed <= 10:
                 #print("gruss2")
@@ -37,8 +37,8 @@ class talk:
                 donotgreet = True
 
             for personnottogreet in self.peoplenottogreet:
-                print(person.name)
-                print(personnottogreet)
+                # print(person.name)
+                # print(personnottogreet)
                 if person.name == personnottogreet:
                     #print("kein gruss")
                     donotgreet = True
